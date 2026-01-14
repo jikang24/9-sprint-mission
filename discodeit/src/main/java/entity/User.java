@@ -3,58 +3,62 @@ package entity;
 import java.util.UUID;
 
 public class User {
-    private UUID id;
+    private final UUID id;
+    private Long now;
     private Long createdAt;
     private Long updatedAt;
-    private String displayName;
+    private String username;
     private String email;
-    private String phoneNumber;
-    private String nickname;
+    private String phonenumber;
 
-    public User(String displayName, String email, String phoneNumber, String nickname) {
+    public User(String username, String email, String phonenumber) {
         this.id = UUID.randomUUID();
-        this.createdAt = System.currentTimeMillis();
-        this.updatedAt = System.currentTimeMillis();
-        this.displayName = displayName;
+        this.now = System.currentTimeMillis();
+        createdAt = now;
+        updatedAt = now;
+        this.username = username;
         this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.nickname = UUID.randomUUID().toString();
+        this.phonenumber = phonenumber;
     }
 
     public UUID getId() {
-        return id;
+        return this.id;
     }
 
     public Long getCreatedAt() {
-        return createdAt;
+        return this.createdAt;
     }
 
     public Long getUpdatedAt() {
-        return updatedAt;
+        return this.updatedAt;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getUsername() {
+        return this.username;
     }
 
     public String getEmail() {
-        return email;
+        return this.email;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPhonenumber() {
+        return this.phonenumber;
     }
 
-    public String getNickname() {
-        return nickname;
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + this.id +
+                ", username='" + this.username + '\'' +
+                ", email='" + this.email + '\'' +
+                ", phonenumber='" + this.phonenumber + '\'' +
+                '}';
     }
-//    public User update(String displayName, String email, String phoneNumber) {
-//        return new User(displayName, email, phoneNumber);
-//    }
-// TODO 업데이트 메서드 추가
 
-    //  무언가 id (무언가 파라미터)
-
-//    public boolean u
+    public void updateUser(String username, String email, String phonenumber){
+        this.username = username;
+        this.email = email;
+        this.phonenumber = phonenumber;
+    }
 
 }
