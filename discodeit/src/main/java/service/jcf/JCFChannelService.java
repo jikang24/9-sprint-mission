@@ -2,7 +2,6 @@ package service.jcf;
 
 import entity.ChannelType;
 import service.ChannelService;
-
 import entity.Channel;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,53 +11,51 @@ public class JCFChannelService implements ChannelService {
         private final List<Channel> data = new ArrayList<>();
 
     @Override
-    public Channel create(ChannelType type, String channel, String channelname) {
-        entity.Channel channel1 = new entity.Channel();
-        data.add(channel1);
-        return channel1;
+    public Channel create(ChannelType type, String channelname, String description) {
+        Channel channel = new Channel(channelname, description);
+        data.add(channel);
+        return channel;
     }
 
     @Override
-    public Channel find(String username, String channelname) {
+    public Channel find(UUID channelId) {
         for (Channel channel : data) {
-            if (channel.getChannelname().equals(channelname)) {
+            if (channel.getChannelId().equals(channelId)) {
                 return channel;
             }
         }
-        return null;
-    }
-
-    @Override
-    public Channel find(UUID id) {
-        for (Channel channel : data) {
-            if (channel.getId().equals(id)) {
-                return channel;
-            }
-        }
-        return null;
+        throw new RuntimeException("Channel not found");
     }
 
     @Override
     public List<Channel> findAll() {
+        if (data.isEmpty()) {
+            System.out.println("만들어진 채널이 없습니다.");
+        }
         return data;
     }
 
 
     @Override
-    public Channel update(UUID id, String channelname, ChannelType type) {
+    public Channel update(UUID channelId, String channelname, ChannelType type) {
         for (Channel channel : data) {
-            if (channel.getId().equals(id)) {
+            if (channel.getChannelId().equals(channelId)) {
                 channel.updateChannel(channelname);
                 return channel;
             }
         }
-        return null;
+        if (find(channelId) == null) {
+            throw new RuntimeException("해당 ID의 채널이 없습니다.");
+        }
+        throw new RuntimeException("수정할 수 없습니다.");
     }
 
+
     @Override
-    public boolean deleteChannel(UUID id) {
-        Channel channel = find(id);
+    public boolean deleteChannel(UUID channelId) {
+        Channel channel = find(channelId);
         if (channel == null) {
+            System.out.println("삭제할 채널이 없습니다.");
             return false;
         }
         data.remove(channel);

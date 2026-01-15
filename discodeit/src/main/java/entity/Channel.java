@@ -7,19 +7,17 @@ public class Channel {
     private Long createdAt;
     private Long updatedAt;
     private String channelname;
-    private String username;
-    private UUID id;
+    private final UUID channelId;
+    private String description;
 
 
-
-    public Channel() {
+    public Channel(String channelname, String description) {
         this.now = System.currentTimeMillis();
         createdAt = now;
         updatedAt = now;
         this.channelname = channelname;
-        this.username = username;
-        this.id = UUID.randomUUID();
-
+        this.channelId = UUID.randomUUID();
+        this.description = description;
     }
 
     public Long getNow() {
@@ -34,28 +32,23 @@ public class Channel {
         return updatedAt;
     }
 
-    public String getUsername() {
-        return username;
+
+    public UUID getChannelId() {
+        return this.channelId;
     }
 
-    public UUID getId() {
-        return id;
-    }
 
-    public String getChannelname() {
-        return channelname;
-    }
 
-    public void updateChannel(String channelname){
+    public void updateChannel(String channelname) {
         this.channelname = channelname;
     }
 
-    public CharSequence getName() {
-        return username;
+    public String getName() {
+        return channelname;
     }
 
-    public CharSequence getDescription() {
-        return channelname;
+    public String getDescription() {
+        return description;
     }
 
 //    public void plusUser(String username){
@@ -64,5 +57,8 @@ public class Channel {
 //
 //    public void minusUser(String username){
 //        this.username = this.username.replace(username, "");
+//    }
+    //    public String getChannelname() {
+//        return this.channelname;
 //    }
 }

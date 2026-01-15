@@ -27,12 +27,15 @@ public class JCFUserService implements UserService {
                 return user;
             }
         }
-        return null;
+        throw new RuntimeException("User not found");
     }
 
     // 전체조회 오버라이드
     @Override
     public List<User> findAll() {
+        if (data.isEmpty()) {
+           System.out.println("유저가 없습니다.");
+        }
         return data;
     }
 
@@ -44,13 +47,17 @@ public class JCFUserService implements UserService {
                 return user;
             }
         }
-        return null;
+        if (find(id) == null) {
+            throw new RuntimeException("해당 Id를 가진 유저가 없습니다");
+        }
+        throw new RuntimeException("수정할 수 없습니다.");
     }
 
     @Override
     public boolean delete(UUID id) {
         User user = find(id);
         if (user == null) {
+            System.out.println("삭제할 유저가 없습니다.");
             return false;
         }
         data.remove(user);
