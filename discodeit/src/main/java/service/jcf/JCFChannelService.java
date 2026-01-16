@@ -11,14 +11,14 @@ public class JCFChannelService implements ChannelService {
         private final List<Channel> data = new ArrayList<>();
 
     @Override
-    public Channel create(ChannelType type, String channelname, String description) {
-        Channel channel = new Channel(channelname, description);
+    public Channel createChannel(ChannelType type, String channelName, String description) {
+        Channel channel = new Channel(channelName, description);
         data.add(channel);
         return channel;
     }
 
     @Override
-    public Channel find(UUID channelId) {
+    public Channel findByChannelId(UUID channelId) {
         for (Channel channel : data) {
             if (channel.getChannelId().equals(channelId)) {
                 return channel;
@@ -28,7 +28,7 @@ public class JCFChannelService implements ChannelService {
     }
 
     @Override
-    public List<Channel> findAll() {
+    public List<Channel> findAllChannel() {
         if (data.isEmpty()) {
             System.out.println("만들어진 채널이 없습니다.");
         }
@@ -37,29 +37,41 @@ public class JCFChannelService implements ChannelService {
 
 
     @Override
-    public Channel update(UUID channelId, String channelname, ChannelType type) {
-        for (Channel channel : data) {
-            if (channel.getChannelId().equals(channelId)) {
-                channel.updateChannel(channelname);
-                return channel;
-            }
+    public Channel updateChannel(UUID channelId, String channelName, ChannelType type, String description) {
+        Channel channel = findByChannelId(channelId);
+
+        if (channel == null) {
+            throw new RuntimeException("해당 Id를 가진 채널이 없습니다.");
         }
-        if (find(channelId) == null) {
-            throw new RuntimeException("해당 ID의 채널이 없습니다.");
+
+        boolean updated = false;
+
+        if (channelName != null){
+            channel.updateChannel(channelName);
+            updated = true;
         }
-        throw new RuntimeException("수정할 수 없습니다.");
+
+        if (description != null){
+            channel.updateDescription(description);
+            updated = true;
+        }
+
+        if (!updated){
+            throw new RuntimeException("수정할 값이 없습니다");
+        }
+
+        return channel;
     }
 
 
     @Override
     public boolean deleteChannel(UUID channelId) {
-        Channel channel = find(channelId);
+        Channel channel = findByChannelId(channelId);
         if (channel == null) {
             System.out.println("삭제할 채널이 없습니다.");
             return false;
         }
-        data.remove(channel);
-        return true;
+        return data.remove(channel);
     }
 
 }

@@ -13,17 +13,17 @@ public class JCFUserService implements UserService {
 
     //생성 오버라이드
     @Override
-    public User create(String username, String email, String phonenumber) {
-        User user = new User(username, email, phonenumber);
+    public User createUser(String userName, String email, String phoneNumber) {
+        User user = new User(userName, email, phoneNumber);
         data.add(user);
         return user;
     }
 
     //조회 오버라이드
     @Override
-    public User find(UUID id) {
+    public User findByUserId(UUID id) {
         for (User user : data) {
-            if (user.getId().equals(id)) {
+            if (user.getUserId().equals(id)) {
                 return user;
             }
         }
@@ -32,7 +32,7 @@ public class JCFUserService implements UserService {
 
     // 전체조회 오버라이드
     @Override
-    public List<User> findAll() {
+    public List<User> findAllUser() {
         if (data.isEmpty()) {
            System.out.println("유저가 없습니다.");
         }
@@ -40,27 +40,44 @@ public class JCFUserService implements UserService {
     }
 
     @Override
-    public User update(UUID id, String username, String email, String phonenumber) {
-        for (User user : data) {
-            if (user.getId().equals(id)) {
-                user.updateUser(username, email, phonenumber);
-                return user;
-            }
-        }
-        if (find(id) == null) {
+    public User updateUser(UUID id, String userName, String email, String phoneNumber) {
+        User user = findByUserId(id);
+
+        if (user == null) {
             throw new RuntimeException("해당 Id를 가진 유저가 없습니다");
         }
-        throw new RuntimeException("수정할 수 없습니다.");
+
+        boolean updated = false;
+
+        if (userName != null) {
+            user.updateUserName(userName);
+            updated = true;
+        }
+
+        if (email != null) {
+            user.updateEmail(email);
+            updated = true;
+        }
+
+        if (phoneNumber != null) {
+            user.updatePhoneNumber(phoneNumber);
+            updated = true;
+        }
+
+        if (!updated) {
+            throw new RuntimeException("수정할 값이 없습니다");
+        }
+
+        return user;
     }
 
     @Override
-    public boolean delete(UUID id) {
-        User user = find(id);
+    public boolean deleteUser(UUID id) {
+        User user = findByUserId(id);
         if (user == null) {
             System.out.println("삭제할 유저가 없습니다.");
             return false;
         }
-        data.remove(user);
-        return true;
+        return data.remove(user);
     }
 }

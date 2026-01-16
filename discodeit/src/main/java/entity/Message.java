@@ -1,48 +1,44 @@
 package entity;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Message {
     private final UUID messageId;
-    private Long now;
-    private Long createdAt;
+    private final Long createdAt;
     private Long updatedAt;
-    private User username;
-    private String messagetext;
+    private String messageText;
     private final UUID channelId;
     private final UUID userId;
 
 
+    public Message(UUID userId, UUID channelId, String messageText) {
 
-    public Message(UUID userId, UUID channelId, String messagetext) {
         this.messageId = UUID.randomUUID();
         this.userId = userId;
         this.channelId = channelId;
-        this.now = System.currentTimeMillis();
-        createdAt = now;
-        updatedAt = now;
-        this.messagetext = messagetext;
+        this.createdAt = System.currentTimeMillis();
+        this.updatedAt = this.createdAt;
+        this.messageText = messageText;
     }
-
 
     public UUID getMessageId() {
         return messageId;
     }
 
-    public Long getNow() {
-        return now;
+//    public User getUsername() {
+//        return username;
+//    }
+
+    public LocalDateTime getCreatedAtLocalDateTime(){
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(this.createdAt)
+                , java.time.ZoneId.systemDefault());
     }
 
-    public Long getCreatedAt() {
-        return createdAt;
-    }
-
-    public Long getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public User getUsername() {
-        return username;
+    public LocalDateTime getUpdatedAtLocalDateTime() {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(this.updatedAt)
+                , java.time.ZoneId.systemDefault());
     }
 
     public UUID getUserId() {
@@ -53,15 +49,26 @@ public class Message {
         return channelId;
     }
 
-    public String getMessagetext() {
-        return messagetext;
+    public String getMessageText() {
+        return messageText;
     }
 
-    public void updateMessage(String messagetext){
-        this.messagetext = messagetext;
+    public void updateMessage(String messageText){
+        this.messageText = messageText;
+        this.updatedAt = System.currentTimeMillis();
     }
 
-
+    @Override
+    public String toString() {
+        return "Message{" +
+                "messageId=" + messageId +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", messagetext='" + messageText + '\'' +
+                ", channelId=" + channelId +
+                ", userId=" + userId +
+                '}';
+    }
 }
 
 

@@ -1,5 +1,6 @@
 import entity.ChannelType;
 import entity.Message;
+
 import java.util.List;
 import entity.User;
 import service.ChannelService;
@@ -16,25 +17,25 @@ public class JavaApplication {
     static void userPrint(UserService userService) {
         System.out.println("==========================");
         // 생성
-        User user = userService.create("woody", "woody@codeit.com", "01029483919");
-        System.out.println("유저 생성: " + user.getId());
-        System.out.println("유저 이름: " + user.getUsername());
-        System.out.println("유저 email: " + user.getEmail());
-        System.out.println("유저 전화번호: " + user.getPhonenumber());
+        User user1 = userService.createUser("woody", "woody@codeit.com", "01029483919");
+        User user2 = userService.createUser("강지원","jiwon@gmail.com","01073829184");
+        System.out.println("유저 생성ID : " + user1.getUserId().toString());
+        System.out.println("유저 이름: " + user1.getUserName());
+        System.out.println("유저 email: " + user1.getEmail());
+        System.out.println("유저 전화번호: " + user1.getPhoneNumber());
+        System.out.println("유저 생성시간: " + user1.getCreatedAtLocalDateTime());
         // 조회
-        User foundUser = userService.find(user.getId());
-        System.out.println("유저 조회(단건): " + foundUser.getId());
-        List<User> foundUsers = userService.findAll();
+        User foundUser = userService.findByUserId(user1.getUserId());
+        System.out.println("유저 조회(단건): " + foundUser.getUserId());
+        List<User> foundUsers = userService.findAllUser();
         System.out.println("유저 조회(다건): " + foundUsers.size());
         // 수정
-        User updatedUser = userService.update(user.getId(), null, null, "01029384839");
-        System.out.println("유저 수정: " + String.join("/", updatedUser.getUsername(), updatedUser.getEmail(), updatedUser.getPhonenumber()));
-//        // 삭제
-/*       String inputId = user.getId().toString();
-//        UUID id = UUID.fromString(inputId);
- */
-        userService.delete(user.getId());
-        List<User> foundUsersAfterDelete = userService.findAll();
+        User updatedUser = userService.updateUser(user2.getUserId(), null, null, "01029384839");
+        System.out.println("유저 수정: " + String.join("/", updatedUser.getUserName(), updatedUser.getEmail(), updatedUser.getPhoneNumber()));
+        System.out.println("유저 수정시간: " + updatedUser.getUpdatedAtLocalDateTime());
+        // 삭제
+        userService.deleteUser(user1.getUserId());
+        List<User> foundUsersAfterDelete = userService.findAllUser();
         System.out.println("삭제 후 유저수 : " + foundUsersAfterDelete.size());
         System.out.println("==========================");
     }
@@ -42,20 +43,22 @@ public class JavaApplication {
     static void channelPrint(ChannelService channelService) {
         System.out.println("==========================");
         // 생성
-        Channel channel = channelService.create(ChannelType.PUBLIC, "공지", "공지 채널입니다.");
-        System.out.println("채널 생성: " + channel.getChannelId());
-        System.out.println("채널 이름 :" + channel.getName());
-//        // 조회
-        Channel foundChannel = channelService.find(channel.getChannelId());
+        Channel channel = channelService.createChannel(ChannelType.PUBLIC, "공지", "공지 채널입니다.");
+        System.out.println("채널 생성ID : " + channel.getChannelId().toString());
+        System.out.println("채널 이름 :" + channel.getChannelName());
+        System.out.println("채널 생성 시간: " + channel.getCreatedAtLocalDateTime());
+        // 조회
+        Channel foundChannel = channelService.findByChannelId(channel.getChannelId());
         System.out.println("채널 조회(단건): " + foundChannel.getChannelId());
-        List<Channel> foundChannels = channelService.findAll();
+        List<Channel> foundChannels = channelService.findAllChannel();
         System.out.println("채널 조회(다건): " + foundChannels.size());
-//        // 수정
-        Channel updatedChannel = channelService.update(channel.getChannelId(), "공지사항", null);
-        System.out.println("채널 수정: " + String.join("/", updatedChannel.getName(), updatedChannel.getDescription()));
+        // 수정
+        Channel updatedChannel = channelService.updateChannel(channel.getChannelId(), "공지사항", null,null);
+        System.out.println("채널 수정: " + String.join("/", updatedChannel.getChannelName(), updatedChannel.getDescription()));
+        System.out.println("채널 수정시간: " + updatedChannel.getUpdatedAtLocalDateTime());
         // 삭제
         channelService.deleteChannel(channel.getChannelId());
-        List<Channel> foundChannelsAfterDelete = channelService.findAll();
+        List<Channel> foundChannelsAfterDelete = channelService.findAllChannel();
         System.out.println("채널 삭제후 : " + foundChannelsAfterDelete.size());
         System.out.println("==========================");
     }
@@ -64,23 +67,71 @@ public class JavaApplication {
         // 생성
         UUID channelId = UUID.randomUUID();
         UUID authorId = UUID.randomUUID();
-        Message message = messageService.create("안녕하세요.", channelId, authorId);
-        System.out.println("메시지 생성: " + message.getMessageId());
-        System.out.println("메시지 내용: " + message.getMessagetext());
+        Message message = messageService.createMessage("안녕하세요.", channelId, authorId);
+        System.out.println("메시지 생성ID : " + message.getMessageId().toString());
+        System.out.println("메시지 내용: " + message.getMessageText());
+        System.out.println("메시지 생성 시간: " + message.getCreatedAtLocalDateTime());
         // 조회
-        Message foundMessage = messageService.find(message.getMessageId());
+        Message foundMessage = messageService.findByMessageId(message.getMessageId());
         System.out.println("메시지 조회(단건): " + foundMessage.getMessageId());
-        List<Message> foundMessages = messageService.findAll();
+        List<Message> foundMessages = messageService.findAllMessage();
         System.out.println("메시지 조회(다건): " + foundMessages.size());
         // 수정
-        Message updatedMessage = messageService.update(message.getMessageId(), "반갑습니다.");
-        System.out.println("메시지 수정: " + updatedMessage.getMessagetext());
+        Message updatedMessage = messageService.updateMessage(message.getMessageId(), "반갑습니다.");
+        System.out.println("메시지 수정: " + updatedMessage.getMessageText());
+        System.out.println("메시지 수정시간: " + updatedMessage.getUpdatedAtLocalDateTime());
         // 삭재
         messageService.deleteMessage(message.getMessageId());
-        List<Message> foundMessagesAfterDelete = messageService.findAll();
+        List<Message> foundMessagesAfterDelete = messageService.findAllMessage();
         System.out.println("메시지 삭제후 : " + foundMessagesAfterDelete.size());
         System.out.println("==========================");
     }
+
+//    public class UserList{
+//        Map UserStore = new HashMap();
+//
+//        public void addUser(User user){
+//            UserStore.put(user.getId(), user);
+//        }
+//
+//        public User getUser(UUID userId){
+//            return (User) UserStore.get(userId);
+//        }
+//
+//        public List<User> getUsers(){
+//            return (List<User>) UserStore.values();
+//        }
+//    }
+
+
+//    public class TalkService{
+//        Map MessageStore = new HashMap();
+//
+//        public void addMessage(Message message){
+//            MessageStore.put(message.getMessageId(), message);
+//        }
+//
+//        public Message getMessage(UUID messageId){
+//            return (Message) MessageStore.get(messageId);
+//        }
+//
+//        public List<Message> getMessages(){
+//            return (List<Message>) MessageStore.values();
+//        }
+//
+//        public void deleteMessage(UUID messageId){
+//            MessageStore.remove(messageId);
+//        }
+//
+//        public void printMessage(UUID messageId){
+//            System.out.println(MessageStore.get(messageId));
+//        }
+//
+//        public void printAllMessages(){
+//            System.out.println(MessageStore.values());
+//        }
+//
+//    }
 
     public static void main(String[] args) {
         UserService userService = new JCFUserService();
@@ -90,6 +141,7 @@ public class JavaApplication {
         userPrint(userService);
         channelPrint(channelService);
         messagePrint(messageService);
+
 
 
 

@@ -1,35 +1,42 @@
 package entity;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Channel {
-    private Long now;
-    private Long createdAt;
+    private final Long createdAt;
     private Long updatedAt;
-    private String channelname;
+    private String channelName;
     private final UUID channelId;
     private String description;
 
 
-    public Channel(String channelname, String description) {
-        this.now = System.currentTimeMillis();
-        createdAt = now;
-        updatedAt = now;
-        this.channelname = channelname;
+    public Channel(String channelName, String description) {
+        this.createdAt = System.currentTimeMillis();
+        this.updatedAt = this.createdAt;
+        this.channelName = channelName;
         this.channelId = UUID.randomUUID();
         this.description = description;
     }
 
-    public Long getNow() {
-        return now;
+//
+//    public Long getCreatedAt() {
+//        return createdAt;
+//    }
+//
+//    public Long getUpdatedAt() {
+//        return updatedAt;
+//    }
+
+    public LocalDateTime getCreatedAtLocalDateTime(){
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(this.createdAt)
+                , java.time.ZoneId.systemDefault());
     }
 
-    public Long getCreatedAt() {
-        return createdAt;
-    }
-
-    public Long getUpdatedAt() {
-        return updatedAt;
+    public LocalDateTime getUpdatedAtLocalDateTime() {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(this.updatedAt)
+                , java.time.ZoneId.systemDefault());
     }
 
 
@@ -39,19 +46,36 @@ public class Channel {
 
 
 
-    public void updateChannel(String channelname) {
-        this.channelname = channelname;
+    public void updateChannel(String channelName) {
+        this.channelName = channelName;
+        this.updatedAt = System.currentTimeMillis();
     }
 
-    public String getName() {
-        return channelname;
+    public void updateDescription(String description){
+        this.description = description;
+        this.updatedAt = System.currentTimeMillis();
+    }
+
+    public String getChannelName() {
+        return channelName;
     }
 
     public String getDescription() {
         return description;
     }
 
-//    public void plusUser(String username){
+    @Override
+    public String toString() {
+        return "Channel{" +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", channelname='" + channelName + '\'' +
+                ", channelId=" + channelId +
+                ", description='" + description + '\'' +
+                '}';
+    }
+
+    //    public void plusUser(String username){
 //        this.username += username;
 //    }
 //

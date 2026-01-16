@@ -1,64 +1,78 @@
 package entity;
 
+
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class User {
     private final UUID id;
-    private Long now;
-    private Long createdAt;
+    private final Long createdAt;
     private Long updatedAt;
-    private String username;
+    private String userName;
     private String email;
-    private String phonenumber;
+    private String phoneNumber;
 
-    public User(String username, String email, String phonenumber) {
+    public User(String userName, String email, String phoneNumber) {
         this.id = UUID.randomUUID();
-        this.now = System.currentTimeMillis();
-        createdAt = now;
-        updatedAt = now;
-        this.username = username;
+        this.createdAt = System.currentTimeMillis();
+        this.updatedAt = this.createdAt;
+        this.userName = userName;
         this.email = email;
-        this.phonenumber = phonenumber;
+        this.phoneNumber = phoneNumber;
     }
 
-    public UUID getId() {
+
+    public UUID getUserId() {
         return this.id;
     }
 
-    public Long getCreatedAt() {
-        return this.createdAt;
+    public LocalDateTime getCreatedAtLocalDateTime(){
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(this.createdAt)
+                , java.time.ZoneId.systemDefault());
     }
 
-    public Long getUpdatedAt() {
-        return this.updatedAt;
+    public LocalDateTime getUpdatedAtLocalDateTime() {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(this.updatedAt)
+        , java.time.ZoneId.systemDefault());
     }
 
-    public String getUsername() {
-        return this.username;
+    public String getUserName() {
+        return this.userName;
     }
 
     public String getEmail() {
         return this.email;
     }
 
-    public String getPhonenumber() {
-        return this.phonenumber;
+    public String getPhoneNumber() {
+        return this.phoneNumber;
+    }
+
+    public void updateUserName(String userName){
+        this.userName = userName;
+        this.updatedAt = System.currentTimeMillis();
+    }
+
+    public void updateEmail(String email){
+        this.email = email;
+        this.updatedAt = System.currentTimeMillis();
+    }
+
+    public void updatePhoneNumber(String phoneNumber){
+        this.phoneNumber = phoneNumber;
+        this.updatedAt = System.currentTimeMillis();
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "id=" + this.id +
-                ", username='" + this.username + '\'' +
+                ", username='" + this.userName + '\'' +
                 ", email='" + this.email + '\'' +
-                ", phonenumber='" + this.phonenumber + '\'' +
+                ", phonenumber='" + this.phoneNumber + '\'' +
                 '}';
     }
 
-    public void updateUser(String username, String email, String phonenumber){
-        this.username = username;
-        this.email = email;
-        this.phonenumber = phonenumber;
-    }
 
 }
