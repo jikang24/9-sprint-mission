@@ -1,0 +1,21 @@
+package repository;
+
+import entity.Channel;
+
+import java.util.List;
+import java.util.UUID;
+
+public interface ChannelRepository {
+    Channel save(Channel channel);
+
+    List<Channel> findByChannelId(UUID channelId);
+
+    List<Channel> findAllChannel();
+
+    boolean existsById(UUID channelId);
+
+    void deleteById(UUID channelId);
+
+
+
+}

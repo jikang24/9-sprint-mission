@@ -1,10 +1,13 @@
 package entity;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class Message {
+public class Message implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private final UUID messageId;
     private final Long createdAt;
     private Long updatedAt;

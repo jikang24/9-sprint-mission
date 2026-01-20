@@ -1,10 +1,13 @@
 package entity;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class Channel {
+public class Channel implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private final Long createdAt;
     private Long updatedAt;
     private String channelName;

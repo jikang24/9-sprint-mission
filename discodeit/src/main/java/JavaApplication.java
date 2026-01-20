@@ -34,7 +34,9 @@ public class JavaApplication {
         System.out.println("유저 수정: " + String.join("/", updatedUser.getUserName(), updatedUser.getEmail(), updatedUser.getPhoneNumber()));
         System.out.println("유저 수정시간: " + updatedUser.getUpdatedAtLocalDateTime());
         // 삭제
-        userService.deleteUser(user1.getUserId());
+//        boolean removedUser = userService.deleteUser(user1.getUserId());
+//        System.out.println("유저 삭제여부 : " + removedUser);
+//        System.out.println(String.format("유저 삭제여부 %b, %s, 12312312312", removed, "123"));
         List<User> foundUsersAfterDelete = userService.findAllUser();
         System.out.println("삭제 후 유저수 : " + foundUsersAfterDelete.size());
         System.out.println("==========================");
@@ -57,7 +59,8 @@ public class JavaApplication {
         System.out.println("채널 수정: " + String.join("/", updatedChannel.getChannelName(), updatedChannel.getDescription()));
         System.out.println("채널 수정시간: " + updatedChannel.getUpdatedAtLocalDateTime());
         // 삭제
-        channelService.deleteChannel(channel.getChannelId());
+//        boolean removedChannel = channelService.deleteChannel(channel.getChannelId());
+//        System.out.println("채널 삭제여부: " + removedChannel);
         List<Channel> foundChannelsAfterDelete = channelService.findAllChannel();
         System.out.println("채널 삭제후 : " + foundChannelsAfterDelete.size());
         System.out.println("==========================");
@@ -67,6 +70,7 @@ public class JavaApplication {
         // 생성
         UUID channelId = UUID.randomUUID();
         UUID authorId = UUID.randomUUID();
+        //하드코딩을 위한 아이디 부여
         Message message = messageService.createMessage("안녕하세요.", channelId, authorId);
         System.out.println("메시지 생성ID : " + message.getMessageId().toString());
         System.out.println("메시지 내용: " + message.getMessageText());
@@ -81,59 +85,40 @@ public class JavaApplication {
         System.out.println("메시지 수정: " + updatedMessage.getMessageText());
         System.out.println("메시지 수정시간: " + updatedMessage.getUpdatedAtLocalDateTime());
         // 삭재
-        messageService.deleteMessage(message.getMessageId());
+//        boolean removedMessage = messageService.deleteMessage(message.getMessageId());
+//        System.out.println("메시지 삭제여뷰: " + removedMessage);
         List<Message> foundMessagesAfterDelete = messageService.findAllMessage();
         System.out.println("메시지 삭제후 : " + foundMessagesAfterDelete.size());
         System.out.println("==========================");
     }
 
-//    public class UserList{
-//        Map UserStore = new HashMap();
-//
-//        public void addUser(User user){
-//            UserStore.put(user.getId(), user);
-//        }
-//
-//        public User getUser(UUID userId){
-//            return (User) UserStore.get(userId);
-//        }
-//
-//        public List<User> getUsers(){
-//            return (List<User>) UserStore.values();
-//        }
-//    }
+    static void sendMessage(UserService userService, ChannelService channelService, MessageService messageService) {
+        Channel channel = channelService.createChannel(
+                ChannelType.PUBLIC,
+                "자유방",
+                "맘껏 떠드세요"
+        );
 
+        User user1 = userService.createUser(
+                "용땡땡",
+                "abc@email.com",
+                "01012345678"
+        );
 
-//    public class TalkService{
-//        Map MessageStore = new HashMap();
-//
-//        public void addMessage(Message message){
-//            MessageStore.put(message.getMessageId(), message);
-//        }
-//
-//        public Message getMessage(UUID messageId){
-//            return (Message) MessageStore.get(messageId);
-//        }
-//
-//        public List<Message> getMessages(){
-//            return (List<Message>) MessageStore.values();
-//        }
-//
-//        public void deleteMessage(UUID messageId){
-//            MessageStore.remove(messageId);
-//        }
-//
-//        public void printMessage(UUID messageId){
-//            System.out.println(MessageStore.get(messageId));
-//        }
-//
-//        public void printAllMessages(){
-//            System.out.println(MessageStore.values());
-//        }
-//
-//    }
+        User user2 = userService.createUser(
+                "강땡땡",
+                "def@email.com",
+                "01092739271"
+        );
 
-    public static void main(String[] args) {
+        Message message1 = messageService.createMessage("ㅎㅇ", channel.getChannelId(), user1.getUserId());
+        System.out.println("유저1 \"" + user1.getUserName() + "\"이(가) 메세지를 보냈습니다 :" + message1.getMessageText());
+
+        Message message2 = messageService.createMessage("안냐세여", channel.getChannelId(), user2.getUserId() );
+        System.out.println("유저2 \"" + user2.getUserName() +"\"이(가) 메세지를 보냈습니다 :" + message2.getMessageText());
+    }
+
+        public static void main(String[] args) {
         UserService userService = new JCFUserService();
         ChannelService channelService = new JCFChannelService();
         MessageService messageService = new JCFMessageService();
@@ -142,13 +127,17 @@ public class JavaApplication {
         channelPrint(channelService);
         messagePrint(messageService);
 
-
-
-
-
+        sendMessage(userService, channelService, messageService);
     }
 
 }
+
+
+
+
+
+
+
 
 /*
 // 이전 사용 코드

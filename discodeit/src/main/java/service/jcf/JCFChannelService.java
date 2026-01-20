@@ -38,7 +38,8 @@ public class JCFChannelService implements ChannelService {
 
     @Override
     public Channel updateChannel(UUID channelId, String channelName, ChannelType type, String description) {
-        Channel channel = findByChannelId(channelId);
+        Channel channel = this.data.stream().filter
+                (c -> c.getChannelId().equals(channelId)).findFirst().orElse(null);
 
         if (channel == null) {
             throw new RuntimeException("해당 Id를 가진 채널이 없습니다.");

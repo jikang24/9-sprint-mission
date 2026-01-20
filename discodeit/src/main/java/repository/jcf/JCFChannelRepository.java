@@ -1,0 +1,39 @@
+package repository.jcf;
+
+import entity.Channel;
+import repository.ChannelRepository;
+
+
+import java.util.*;
+
+public class JCFChannelRepository implements ChannelRepository {
+    private final Map<UUID, Channel> store = new HashMap<>();
+
+    @Override
+    public Channel save(Channel channel) {
+        store.put(channel.getChannelId(),channel);
+        return channel;
+    }
+
+    @Override
+    public List<Channel> findByChannelId(UUID channelId) {
+        return Optional.ofNullable
+                (store.get(channelId)).map(Collections::singletonList)
+                .orElse(List.of());
+    }
+
+    @Override
+    public List<Channel> findAllChannel() {
+        return new ArrayList<>(store.values());
+    }
+
+    @Override
+    public void deleteById(UUID channelId) {
+        store.remove(channelId);
+    }
+
+    @Override
+    public boolean existsById(UUID channelId) {
+        return store.containsKey(channelId);
+    }
+}
