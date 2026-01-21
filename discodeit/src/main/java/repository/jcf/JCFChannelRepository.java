@@ -16,10 +16,8 @@ public class JCFChannelRepository implements ChannelRepository {
     }
 
     @Override
-    public List<Channel> findByChannelId(UUID channelId) {
-        return Optional.ofNullable
-                (store.get(channelId)).map(Collections::singletonList)
-                .orElse(List.of());
+    public Optional<Channel> findByChannelId(UUID channelId) {
+        return Optional.ofNullable(store.get(channelId));
     }
 
     @Override

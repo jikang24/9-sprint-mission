@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface MessageRepository {
     Message save (Message message);
 
-    Optional<Message> findByMessageId(Optional<UUID> messageId);
+    Optional<Message> findByMessageId(UUID messageId);
 
     List<Message> findBySenderId(UUID userId);
 
@@ -21,7 +21,7 @@ public interface MessageRepository {
 
     boolean existsById(UUID messageId);
 
-//    List<Message> findByAuthorId(UUID authorId);
+
 
 
 

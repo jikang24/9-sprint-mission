@@ -3,12 +3,13 @@ package repository;
 import entity.Channel;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface ChannelRepository {
     Channel save(Channel channel);
 
-    List<Channel> findByChannelId(UUID channelId);
+    Optional<Channel> findByChannelId(UUID channelId);
 
     List<Channel> findAllChannel();
 

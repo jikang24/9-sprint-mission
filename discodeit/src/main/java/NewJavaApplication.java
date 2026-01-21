@@ -6,11 +6,17 @@ import entity.User;
 import repository.ChannelRepository;
 import repository.MessageRepository;
 import repository.UserRepository;
+import repository.file.FileChannelRepository;
+import repository.file.FileMessageRepository;
+import repository.file.FileUserRepository;
 import repository.jcf.JCFChannelRepository;
+import repository.jcf.JCFMessageRepository;
 import repository.jcf.JCFUserRepository;
 import service.ChannelService;
 import service.MessageService;
 import service.UserService;
+import service.basic.BasicChannelService;
+import service.basic.BasicMessageService;
 import service.basic.BasicUserService;
 import service.file.FileChannelService;
 import service.file.FileMessageService;
@@ -104,24 +110,34 @@ public class NewJavaApplication {
 //        ChannelService channelService = new FileChannelService();
 //        MessageService messageService = new FileMessageService(channelService, userService);
 
-//          UserRepository userRepository = new
-//
-//          UserService userService = new BasicUserService(userRepository);
+        // 메모리 저장체
+          UserRepository userRepository = new JCFUserRepository();
+          ChannelRepository channelRepository = new JCFChannelRepository();
+//          MessageRepository messageRepository = new JCFMessageRepository();
 
+        //직렬화 저장체
+//        UserRepository userRepository = new FileUserRepository();
+//        ChannelRepository channelRepository = new FileChannelRepository();
+        MessageRepository messageRepository = new FileMessageRepository();
 
+        //서비스 초기화
+          UserService userService = new BasicUserService(userRepository);
+          ChannelService channelService = new BasicChannelService(channelRepository);
+          MessageService messageService
+                  = new BasicMessageService(messageRepository, userRepository, channelRepository);
 
-        // 테스트
+        // CRUD테스트
 //        userCRUDTest(userService);
 //        channelCRUDTest(channelService);
 //        messageCRUDTest(messageService);
 
         // 셋업
-//        User user = setupUser(userService);
-//        Channel channel = setupChannel(channelService);
-//        // 테스트
-//        setupUser(userService);
-//        setupChannel(channelService);
-//        messageCreateTest(messageService, channel, user);
+        User user = setupUser(userService);
+        Channel channel = setupChannel(channelService);
+//        // 메시지 생성 테스트
+        setupUser(userService);
+        setupChannel(channelService);
+        messageCreateTest(messageService, channel, user);
 
 
 

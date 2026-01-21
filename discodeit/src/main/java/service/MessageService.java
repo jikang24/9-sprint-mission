@@ -10,6 +10,7 @@ public interface MessageService {
     Message createMessage(String text, UUID channelId, UUID authorId);
 
     Message findByMessageId(UUID messageId);
+
     List<Message> findByChannelId(UUID channelId);
 
     List<Message> findAllMessage();

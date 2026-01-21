@@ -25,7 +25,8 @@ public class BasicUserService implements UserService {
     @Override
     public User findByUserId(UUID id) {
         return userRepository.findByUserId(id)
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
+                .orElseThrow(() -> new NoSuchElementException
+                        ("User with id " + id + " not found"));
     }
 
     @Override
@@ -35,9 +36,9 @@ public class BasicUserService implements UserService {
 
     @Override
     public User updateUser(UUID id, String userName, String email, String phoneNumber) {
-        userRepository.findByUserId(id)
+        User user = userRepository.findByUserId(id)
                 .orElseThrow(() -> new NoSuchElementException("User not found"));
-        return userRepository.save(new User(userName, email, phoneNumber));
+        return userRepository.save(user);
     }
 
     @Override

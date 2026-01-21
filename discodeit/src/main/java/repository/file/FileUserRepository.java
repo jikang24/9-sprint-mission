@@ -3,7 +3,7 @@ package repository.file;
 import entity.User;
 import repository.UserRepository;
 
-import java.io.Serializable;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -11,9 +11,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
-public class FileUserRepository implements Serializable, UserRepository {
-    private static final long serialVersionUID = 1L;
-
+public class FileUserRepository implements UserRepository {
     private final Path DIRECTORY;
     private final String EXTENSION = ".ser";
 
@@ -27,7 +25,6 @@ public class FileUserRepository implements Serializable, UserRepository {
             }
         }
 
-//        System.out.println(DIRECTORY);
     }
 
     private Path resolvePath(UUID id) {
@@ -36,40 +33,85 @@ public class FileUserRepository implements Serializable, UserRepository {
 
     @Override
     public User save(User user) {
-        User result = new FileUserRepository()
-                .findByUserId(user.getUserId()).orElse(null);
-        if (result == null) {
-            try {
-                Files.writeString(resolvePath(user.getUserId()),
-                        user.toString());
-            } catch (Exception e) {
+        Path path = resolvePath(user.getUserId());
+        try (
+                FileOutputStream fos = new FileOutputStream(path.toFile());
+                ObjectOutputStream oos = new ObjectOutputStream(fos)
+        ) {
+            oos.writeObject(user);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return user;
+
+    }
+
+
+    @Override
+    public Optional<User> findByUserId(UUID userId) {
+        User userNullable = null;
+        Path path = resolvePath(userId);
+        if (Files.exists(path)) {
+            try (
+                    FileInputStream fis = new FileInputStream(path.toFile());
+                    ObjectInputStream ois = new ObjectInputStream(fis)
+            ) {
+                userNullable = (User) ois.readObject();
+            } catch (IOException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }
-        return result;
-    }
-    //????
 
-    @Override
-    public Optional<User> findByUserId(UUID id) {
-        return Optional.empty();
+        return Optional.ofNullable(Optional.ofNullable(userNullable)
+                .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found")));
     }
+
+
 
     @Override
     public List<User> findAllUser() {
-        return List.of();
+        try {
+            return Files.list(DIRECTORY)
+                    .filter(path -> path.toString().endsWith(EXTENSION))
+                    .map(path -> {
+                        try (
+                                FileInputStream fis = new FileInputStream(path.toFile());
+                                ObjectInputStream ois = new ObjectInputStream(fis)
+                        ) {
+                            return (User) ois.readObject();
+                        } catch (IOException | ClassNotFoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+                    .toList();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public boolean existsById(UUID id) {
-        return Files.exists(resolvePath(id));
-    }
-
-    @Override
-    public void deleteById(UUID id) {
-        Path path = resolvePath(id);
+    public boolean existsById(UUID userId) {
+        User userNullable = null;
+        Path path = resolvePath(userId);
         if (Files.notExists(path)) {
-            throw new NoSuchElementException("User with id " + id + " not found");
+            try(
+                    FileInputStream fis = new FileInputStream(path.toFile());
+                    ObjectInputStream ois = new ObjectInputStream(fis)
+            ){
+                userNullable = (User) ois.readObject();
+            }catch (IOException | ClassNotFoundException e){
+                throw new RuntimeException(e);
+            }
+        }
+        return userNullable != null;
+    }
+
+    @Override
+    public void deleteById(UUID userId) {
+        Path path = resolvePath(userId);
+        if (Files.notExists(path)) {
+            throw new NoSuchElementException("User with id " + userId + " not found");
         }
         try {
             Files.delete(path);
