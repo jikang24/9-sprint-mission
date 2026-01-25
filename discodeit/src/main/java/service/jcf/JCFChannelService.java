@@ -3,6 +3,8 @@ package service.jcf;
 import entity.ChannelType;
 import service.ChannelService;
 import entity.Channel;
+import service.Exception.ChannelCrudException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -38,30 +40,37 @@ public class JCFChannelService implements ChannelService {
 
     @Override
     public Channel updateChannel(UUID channelId, String channelName, ChannelType type, String description) {
-        Channel channel = this.data.stream().filter
-                (c -> c.getChannelId().equals(channelId)).findFirst().orElse(null);
 
-        if (channel == null) {
-            throw new RuntimeException("해당 Id를 가진 채널이 없습니다.");
+        try {
+            Channel channel = this.data.stream().filter
+                    (c -> c.getChannelId().equals(channelId)).findFirst().orElse(null);
+
+            if (channel == null) {
+                throw new RuntimeException("해당 Id를 가진 채널이 없습니다.");
+            }
+
+            boolean updated = false;
+
+            if (channelName != null) {
+                channel.updateChannel(channelName);
+                updated = true;
+            }
+
+            if (description != null) {
+                channel.updateDescription(description);
+                updated = true;
+            }
+
+            if (!updated) {
+                throw new RuntimeException("수정할 값이 없습니다");
+            }
+
+            return channel;
+        }catch (ChannelCrudException e){
+            System.out.println("Channel에서 다음과 같은 에러가 발생했습니다: " + e.getMessage());
+            throw e;
         }
 
-        boolean updated = false;
-
-        if (channelName != null){
-            channel.updateChannel(channelName);
-            updated = true;
-        }
-
-        if (description != null){
-            channel.updateDescription(description);
-            updated = true;
-        }
-
-        if (!updated){
-            throw new RuntimeException("수정할 값이 없습니다");
-        }
-
-        return channel;
     }
 
 

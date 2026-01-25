@@ -44,17 +44,18 @@ public class JCFMessageService implements MessageService {
 
     @Override
     public Message updateMessage(UUID messageId, String text) {
-        for (Message message : data) {
-            if (message.getMessageId().equals(messageId)){
-                message.updateMessage(text);
-                return message;
+
+            for (Message message : data) {
+                if (message.getMessageId().equals(messageId)){
+                    message.updateMessage(text);
+                    return message;
+                }
             }
+            if (findByMessageId(messageId) == null) {
+                throw new RuntimeException("해당 ID의 메시지가 없습니다.");
+            }
+            throw new RuntimeException("수정할 수 없습니다.");
         }
-        if (findByMessageId(messageId) == null) {
-            throw new RuntimeException("해당 ID의 메시지가 없습니다.");
-        }
-        throw new RuntimeException("수정할 수 없습니다.");
-    }
 
     @Override
     public boolean deleteMessage(UUID messageId) {

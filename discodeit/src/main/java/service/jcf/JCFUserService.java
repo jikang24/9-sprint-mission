@@ -74,15 +74,9 @@ public class JCFUserService implements UserService {
 
             return user;
         } catch (UserCrudException e) {
-            System.out.println("에러 발생!!");
-            System.out.println("무슨 에러지??" + e.getMessage());
+            System.out.println("User에서 다음과 같은 에러가 발생했습니다: " + e.getMessage());
             throw e;
         }
-
-//        finally {
-//            System.out.println("작업이 성공하든 실패하든 어캐든 됨");
-//        }
-
 
     }
 
