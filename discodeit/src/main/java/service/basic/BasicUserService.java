@@ -1,6 +1,7 @@
 package service.basic;
 
 import entity.User;
+import org.springframework.stereotype.Service;
 import repository.UserRepository;
 import service.UserService;
 
@@ -9,6 +10,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
+@Service
 public class BasicUserService implements UserService {
     private final UserRepository userRepository;
 

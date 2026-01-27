@@ -2,6 +2,7 @@ package service.basic;
 
 import entity.Channel;
 import entity.ChannelType;
+import org.springframework.stereotype.Service;
 import repository.ChannelRepository;
 import service.ChannelService;
 
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+@Service
 public class BasicChannelService implements ChannelService {
     private final ChannelRepository channelRepository;
 

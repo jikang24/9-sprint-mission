@@ -1,6 +1,7 @@
 package service.basic;
 
 import entity.Message;
+import org.springframework.stereotype.Service;
 import repository.ChannelRepository;
 import repository.MessageRepository;
 import repository.UserRepository;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+@Service
 public class BasicMessageService implements MessageService {
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;

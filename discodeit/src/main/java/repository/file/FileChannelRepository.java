@@ -1,5 +1,6 @@
 package repository.file;
 
+import org.springframework.stereotype.Repository;
 import repository.ChannelRepository;
 
 import entity.Channel;
@@ -12,6 +13,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
+@Repository
 public class FileChannelRepository implements ChannelRepository {
     private final Path DIRECTORY;
     private final String EXTENSION = ".ser";

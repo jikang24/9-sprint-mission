@@ -1,6 +1,7 @@
 package repository.file;
 
 import entity.User;
+import org.springframework.stereotype.Repository;
 import repository.UserRepository;
 
 import java.io.*;
@@ -11,6 +12,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
+@Repository
 public class FileUserRepository implements UserRepository {
     private final Path DIRECTORY;
     private final String EXTENSION = ".ser";
