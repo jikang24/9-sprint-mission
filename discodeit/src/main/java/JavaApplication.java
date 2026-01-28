@@ -1,15 +1,16 @@
-import entity.ChannelType;
-import entity.Message;
+import com.sprint.mission.discodeit.DTO.UserDTO;
+import com.sprint.mission.discodeit.entity.ChannelType;
+import com.sprint.mission.discodeit.entity.Message;
 
 import java.util.List;
-import entity.User;
-import service.ChannelService;
-import service.MessageService;
-import service.UserService;
-import service.jcf.JCFChannelService;
-import service.jcf.JCFMessageService;
-import service.jcf.JCFUserService;
-import entity.Channel;
+import com.sprint.mission.discodeit.entity.User;
+import com.sprint.mission.discodeit.service.ChannelService;
+import com.sprint.mission.discodeit.service.MessageService;
+import com.sprint.mission.discodeit.service.UserService;
+import com.sprint.mission.discodeit.service.jcf.JCFChannelService;
+import com.sprint.mission.discodeit.service.jcf.JCFMessageService;
+import com.sprint.mission.discodeit.service.jcf.JCFUserService;
+import com.sprint.mission.discodeit.entity.Channel;
 
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ public class JavaApplication {
         System.out.println("유저 생성ID : " + user1.getUserId().toString());
         System.out.println("유저 이름: " + user1.getUserName());
         System.out.println("유저 email: " + user1.getEmail());
-        System.out.println("유저 전화번호: " + user1.getPhoneNumber());
+        System.out.println("유저 전화번호: " + user1.getPassword());
         System.out.println("유저 생성시간: " + user1.getCreatedAtLocalDateTime());
         // 조회
         User foundUser = userService.findByUserId(user1.getUserId());
@@ -31,7 +32,7 @@ public class JavaApplication {
         System.out.println("유저 조회(다건): " + foundUsers.size());
         // 수정
         User updatedUser = userService.updateUser(user2.getUserId(), null, null, "01029384839");
-        System.out.println("유저 수정: " + String.join("/", updatedUser.getUserName(), updatedUser.getEmail(), updatedUser.getPhoneNumber()));
+        System.out.println("유저 수정: " + String.join("/", updatedUser.getUserName(), updatedUser.getEmail(), updatedUser.getPassword()));
         System.out.println("유저 수정시간: " + updatedUser.getUpdatedAtLocalDateTime());
         // 삭제
 //        boolean removedUser = userService.deleteUser(user1.getUserId());
@@ -98,6 +99,9 @@ public class JavaApplication {
                 "자유방",
                 "맘껏 떠드세요"
         );
+
+        UserDTO.CreateUserDTO createUserDTO = new UserDTO.CreateUserDTO("123", "456", "789");
+        userService.createUser(createUserDTO);
 
         User user1 = userService.createUser(
                 "용땡땡",

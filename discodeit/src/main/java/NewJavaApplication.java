@@ -1,33 +1,22 @@
-import entity.ChannelType;
-import entity.Message;
+import com.sprint.mission.discodeit.entity.ChannelType;
+import com.sprint.mission.discodeit.entity.Message;
 
 import java.util.List;
-import entity.User;
-import repository.ChannelRepository;
-import repository.MessageRepository;
-import repository.UserRepository;
-import repository.file.FileChannelRepository;
-import repository.file.FileMessageRepository;
-import repository.file.FileUserRepository;
-import repository.jcf.JCFChannelRepository;
-import repository.jcf.JCFMessageRepository;
-import repository.jcf.JCFUserRepository;
-import service.ChannelService;
-import service.MessageService;
-import service.UserService;
-import service.basic.BasicChannelService;
-import service.basic.BasicMessageService;
-import service.basic.BasicUserService;
-import service.file.FileChannelService;
-import service.file.FileMessageService;
-import service.file.FileUserService;
-import service.jcf.JCFChannelService;
-import service.jcf.JCFMessageService;
-import service.jcf.JCFUserService;
-import entity.Channel;
+import com.sprint.mission.discodeit.entity.User;
+import com.sprint.mission.discodeit.repository.ChannelRepository;
+import com.sprint.mission.discodeit.repository.MessageRepository;
+import com.sprint.mission.discodeit.repository.UserRepository;
+import com.sprint.mission.discodeit.repository.file.FileMessageRepository;
+import com.sprint.mission.discodeit.repository.jcf.JCFChannelRepository;
+import com.sprint.mission.discodeit.repository.jcf.JCFUserRepository;
+import com.sprint.mission.discodeit.service.ChannelService;
+import com.sprint.mission.discodeit.service.MessageService;
+import com.sprint.mission.discodeit.service.UserService;
+import com.sprint.mission.discodeit.service.basic.BasicChannelService;
+import com.sprint.mission.discodeit.service.basic.BasicMessageService;
+import com.sprint.mission.discodeit.service.basic.BasicUserService;
+import com.sprint.mission.discodeit.entity.Channel;
 
-import java.util.UUID;
-import java.util.List;
 import java.util.UUID;
 
 public class NewJavaApplication {
@@ -42,7 +31,7 @@ public class NewJavaApplication {
         System.out.println("유저 조회(다건): " + foundUsers.size());
         // 수정
         User updatedUser = userService.updateUser(user.getUserId(), null, null, "woody5678");
-        System.out.println("유저 수정: " + String.join("/", updatedUser.getUserName(), updatedUser.getEmail(), updatedUser.getPhoneNumber()));
+        System.out.println("유저 수정: " + String.join("/", updatedUser.getUserName(), updatedUser.getEmail(), updatedUser.getPassword()));
         // 삭제
         userService.deleteUser(user.getUserId());
         List<User> foundUsersAfterDelete = userService.findAllUser();

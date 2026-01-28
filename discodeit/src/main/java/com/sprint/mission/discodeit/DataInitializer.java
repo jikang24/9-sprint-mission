@@ -1,14 +1,14 @@
 package com.sprint.mission.discodeit;
 
-import entity.Channel;
-import entity.ChannelType;
-import entity.Message;
-import entity.User;
+import com.sprint.mission.discodeit.entity.Channel;
+import com.sprint.mission.discodeit.entity.ChannelType;
+import com.sprint.mission.discodeit.entity.Message;
+import com.sprint.mission.discodeit.entity.User;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import service.ChannelService;
-import service.MessageService;
-import service.UserService;
+import com.sprint.mission.discodeit.service.ChannelService;
+import com.sprint.mission.discodeit.service.MessageService;
+import com.sprint.mission.discodeit.service.UserService;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -32,7 +32,7 @@ public class DataInitializer implements CommandLineRunner {
 
     private User setupUser() {
         User user = userService.createUser(
-                "t", "",""
+                "Kang", "jiwon@codeit.com","0281739102"
         );
         System.out.println(user);
         return user;
@@ -41,8 +41,8 @@ public class DataInitializer implements CommandLineRunner {
     private Channel setupChannel() {
         Channel channel = channelService.createChannel(
                 ChannelType.PUBLIC,
-                "공지",
-                "공지 채널"
+                "공지 채널",
+                "공지 채널입니다"
         );
         System.out.println(channel);
         return channel;
@@ -57,9 +57,6 @@ public class DataInitializer implements CommandLineRunner {
 
         System.out.println("메시지 생성: " + message.getMessageId());
     }
-
-
-
 
 
 }

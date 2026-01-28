@@ -1,54 +1,32 @@
 package com.sprint.mission.discodeit;
 
-import entity.Channel;
-import entity.ChannelType;
-import entity.Message;
-import entity.User;
+import com.sprint.mission.discodeit.DTO.UserDTO;
+import com.sprint.mission.discodeit.entity.Channel;
+import com.sprint.mission.discodeit.entity.User;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.stereotype.Component;
-import repository.ChannelRepository;
-import repository.MessageRepository;
-import repository.UserRepository;
-import repository.file.FileMessageRepository;
-import repository.jcf.JCFChannelRepository;
-import repository.jcf.JCFUserRepository;
-import service.ChannelService;
-import service.MessageService;
-import service.UserService;
-import service.basic.BasicChannelService;
-import service.basic.BasicMessageService;
-import service.basic.BasicUserService;
+import com.sprint.mission.discodeit.repository.ChannelRepository;
+import com.sprint.mission.discodeit.repository.MessageRepository;
+import com.sprint.mission.discodeit.repository.UserRepository;
+import com.sprint.mission.discodeit.repository.file.FileMessageRepository;
+import com.sprint.mission.discodeit.repository.jcf.JCFChannelRepository;
+import com.sprint.mission.discodeit.repository.jcf.JCFUserRepository;
+import com.sprint.mission.discodeit.service.ChannelService;
+import com.sprint.mission.discodeit.service.MessageService;
+import com.sprint.mission.discodeit.service.UserService;
+import com.sprint.mission.discodeit.service.basic.BasicChannelService;
+import com.sprint.mission.discodeit.service.basic.BasicMessageService;
+import com.sprint.mission.discodeit.service.basic.BasicUserService;
 
 @SpringBootApplication
 public class DiscodeitApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DiscodeitApplication.class, args);
+//		SpringApplication.run(DiscodeitApplication.class, args);
 
 		ConfigurableApplicationContext context = SpringApplication.run(
 				DiscodeitApplication.class, args);
-
-
-
-
-
-//		User setupUser(UserService userService) {
-//			User user = userService.createUser("woody", "woody@codeit.com", "821031039281");
-//			System.out.println(user.toString());
-//		}
-//
-//		Channel setupChannel(ChannelService channelService) {
-//			Channel channel = channelService.createChannel(ChannelType.PUBLIC, "공지", "공지 채널입니다.");
-//			System.out.println(channel.toString());
-//		}
-//
-//		void messageCreateTest(MessageService messageService, Channel channel, User author) {
-//			Message message = messageService.createMessage("안녕하세요.", channel.getChannelId(), author.getUserId());
-//			System.out.println("메시지 생성: " + message.getMessageId());
-//		}
-
 
 
 		// 메모리 저장체
@@ -67,13 +45,7 @@ public class DiscodeitApplication {
 		ChannelService channelService = context.getBean(BasicChannelService.class);
 		MessageService messageService= context.getBean(BasicMessageService.class);
 
-////		 셋업
-//		User user = setupUser(userService);
-//		Channel channel = setupChannel(channelService);
-//        // 메시지 생성 테스트
-//		setupUser(userService);
-//		setupChannel(channelService);
-//		messageCreateTest(messageService, channel, user);
+
 
 
 
