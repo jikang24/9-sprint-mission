@@ -23,12 +23,10 @@ public class JCFUserService implements UserService {
     //조회 오버라이드
     @Override
     public User findByUserId(UUID id) {
-        for (User user : data) {
-            if (user.getUserId().equals(id)) {
-                return user;
-            }
-        }
-        throw new RuntimeException("유저를 찾을 수 없습니다.");
+        return data.stream()
+                .filter(user -> user.getId().equals(id))
+                .findFirst()
+                .orElseThrow(RuntimeException.class);
     }
 
     // 전체조회 오버라이드

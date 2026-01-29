@@ -9,16 +9,18 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 
+@Getter
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Getter
     private final UUID id;
     private final Long createdAt;
     private Long updatedAt;
     private String userName;
     private String email;
     private String password;
+
+    private final UUID profileId;
 
     public User(String userName, String email, String password) {
         this.id = UUID.randomUUID();
@@ -27,6 +29,8 @@ public class User implements Serializable {
         this.userName = userName;
         this.email = email;
         this.password = password;
+
+        this.profileId = UUID.randomUUID();
     }
 
 
@@ -52,17 +56,6 @@ public class User implements Serializable {
         , java.time.ZoneId.systemDefault());
     }
 
-    public String getUserName() {
-        return this.userName;
-    }
-
-    public String getEmail() {
-        return this.email;
-    }
-
-    public String getPassword() {
-        return this.password;
-    }
 
     public void updateUserName(String userName){
         this.userName = userName;
@@ -88,6 +81,8 @@ public class User implements Serializable {
                 ", password='" + this.password + '\'' +
                 '}';
     }
+
+
 
 
 }

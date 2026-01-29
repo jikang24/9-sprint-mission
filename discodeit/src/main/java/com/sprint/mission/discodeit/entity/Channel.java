@@ -7,11 +7,11 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-
+@Getter
 public class Channel implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Getter
+
     private final Long createdAt;
     private Long updatedAt;
     private String channelName;
@@ -47,12 +47,6 @@ public class Channel implements Serializable {
     }
 
 
-    public UUID getChannelId() {
-        return this.channelId;
-    }
-
-
-
     public void updateChannel(String channelName) {
         this.channelName = channelName;
         this.updatedAt = System.currentTimeMillis();
@@ -63,13 +57,6 @@ public class Channel implements Serializable {
         this.updatedAt = System.currentTimeMillis();
     }
 
-    public String getChannelName() {
-        return channelName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
 
     @Override
     public String toString() {

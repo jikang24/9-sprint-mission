@@ -5,13 +5,13 @@ import lombok.Getter;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
-
+@Getter
 public class Message implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Getter
     private final UUID messageId;
     private final Long createdAt;
     private Long updatedAt;
@@ -19,24 +19,21 @@ public class Message implements Serializable {
     private final UUID channelId;
     private final UUID userId;
 
+    private final UUID authorId;
+    private List<UUID> attachmentIds;
+
 
     public Message(UUID userId, UUID channelId, String messageText) {
-
         this.messageId = UUID.randomUUID();
         this.userId = userId;
         this.channelId = channelId;
         this.createdAt = System.currentTimeMillis();
         this.updatedAt = this.createdAt;
         this.messageText = messageText;
+        this.authorId = this.userId;
     }
 
-    public UUID getMessageId() {
-        return messageId;
-    }
 
-//    public User getUsername() {
-//        return username;
-//    }
 
     public LocalDateTime getCreatedAtLocalDateTime(){
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(this.createdAt)
@@ -56,17 +53,6 @@ public class Message implements Serializable {
         return Instant.ofEpochMilli(this.updatedAt);
     }
 
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public UUID getChannelId() {
-        return channelId;
-    }
-
-    public String getMessageText() {
-        return messageText;
-    }
 
     public void updateMessage(String messageText){
         this.messageText = messageText;
@@ -84,6 +70,9 @@ public class Message implements Serializable {
                 ", userId=" + userId +
                 '}';
     }
+
+
+
 }
 
 

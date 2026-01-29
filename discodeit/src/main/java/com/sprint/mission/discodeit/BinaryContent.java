@@ -2,23 +2,34 @@ package com.sprint.mission.discodeit;
 
 import lombok.Getter;
 
+import java.time.Instant;
 import java.util.UUID;
 
+
+@Getter
 public class BinaryContent {
-    @Getter
-    private final UUID messageId;
-    private final UUID userId;
-    private final Long createdAt;
-//    private byte[] content;
-//    private String contentType;
-//    private Long size;
-//    private String fileName;
 
+    /** 바이너리 컨텐츠 식별자 */
+    private final UUID id;
 
-    public BinaryContent(UUID messageId, UUID userId, Long createdAt) {
-        this.messageId = messageId;
-        this.userId = userId;
-        this.createdAt = createdAt;
+    /** 실제 바이너리 데이터 */
+    private final byte[] data;
+
+    /** MIME 타입 (image/png, application/pdf 등) */
+    private final String contentType;
+
+    /** 데이터 크기 (bytes) */
+    private final long size;
+
+    /** 생성 시각 */
+    private final long createdAt;
+
+    public BinaryContent(byte[] data, String contentType) {
+        this.id = UUID.randomUUID();
+        this.data = data;
+        this.contentType = contentType;
+        this.size = data.length;
+        this.createdAt = Instant.now().toEpochMilli();
     }
 
 

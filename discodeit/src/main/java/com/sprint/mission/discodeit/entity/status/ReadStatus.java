@@ -8,20 +8,38 @@ import java.util.UUID;
 
 @Getter
 public class ReadStatus {
-    private final UUID messageId;
     private final UUID userId;
     private final UUID channelId;
+    private final UUID messageId;
     private final Long createdAt;
     private Long updatedAt;
-    private boolean read;
+    private UUID lastReadMessageId;
+
 
     @Builder
-    public ReadStatus(UUID messageId, UUID userId, UUID channelId) {
-        this.messageId = messageId;
+    public ReadStatus(UUID userId, UUID channelId, UUID messageId) {
         this.userId = userId;
         this.channelId = channelId;
+        this.messageId = messageId;
         this.createdAt = Instant.now().toEpochMilli();
         this.updatedAt = this.createdAt;
-//        this.read = false;
+
     }
+    //사용자가 채널 별 마지막으로 메시지를 읽은 시간을 표현하는 도메인 모델
+
+    public void read(UUID messageId){
+        if (isAlreadyRead(messageId)){
+            return;
+        }
+        this.lastReadMessageId = messageId;
+        this.updatedAt = Instant.now().toEpochMilli();
+    }
+
+    private boolean isAlreadyRead(UUID messageId){
+        if (lastReadMessageId == null){
+            return false;
+        }
+        return lastReadMessageId.equals(messageId);
+    }
+
 }

@@ -20,11 +20,11 @@ public class BasicUserService implements UserService {
 //        this.userRepository = userRepository;
 //    }
 
-    @Override
-    public User createUser(String username, String email, String password){
-        User user = new User(username, email, password);
-        return userRepository.save(user);
-    }
+//    @Override
+//    public User createUser(String username, String email, String password){
+//        User user = new User(username, email, password);
+//        return userRepository.save(user);
+//    }
 
     @Override
     public User createUser(UserDTO.CreateUserDTO createUserDTO) {

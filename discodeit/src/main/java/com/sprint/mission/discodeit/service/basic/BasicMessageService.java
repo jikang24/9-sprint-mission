@@ -2,6 +2,7 @@ package com.sprint.mission.discodeit.service.basic;
 
 import com.sprint.mission.discodeit.entity.Message;
 import com.sprint.mission.discodeit.entity.status.ReadStatus;
+import com.sprint.mission.discodeit.repository.ReadStatusRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.sprint.mission.discodeit.repository.ChannelRepository;
@@ -16,10 +17,12 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class BasicMessageService implements MessageService {
+
     private final MessageRepository messageRepository;
-    private final ReadstatusReposito
     private final UserRepository userRepository;
+
     private final ChannelRepository channelRepository;
+    private final ReadStatusRepository readstatusRepositoty;
 
 //    public BasicMessageService(MessageRepository messageRepository, UserRepository userRepository, ChannelRepository channelRepository) {
 //        this.messageRepository = messageRepository;
@@ -37,7 +40,7 @@ public class BasicMessageService implements MessageService {
                 .build();
 
         messageRepository.save(message);
-        readstatusrepo.save(readStatus);
+        readstatusRepositoty.save(readStatus);
         return message;
     }
 

@@ -21,9 +21,13 @@ public class UserDTO {
             String email,
             String password
     ) {
+        public User toEntity() {
+            return new User(userName, email, password);
+        }
 
     }
 
-    public record DeleteUserDTO(UUID id) {
-    }
+
+
+
 }

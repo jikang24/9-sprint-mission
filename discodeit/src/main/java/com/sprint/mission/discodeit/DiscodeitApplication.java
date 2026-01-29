@@ -45,7 +45,9 @@ public class DiscodeitApplication {
 		ChannelService channelService = context.getBean(BasicChannelService.class);
 		MessageService messageService= context.getBean(BasicMessageService.class);
 
-
+		UserDTO.CreateUserDTO createUserDTO
+				= new UserDTO.CreateUserDTO("123", "456", "789");
+		userService.createUser(createUserDTO);
 
 
 

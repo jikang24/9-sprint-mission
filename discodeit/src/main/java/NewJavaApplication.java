@@ -1,3 +1,4 @@
+import com.sprint.mission.discodeit.DTO.UserDTO;
 import com.sprint.mission.discodeit.entity.ChannelType;
 import com.sprint.mission.discodeit.entity.Message;
 
@@ -22,7 +23,7 @@ import java.util.UUID;
 public class NewJavaApplication {
     static void userCRUDTest(UserService userService) {
         // 생성
-        User user = userService.createUser("강지원", "jiwon@codeit.com", "01837271939");
+        User user = userService.createUser("d",);
         System.out.println("유저 생성: " + user.getUserId());
         // 조회
         User foundUser = userService.findByUserId(user.getUserId());
@@ -75,8 +76,35 @@ public class NewJavaApplication {
 //        List<Message> foundMessagesAfterDelete = messageService.findAllMessage();
 //        System.out.println("메시지 삭제: " + foundMessagesAfterDelete.size());
     }
+    static void sendMessage(UserService userService, ChannelService channelService, MessageService messageService) {
+        Channel channel = channelService.createChannel(
+                ChannelType.PUBLIC,
+                "자유방",
+                "맘껏 떠드세요"
+        );
 
-    static User setupUser(UserService userService) {
+
+//        User user1 = userService.createUser(
+//                "용땡땡",
+//                "abc@email.com",
+//                "01012345678"
+//        );
+//
+//        User user2 = userService.createUser(
+//                "강땡땡",
+//                "def@email.com",
+//                "01092739271"
+//        );
+//
+//        Message message1 = messageService.createMessage("ㅎㅇ", channel.getChannelId(), user1.getUserId());
+//        System.out.println("유저1 \"" + user1.getUserName() + "\"이(가) 메세지를 보냈습니다 :" + message1.getMessageText());
+//
+//        Message message2 = messageService.createMessage("안냐세여", channel.getChannelId(), user2.getUserId());
+//        System.out.println("유저2 \"" + user2.getUserName() + "\"이(가) 메세지를 보냈습니다 :" + message2.getMessageText());
+    }
+
+
+        static User setupUser(UserService userService) {
         User user = userService.createUser("woody", "woody@codeit.com", "821031039281");
         System.out.println(user.toString());
         return user;
@@ -113,12 +141,17 @@ public class NewJavaApplication {
           UserService userService = new BasicUserService(userRepository);
           ChannelService channelService = new BasicChannelService(channelRepository);
           MessageService messageService
-                  = new BasicMessageService(messageRepository, userRepository, channelRepository);
+                  = new BasicMessageService(messageRepository, userRepository, channelRepository,null);
 
         // CRUD테스트
 //        userCRUDTest(userService);
 //        channelCRUDTest(channelService);
 //        messageCRUDTest(messageService);
+
+//        userPrint(userService);
+//        channelPrint(channelService);
+//        messagePrint(messageService);
+
 
         // 셋업
         User user = setupUser(userService);
