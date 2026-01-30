@@ -4,9 +4,23 @@ import com.sprint.mission.discodeit.entity.Message;
 
 import java.util.UUID;
 
-public record MessageDTO (String text, UUID channelId, UUID authorId) {
-    public Message toEntity(){
-        return new Message(channelId,authorId,text);
+public class MessageDTO{
+
+    public record CreateMessageDTO (
+            String text,
+            UUID channelId,
+            UUID authorId
+    ) {
+        public Message toEntity(){
+            return new Message(authorId, channelId, text);
+        }
     }
 
+    public record UpdateMessageDTO (
+            String text
+    ) {
+        public Message toEntity(){
+            return null;
+        }
+    }
 }
