@@ -28,7 +28,6 @@ public class DiscodeitApplication {
 		ConfigurableApplicationContext context = SpringApplication.run(
 				DiscodeitApplication.class, args);
 
-
 		// 메모리 저장체
 		UserRepository userRepository = new JCFUserRepository();
 		ChannelRepository channelRepository = new JCFChannelRepository();
@@ -45,9 +44,9 @@ public class DiscodeitApplication {
 		ChannelService channelService = context.getBean(BasicChannelService.class);
 		MessageService messageService= context.getBean(BasicMessageService.class);
 
-		UserDTO.CreateUserDTO createUserDTO
-				= new UserDTO.CreateUserDTO("123", "456", "789");
-		userService.createUser(createUserDTO);
+//		UserDTO.CreateUserDTO createUserDTO
+//				= new UserDTO.CreateUserDTO("123", "456", "789");
+//		userService.createUser(createUserDTO);
 
 
 

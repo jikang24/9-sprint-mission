@@ -12,9 +12,11 @@ import java.util.UUID;
 public interface ReadStatusRepository {
     ReadStatus read (User userId, Channel channelId);
 
-    Optional<ReadStatus> findByUserIdAndChannelId(UUID userId, Channel channelId);
+    Optional<ReadStatus> findByUserIdAndChannelId(UUID userId, UUID channelId);
 
     ReadStatus save(ReadStatus readStatus);
+
+    ReadStatus delete(ReadStatus readStatus);
 
 
 }

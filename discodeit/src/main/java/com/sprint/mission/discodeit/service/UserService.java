@@ -3,20 +3,21 @@ package com.sprint.mission.discodeit.service;
 import com.sprint.mission.discodeit.DTO.UserDTO;
 import com.sprint.mission.discodeit.entity.User;
 
-import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 public interface UserService {
     //생성
-    User createUser(UserDTO userDTO);
+    User createUser(String username,String email,String password);
+//    UserDTO.CreateUserDTO createUser(UserDTO.CreateUserDTO dto);
     //조회
-    User findByUserId(UUID id);
+    UserDTO.FindUserDTO findByUserId(UUID id);
 
     //전체 조회
-    List<User> findAllUser();
+    Stream<UserDTO.FindUserDTO> findAllUser();
 
     //수정
-    User updateUser(UUID id, String userName, String email, String password);
+    UserDTO.UpdateUserDTO updateUser(UUID id, String userName, String email, String password);
     //삭제
     boolean deleteUser(UUID id);
 }

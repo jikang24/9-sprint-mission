@@ -12,9 +12,19 @@ public interface UserRepository {
 
     Optional<User> findByUserId(UUID id);
 
+    Optional<User> findByUserName(String userName);
+
     List<User> findAllUser();
 
     boolean existsById(UUID id);
 
     void deleteById(UUID id);
+
+
+    boolean existsByEmail(String email);
+
+    boolean existsByUserName(String userName);
+
+    boolean existByProfileId(UUID profileId);
+
 }

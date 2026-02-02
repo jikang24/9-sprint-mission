@@ -17,14 +17,32 @@ public class Channel implements Serializable {
     private String channelName;
     private final UUID channelId;
     private String description;
+    private ChannelType type;
+    private final UUID userId;
+    private UUID messageId;
 
 
-    public Channel(String channelName, String description) {
-        this.createdAt = System.currentTimeMillis();
+    public Channel(String channelName, String description, ChannelType type) {
+        this.createdAt = Instant.now().toEpochMilli();
         this.updatedAt = this.createdAt;
         this.channelName = channelName;
         this.channelId = UUID.randomUUID();
         this.description = description;
+        this.type = ChannelType.PUBLIC;
+        this.userId = getUserId();
+        this.messageId = getMessageId();
+    }
+
+    public Channel(ChannelType type){
+        if (type != ChannelType.PRIVATE){
+            throw new IllegalArgumentException("PRIVATE 채널만 생성가능");
+        }
+        this.channelId = UUID.randomUUID();
+        this.createdAt = Instant.now().toEpochMilli();
+        this.updatedAt = this.createdAt;
+        this.type = type;
+        this.userId = getUserId();
+        this.messageId = getMessageId();
     }
 
 
@@ -68,6 +86,8 @@ public class Channel implements Serializable {
                 ", description='" + description + '\'' +
                 '}';
     }
+
+
 
     //    public void plusUser(String username){
 //        this.username += username;

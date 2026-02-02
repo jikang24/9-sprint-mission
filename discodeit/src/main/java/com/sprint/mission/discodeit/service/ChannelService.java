@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.service;
 
+import com.sprint.mission.discodeit.DTO.ChannelDTO;
 import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.entity.ChannelType;
 
@@ -14,7 +15,7 @@ public interface ChannelService {
 
     List<Channel> findAllChannel();
 
-    Channel updateChannel(UUID ChannelId, String channelName, ChannelType type, String description);
+    ChannelDTO.UpdateChannelDTO updateChannel(UUID ChannelId, String channelName, ChannelType type, String description);
 
     boolean deleteChannel(UUID ChannelId);
 

@@ -3,6 +3,7 @@ package com.sprint.mission.discodeit.entity.status;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.rmi.server.UID;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -40,6 +41,10 @@ public class ReadStatus {
             return false;
         }
         return lastReadMessageId.equals(messageId);
+    }
+
+    public static ReadStatus createForChannel (UUID userId,UUID channelId){
+        return new ReadStatus(userId,channelId,null);
     }
 
 }

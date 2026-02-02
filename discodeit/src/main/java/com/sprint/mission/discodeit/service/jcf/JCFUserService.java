@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.service.jcf;
 
+import com.sprint.mission.discodeit.DTO.UserDTO;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.service.Exception.UserCrudException;
 import com.sprint.mission.discodeit.service.UserService;
@@ -7,6 +8,7 @@ import com.sprint.mission.discodeit.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 public class JCFUserService implements UserService {
     private final List<User> data = new ArrayList<>();
@@ -22,7 +24,7 @@ public class JCFUserService implements UserService {
 
     //조회 오버라이드
     @Override
-    public User findByUserId(UUID id) {
+    public UserDTO.FindUserDTO findByUserId(UUID id) {
         return data.stream()
                 .filter(user -> user.getId().equals(id))
                 .findFirst()
@@ -31,7 +33,7 @@ public class JCFUserService implements UserService {
 
     // 전체조회 오버라이드
     @Override
-    public List<User> findAllUser() {
+    public Stream<UserDTO.FindUserDTO> findAllUser() {
         if (data.isEmpty()) {
            System.out.println("유저가 없습니다.");
         }
@@ -39,7 +41,7 @@ public class JCFUserService implements UserService {
     }
 
     @Override
-    public User updateUser(UUID id, String userName, String email, String password) {
+    public UserDTO.UpdateUserDTO updateUser(UUID id, String userName, String email, String password) {
 
         try {
             User user = this.data.stream().filter

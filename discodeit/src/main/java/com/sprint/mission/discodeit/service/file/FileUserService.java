@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.service.file;
 
+import com.sprint.mission.discodeit.DTO.UserDTO;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.service.UserService;
 
@@ -7,10 +8,10 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 public class FileUserService implements UserService {
     private final Path DIRECTORY;
@@ -33,7 +34,7 @@ public class FileUserService implements UserService {
 
     @Override
     public User createUser(String username, String email, String password) {
-        User user = new User(username, email, password);
+        User user = new User(username, email, password,null);
         Path path = resolvePath(user.getUserId());
         try (
                 FileOutputStream fos = new FileOutputStream(path.toFile());
@@ -48,28 +49,29 @@ public class FileUserService implements UserService {
     }
 
     @Override
-    public User findByUserId(UUID userId) {
-        User userNullable = null;
+    public UserDTO.FindUserDTO findByUserId(UUID userId) {
+        UserDTO.FindUserDTO userNullable = null;
         Path path = resolvePath(userId);
         if (Files.exists(path)) {
             try (
                     FileInputStream fis = new FileInputStream(path.toFile());
                     ObjectInputStream ois = new ObjectInputStream(fis)
             ) {
-                userNullable = (User) ois.readObject();
+                userNullable = (UserDTO.FindUserDTO) ois.readObject();
             } catch (IOException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }
 
         return Optional.ofNullable(userNullable)
-                .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found"));
+                .orElseThrow(()
+                        -> new NoSuchElementException("User with id " + userId + " not found"));
     }
 
     @Override
-    public List<User> findAllUser() {
+    public Stream<UserDTO.FindUserDTO> findAllUser() {
         try {
-            return Files.list(DIRECTORY)
+            return (Stream<UserDTO.FindUserDTO>) Files.list(DIRECTORY)
                     .filter(path -> path.toString().endsWith(EXTENSION))
                     .map(path -> {
                         try (
@@ -88,25 +90,26 @@ public class FileUserService implements UserService {
     }
 
     @Override
-    public User updateUser(UUID userId, String newUsername, String newEmail, String password) {
-        User userNullable = null;
+    public UserDTO.UpdateUserDTO updateUser(UUID userId, String newUsername, String newEmail, String password) {
+        UserDTO.UpdateUserDTO userNullable = null;
         Path path = resolvePath(userId);
         if (Files.exists(path)) {
             try (
                     FileInputStream fis = new FileInputStream(path.toFile());
                     ObjectInputStream ois = new ObjectInputStream(fis)
             ) {
-                userNullable = (User) ois.readObject();
+                userNullable = (UserDTO.UpdateUserDTO) ois.readObject();
             } catch (IOException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }
 
-        User user = Optional.ofNullable(userNullable)
+        UserDTO.UpdateUserDTO user = Optional.ofNullable(userNullable)
                 .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found"));
-        user.updateUserName(newUsername);
-        user.updateEmail(newEmail);
-        user.updatePassword(password);
+//        user.updateUserName(newUsername);
+//        user.updateEmail(newEmail);
+//        user.updatePassword(password);
+        //TODO 추후 수정
 
         try(
                 FileOutputStream fos = new FileOutputStream(path.toFile());

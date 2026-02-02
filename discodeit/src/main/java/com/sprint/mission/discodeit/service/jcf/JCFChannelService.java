@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.service.jcf;
 
+import com.sprint.mission.discodeit.DTO.ChannelDTO;
 import com.sprint.mission.discodeit.entity.ChannelType;
 import com.sprint.mission.discodeit.service.ChannelService;
 import com.sprint.mission.discodeit.entity.Channel;
@@ -39,7 +40,7 @@ public class JCFChannelService implements ChannelService {
 
 
     @Override
-    public Channel updateChannel(UUID channelId, String channelName, ChannelType type, String description) {
+    public ChannelDTO.UpdateChannelDTO updateChannel(UUID channelId, String channelName, ChannelType type, String description) {
 
         try {
             Channel channel = this.data.stream().filter

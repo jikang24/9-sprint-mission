@@ -5,7 +5,6 @@ import lombok.Getter;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 
@@ -21,16 +20,18 @@ public class User implements Serializable {
     private String password;
 
     private final UUID profileId;
+    private String profileImage;
 
-    public User(String userName, String email, String password) {
+    public User(String userName, String email, String password, String profileImage) {
         this.id = UUID.randomUUID();
-        this.createdAt = System.currentTimeMillis();
+        this.createdAt = Instant.now().toEpochMilli();
         this.updatedAt = this.createdAt;
         this.userName = userName;
         this.email = email;
         this.password = password;
 
         this.profileId = UUID.randomUUID();
+        this.profileImage = profileImage;
     }
 
 
@@ -38,23 +39,15 @@ public class User implements Serializable {
         return this.id;
     }
 
-    public LocalDateTime getCreatedAtLocalDateTime(){
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(this.createdAt)
-                , java.time.ZoneId.systemDefault());
-    }
-
-    public Instant getCreatedAtInstant(){
-        return Instant.ofEpochMilli(this.createdAt);
-    }
-
-    public Instant getUpdatedAtInstant(){
-        return Instant.ofEpochMilli(this.updatedAt);
-    }
-
-    public LocalDateTime getUpdatedAtLocalDateTime() {
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(this.updatedAt)
-        , java.time.ZoneId.systemDefault());
-    }
+//    public LocalDateTime getCreatedAtLocalDateTime(){
+//        return LocalDateTime.ofInstant(Instant.ofEpochMilli(this.createdAt)
+//                , java.time.ZoneId.systemDefault());
+//    }
+//
+//    public LocalDateTime getUpdatedAtLocalDateTime() {
+//        return LocalDateTime.ofInstant(Instant.ofEpochMilli(this.updatedAt)
+//        , java.time.ZoneId.systemDefault());
+//    }
 
 
     public void updateUserName(String userName){

@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.service.file;
 
+import com.sprint.mission.discodeit.DTO.ChannelDTO;
 import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.entity.ChannelType;
 import com.sprint.mission.discodeit.service.ChannelService;
@@ -84,7 +85,7 @@ public class FileChannelService implements ChannelService{
     }
 
     @Override
-    public Channel updateChannel(UUID channelId, String newChannelName,ChannelType newType, String newDescription){
+    public ChannelDTO.UpdateChannelDTO updateChannel(UUID channelId, String newChannelName, ChannelType newType, String newDescription){
         Channel channelNullable = null;
         Path path = resolvePath(channelId);
         if (Files.exists(path)) {
