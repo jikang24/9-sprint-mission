@@ -13,11 +13,21 @@ import java.util.UUID;
 public class JCFChannelService implements ChannelService {
         private final List<Channel> data = new ArrayList<>();
 
+//    @Override
+//    public Channel createChannel(ChannelType type, String channelName, String description) {
+//        Channel channel = new Channel(channelName, description);
+//        data.add(channel);
+//        return channel;
+//    }
+
     @Override
-    public Channel createChannel(ChannelType type, String channelName, String description) {
-        Channel channel = new Channel(channelName, description);
-        data.add(channel);
-        return channel;
+    public Channel createPublicChannel(ChannelDTO.CreatePublicChannelDTO dto) {
+        return null;
+    }
+
+    @Override
+    public Channel createPrivateChannel(ChannelDTO.CreatePrivateChannelDTO dto) {
+        return null;
     }
 
     @Override
@@ -40,7 +50,7 @@ public class JCFChannelService implements ChannelService {
 
 
     @Override
-    public ChannelDTO.UpdateChannelDTO updateChannel(UUID channelId, String channelName, ChannelType type, String description) {
+    public Channel updateChannel(UUID channelId, String channelName, ChannelType type, String description) {
 
         try {
             Channel channel = this.data.stream().filter

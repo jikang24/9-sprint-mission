@@ -10,7 +10,8 @@ public class UserDTO {
             String email,
             String password,
             String profileImage
-    ) {}
+    ) {
+    }
 
     public record FindUserDTO(
             UUID id,
@@ -26,7 +27,9 @@ public class UserDTO {
             String profileImage
     ) {}
 
-    public record loginDTO(String userName, String password){}
+    public record loginDTO(
+            String userName,
+            String password){}
 
 
 }

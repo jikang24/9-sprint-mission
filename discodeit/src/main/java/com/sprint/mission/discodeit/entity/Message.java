@@ -23,7 +23,7 @@ public class Message implements Serializable {
     private List<UUID> attachmentIds;
 
 
-    public Message(UUID userId, UUID channelId, String messageText) {
+    public Message(UUID userId, UUID channelId, String messageText, List<UUID> attachmentIds) {
         this.messageId = UUID.randomUUID();
         this.userId = userId;
         this.channelId = channelId;
@@ -31,6 +31,7 @@ public class Message implements Serializable {
         this.updatedAt = this.createdAt;
         this.messageText = messageText;
         this.authorId = this.userId;
+        this.attachmentIds = attachmentIds;
     }
 
 

@@ -29,7 +29,7 @@ public class BasicUserService implements UserService {
         return userRepository.save(user);
     }
 
-
+    @Override
     public User createUser(UserDTO.CreateUserDTO dto) {
         if(userRepository.existsByEmail(dto.email())){
             throw new IllegalArgumentException("이미 존재하는 email 입니다: " + dto.email());
@@ -46,6 +46,7 @@ public class BasicUserService implements UserService {
         );
 
         UserStatus userStatus = new UserStatus(user.getUserId());
+
         userStatusRepository.save(userStatus);
         userRepository.save(user);
         return user;

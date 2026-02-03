@@ -29,7 +29,7 @@ public class BasicChannelService implements ChannelService {
 //    public BasicChannelService(ChannelRepository channelRepository) {
 //        this.channelRepository = channelRepository;
 //    }
-
+    @Override
     public Channel createPublicChannel(ChannelDTO.CreatePublicChannelDTO dto){
         if (channelRepository.existsById(dto.channelId())){
             throw new IllegalArgumentException("이미 존재하는 채널입니다.");
@@ -43,7 +43,7 @@ public class BasicChannelService implements ChannelService {
         channelRepository.save(channel);
         return channel;
     }
-
+    @Override
     public Channel createPrivateChannel(ChannelDTO.CreatePrivateChannelDTO dto){
         if (channelRepository.existsById(dto.channelId())){
             throw new IllegalArgumentException("이미 존재하는 채널입니다.");
@@ -65,11 +65,11 @@ public class BasicChannelService implements ChannelService {
 
 
 
-    @Override
-    public Channel createChannel(ChannelType type, String channelName, String description) {
-        Channel channel = new Channel(channelName, description, type);
-        return channelRepository.save(channel);
-    }
+//    @Override
+//    public Channel createChannel(ChannelType type, String channelName, String description) {
+//        Channel channel = new Channel(channelName, description, type);
+//        return channelRepository.save(channel);
+//    }
 
     @Override
     public Channel findByChannelId(UUID ChannelId) {
@@ -140,17 +140,21 @@ public class BasicChannelService implements ChannelService {
                 });
     }
 
-    /*
-    //TODO 특정 User가 볼 수 있는 Channel 목록을 조회하도록 조회 조건을 추가하고,
-    // 메소드 명을 변경합니다. findAllByUserId
-    //PUBLIC 채널 목록은 전체 조회합니다.
-    //PRIVATE 채널은 조회한 User가 참여한 채널만 조회합니다.
-    */
+
+    public List<Channel> findAllChannelByUserId(UUID userId){
+        if (!channelRepository.existsById(userId)){
+            throw new NoSuchElementException("you don't have any channel");
+        }
+        if (ChannelType.PRIVATE.equals(userId)){
+            return channelRepository.findAllByUserId(userId);
+        }
+        return channelRepository.findAllChannel();
+    }
 
 
 
     @Override
-    public ChannelDTO.UpdateChannelDTO updateChannel(UUID ChannelId, String channelName, ChannelType type, String description) {
+    public Channel updateChannel(UUID ChannelId, String channelName, ChannelType type, String description) {
 //        Channel channel = channelRepository.findByChannelId(ChannelId)
 //                .orElseThrow(() -> new NoSuchElementException("Channel with id " + ChannelId + " not found"));
 //        return channelRepository.save(channel);
@@ -160,11 +164,7 @@ public class BasicChannelService implements ChannelService {
         Channel channel = channelRepository.findByChannelId(ChannelId)
                 .orElseThrow(() -> new NoSuchElementException("Channel with id " + ChannelId + " not found"));
 
-        return new ChannelDTO.UpdateChannelDTO(
-                channel.getChannelName(),
-                channel.getType(),
-                channel.getDescription()
-        );
+        return  channel;
     }
 
     @Override

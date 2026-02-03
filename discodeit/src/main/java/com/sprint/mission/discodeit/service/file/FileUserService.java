@@ -49,6 +49,11 @@ public class FileUserService implements UserService {
     }
 
     @Override
+    public User createUser(UserDTO.CreateUserDTO dto) {
+        return null;
+    }
+
+    @Override
     public UserDTO.FindUserDTO findByUserId(UUID userId) {
         UserDTO.FindUserDTO userNullable = null;
         Path path = resolvePath(userId);

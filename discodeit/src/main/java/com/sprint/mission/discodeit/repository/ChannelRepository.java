@@ -13,6 +13,8 @@ public interface ChannelRepository {
 
     List<Channel> findAllChannel();
 
+    List<Channel> findAllByUserId(UUID userId);
+
     boolean existsById(UUID channelId);
 
     void deleteById(UUID channelId);

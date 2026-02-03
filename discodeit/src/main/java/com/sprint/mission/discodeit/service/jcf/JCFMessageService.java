@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.service.jcf;
 
+import com.sprint.mission.discodeit.DTO.MessageDTO;
 import com.sprint.mission.discodeit.entity.Message;
 import com.sprint.mission.discodeit.service.MessageService;
 
@@ -43,7 +44,7 @@ public class JCFMessageService implements MessageService {
     }
 
     @Override
-    public Message updateMessage(UUID messageId, String text) {
+    public MessageDTO.UpdateMessageDTO updateMessage(UUID messageId, String text) {
 
             for (Message message : data) {
                 if (message.getMessageId().equals(messageId)){

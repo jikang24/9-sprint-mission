@@ -85,7 +85,7 @@ public class FileChannelService implements ChannelService{
     }
 
     @Override
-    public ChannelDTO.UpdateChannelDTO updateChannel(UUID channelId, String newChannelName, ChannelType newType, String newDescription){
+    public Channel updateChannel(UUID channelId, String newChannelName, ChannelType newType, String newDescription){
         Channel channelNullable = null;
         Path path = resolvePath(channelId);
         if (Files.exists(path)) {

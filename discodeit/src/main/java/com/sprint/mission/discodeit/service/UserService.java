@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 public interface UserService {
     //생성
     User createUser(String username,String email,String password);
-//    UserDTO.CreateUserDTO createUser(UserDTO.CreateUserDTO dto);
+    User createUser(UserDTO.CreateUserDTO dto);
     //조회
     UserDTO.FindUserDTO findByUserId(UUID id);
 

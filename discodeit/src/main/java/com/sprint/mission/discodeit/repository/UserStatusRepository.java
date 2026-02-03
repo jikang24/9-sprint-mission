@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.repository;
 
+import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.entity.status.UserStatus;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +11,15 @@ import java.util.UUID;
 public interface UserStatusRepository {
     Optional<UserStatus> findByUserId(UUID userId);
 
+    Optional<UserStatus> findAllByUserId(UUID userId);
+
     UserStatus save(UserStatus userStatus);
+
+    UserStatus update(UserStatus userStatus);
+
+    UserStatus updateByUserId(UUID userId, UserStatus userStatus);
+
+    boolean existsById(UUID userId);
 
     void deleteById(UUID userId);
 

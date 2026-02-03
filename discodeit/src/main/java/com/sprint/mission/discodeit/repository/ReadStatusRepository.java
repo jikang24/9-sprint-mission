@@ -14,9 +14,14 @@ public interface ReadStatusRepository {
 
     Optional<ReadStatus> findByUserIdAndChannelId(UUID userId, UUID channelId);
 
+    Optional<ReadStatus> findAllByUserId(UUID userId);
+
+    ReadStatus update(ReadStatus readStatus);
+
     ReadStatus save(ReadStatus readStatus);
 
     ReadStatus delete(ReadStatus readStatus);
 
 
+    boolean existsById(UUID messageId);
 }

@@ -1,7 +1,9 @@
 package com.sprint.mission.discodeit;
 
+import com.sprint.mission.discodeit.DTO.ChannelDTO;
 import com.sprint.mission.discodeit.DTO.UserDTO;
 import com.sprint.mission.discodeit.entity.Channel;
+import com.sprint.mission.discodeit.entity.ChannelType;
 import com.sprint.mission.discodeit.entity.User;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,6 +23,18 @@ import com.sprint.mission.discodeit.service.basic.BasicUserService;
 
 @SpringBootApplication
 public class DiscodeitApplication {
+	static User setupUser(UserService userService) {
+		UserDTO.CreateUserDTO createUserDTO = new UserDTO.CreateUserDTO("123", "456", "789","101112");
+		User user = userService.createUser(createUserDTO);
+        return user;
+	}
+
+	static Channel setupChannel(ChannelService channelService){
+		ChannelDTO.CreatePublicChannelDTO createPublicChannelDTO
+				= new ChannelDTO.CreatePublicChannelDTO("공지", ChannelType.PUBLIC,"공지채널입니다",null );
+		Channel channel = channelService.createPublicChannel(createPublicChannelDTO);
+		return channel;
+	}
 
 	public static void main(String[] args) {
 //		SpringApplication.run(DiscodeitApplication.class, args);
@@ -44,9 +58,10 @@ public class DiscodeitApplication {
 		ChannelService channelService = context.getBean(BasicChannelService.class);
 		MessageService messageService= context.getBean(BasicMessageService.class);
 
-//		UserDTO.CreateUserDTO createUserDTO
-//				= new UserDTO.CreateUserDTO("123", "456", "789");
-//		userService.createUser(createUserDTO);
+		User user = setupUser(userService);
+		Channel channel = setupChannel(channelService);
+
+
 
 
 

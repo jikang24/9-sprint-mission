@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.service.file;
 
+import com.sprint.mission.discodeit.DTO.MessageDTO;
 import com.sprint.mission.discodeit.entity.Message;
 import com.sprint.mission.discodeit.service.ChannelService;
 import com.sprint.mission.discodeit.service.MessageService;
@@ -78,7 +79,7 @@ public class FileMessageService implements MessageService{
     }
 
     @Override
-    public Message updateMessage(UUID messageId, String text) {
+    public MessageDTO.UpdateMessageDTO updateMessage(UUID messageId, String text) {
         Message messageNullable = null;
         Path path = resolvePath(messageId);
         if (Files.notExists(path)) {

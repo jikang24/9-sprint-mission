@@ -17,6 +17,8 @@ public interface MessageRepository {
 
     List<Message> findAllMessage();
 
+    List<Message> findAllByChannelId(UUID channelId);
+
     void deleteById(UUID messageId);
 
     boolean existsById(UUID messageId);
