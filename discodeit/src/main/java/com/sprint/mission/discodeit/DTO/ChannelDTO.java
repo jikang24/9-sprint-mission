@@ -10,7 +10,8 @@ public class ChannelDTO {
 
     public record CreatePrivateChannelDTO (
             UUID channelId,
-            List<UUID> channelMembersIds
+            List<UUID> channelMembersIds,
+            ChannelType type
     ) { }
 
     public record CreatePublicChannelDTO (

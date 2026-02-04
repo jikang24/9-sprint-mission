@@ -14,10 +14,6 @@ public class MessageDTO{
             List<UUID> attachmentIds
     ) { }
 
-    public record FindMessageDTO (
-            UUID messageId
-    ) { }
-
     public record UpdateMessageDTO (
             String text
     ) { }

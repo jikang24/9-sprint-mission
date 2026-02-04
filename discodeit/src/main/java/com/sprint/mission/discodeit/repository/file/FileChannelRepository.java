@@ -87,6 +87,26 @@ public class FileChannelRepository implements ChannelRepository {
     }
 
     @Override
+    public List<Channel> findAllByUserId(UUID userId) {
+        try {
+            return Files.list(DIRECTORY)
+                    .filter(path -> path.toString().endsWith(EXTENSION))
+                    .map(path -> {
+                        try (
+                                FileInputStream fis = new FileInputStream(path.toFile());
+                                ObjectInputStream ois = new ObjectInputStream(fis)
+                        ) {
+                            return (Channel) ois.readObject();
+                        } catch (IOException | ClassNotFoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }).toList();
+        }catch (IOException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public boolean existsById(UUID channelId) {
         Channel channelNullable = null;
         Path path = resolvePath(channelId);

@@ -10,9 +10,17 @@ public class JCFMessageService implements MessageService {
     private List<Message> data = new ArrayList<>();
 
 
+//    @Override
+//    public Message createMessage(String text, UUID channelId, UUID authorId) {
+//        Message message = new Message(authorId, channelId, text);
+//        data.add(message);
+//        return message;
+//    }
+
+
     @Override
-    public Message createMessage(String text, UUID channelId, UUID authorId) {
-        Message message = new Message(authorId, channelId, text);
+    public Message createMessage(MessageDTO.CreateMessageDTO dto) {
+        Message message = new Message(dto.authorId(),dto.channelId(),dto.text(),dto.attachmentIds());
         data.add(message);
         return message;
     }
@@ -44,7 +52,7 @@ public class JCFMessageService implements MessageService {
     }
 
     @Override
-    public MessageDTO.UpdateMessageDTO updateMessage(UUID messageId, String text) {
+    public Message updateMessage(UUID messageId, String text) {
 
             for (Message message : data) {
                 if (message.getMessageId().equals(messageId)){

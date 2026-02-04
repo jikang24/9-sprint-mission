@@ -32,9 +32,25 @@ public class FileMessageService implements MessageService{
 
     private Path resolvePath(UUID id) {return DIRECTORY.resolve(id + EXTENSION);}
 
+//    @Override
+//    public Message createMessage(String text, UUID channelId, UUID authorId){
+//        Message message = new Message(authorId, channelId, text);
+//        Path path = resolvePath(message.getMessageId());
+//        try (
+//                FileOutputStream fos = new FileOutputStream(path.toFile());
+//                ObjectOutputStream oos = new ObjectOutputStream(fos)
+//        ) {
+//            oos.writeObject(message);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        return message;
+//    }
+
     @Override
-    public Message createMessage(String text, UUID channelId, UUID authorId){
-        Message message = new Message(authorId, channelId, text);
+    public Message createMessage(MessageDTO.CreateMessageDTO dto) {
+        Message message = new Message(dto.authorId(), dto.channelId(), dto.text(), dto.attachmentIds());
         Path path = resolvePath(message.getMessageId());
         try (
                 FileOutputStream fos = new FileOutputStream(path.toFile());
@@ -79,7 +95,7 @@ public class FileMessageService implements MessageService{
     }
 
     @Override
-    public MessageDTO.UpdateMessageDTO updateMessage(UUID messageId, String text) {
+    public Message updateMessage(UUID messageId, String text) {
         Message messageNullable = null;
         Path path = resolvePath(messageId);
         if (Files.notExists(path)) {

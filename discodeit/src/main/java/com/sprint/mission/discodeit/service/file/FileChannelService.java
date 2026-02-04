@@ -32,9 +32,39 @@ public class FileChannelService implements ChannelService{
     private Path resolvePath(UUID id) {
         return DIRECTORY.resolve(id + EXTENSION);}
 
+//    @Override
+//    public Channel createChannel(ChannelType type, String channelName, String description){
+//        Channel channel = new Channel(channelName, description);
+//        Path path = resolvePath(channel.getChannelId());
+//        try (
+//                FileOutputStream fos = new FileOutputStream(path.toFile());
+//                ObjectOutputStream oos = new ObjectOutputStream(fos)
+//        ) {
+//            oos.writeObject(channel);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return channel;
+//    }
+
     @Override
-    public Channel createChannel(ChannelType type, String channelName, String description){
-        Channel channel = new Channel(channelName, description);
+    public Channel createPublicChannel(ChannelDTO.CreatePublicChannelDTO dto) {
+        Channel channel = new Channel(dto.channelName(), dto.description(), ChannelType.PUBLIC);
+        Path path = resolvePath(channel.getChannelId());
+        try (
+                FileOutputStream fos = new FileOutputStream(path.toFile());
+                ObjectOutputStream oos = new ObjectOutputStream(fos)
+        ) {
+            oos.writeObject(channel);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return channel;
+    }
+
+    @Override
+    public Channel createPrivateChannel(ChannelDTO.CreatePrivateChannelDTO dto) {
+        Channel channel = new Channel(ChannelType.PRIVATE);
         Path path = resolvePath(channel.getChannelId());
         try (
                 FileOutputStream fos = new FileOutputStream(path.toFile());

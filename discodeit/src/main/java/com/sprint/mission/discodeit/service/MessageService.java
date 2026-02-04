@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface MessageService {
-    Message createMessage(String text, UUID channelId, UUID authorId);
+//    Message createMessage(String text, UUID channelId, UUID authorId);
+    Message createMessage(MessageDTO.CreateMessageDTO dto);
 
     Message findByMessageId(UUID messageId);
 

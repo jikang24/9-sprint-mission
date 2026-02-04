@@ -1,6 +1,7 @@
 package com.sprint.mission.discodeit.service.basic;
 
 import com.sprint.mission.discodeit.DTO.UserDTO;
+import com.sprint.mission.discodeit.DTO.UserServiceResponseDTO;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.entity.status.UserStatus;
 import com.sprint.mission.discodeit.repository.BinaryContentRepository;
@@ -23,11 +24,11 @@ public class BasicUserService implements UserService {
     private final BinaryContentRepository binaryContentRepository;
     private final UserStatusRepository userStatusRepository;
 
-    @Override
-    public User createUser(String username, String email, String password){
-        User user = new User(username, email, password,null);
-        return userRepository.save(user);
-    }
+//    @Override
+//    public User createUser(String username, String email, String password){
+//        User user = new User(username, email, password,null);
+//        return userRepository.save(user);
+//    }
 
     @Override
     public User createUser(UserDTO.CreateUserDTO dto) {
@@ -46,32 +47,43 @@ public class BasicUserService implements UserService {
         );
 
         UserStatus userStatus = new UserStatus(user.getUserId());
-
         userStatusRepository.save(userStatus);
         userRepository.save(user);
         return user;
     }
 
     @Override
-    public UserDTO.FindUserDTO findByUserId(UUID id) {
-        User user = userRepository.findByUserId(id)
+    public UserServiceResponseDTO.FindUserId findByUserId(UserDTO.FindUserDTO dto) {
+        User user = userRepository.findByUserId(dto.id())
                 .orElseThrow(() ->
-                        new NoSuchElementException("User with id" + id + "not found"));
+                        new NoSuchElementException("User with id" + dto.id() + "not found"));
 
-        UserStatus userStatus = userStatusRepository.findByUserId(id)
+        UserStatus userStatus = userStatusRepository.findByUserId(dto.id())
                 .orElseThrow(() ->
-                        new NoSuchElementException("UserStatus with id " + id + " not found"));
+                        new NoSuchElementException("UserStatus with id " + dto.id() + " not found"));
 
-        return new UserDTO.FindUserDTO(
-                user.getId(),
-                userStatus.isOnline(),
-                userStatus.getLastUpdatedAt()
-        );
+        return new UserServiceResponseDTO.FindUserId(
+                dto.id(),
+                dto.online(),
+                dto.lastOnline()
+                );
 
+    }
+
+//    @Override
+//    public User findByUserId(UUID id) {
+//        User user = userRepository.findByUserId(id)
+//                .orElseThrow(() ->
+//                        new NoSuchElementException("User with id" + id + "not found"));
+//
+//        UserStatus userStatus = userStatusRepository.findByUserId(id)
+//                .orElseThrow(() ->
+//                        new NoSuchElementException("UserStatus with id " + id + " not found"));
+//
 //        return userRepository.findByUserId(id)
 //                .orElseThrow(() -> new NoSuchElementException
 //                        ("User with id " + id + " not found"));
-    }
+//    }
 
     @Override
     public Stream<UserDTO.FindUserDTO> findAllUser() {
@@ -94,7 +106,7 @@ public class BasicUserService implements UserService {
     }
 
     @Override
-    public UserDTO.UpdateUserDTO updateUser(UUID id, String userName, String email, String password) {
+    public User updateUser(UUID id, String userName, String email, String password) {
 
 //        User user = userRepository.findByUserId(id)
 //                .orElseThrow(() -> new NoSuchElementException("User not found"));
@@ -103,23 +115,20 @@ public class BasicUserService implements UserService {
                 .orElseThrow(() ->
                         new NoSuchElementException("User with id" + id + "not found"));
 
-        return new UserDTO.UpdateUserDTO(
-                user.getUserName(),
-                user.getEmail(),
-                user.getPassword(),
-                user.getProfileImage()
-        );
+        return user;
     }
 
+
+
     @Override
-    public boolean deleteUser(UUID id) {
-        Optional<User> optionalUser = userRepository.findByUserId(id);
+    public boolean deleteUser(UserDTO.FindUserDTO dto) {
+        Optional<User> optionalUser = userRepository.findByUserId(dto.id());
         if (optionalUser.isEmpty()) {
             return false;
         }
 
         User user = optionalUser.get();
-        userStatusRepository.deleteById(id);
+        userStatusRepository.deleteById(dto.id());
 
         UUID profileId = user.getProfileId();
 
@@ -129,7 +138,7 @@ public class BasicUserService implements UserService {
         else {
             throw new NoSuchElementException("profileImage not found");
         }
-        userRepository.deleteById(id);
+        userRepository.deleteById(dto.id());
         return true;
     }
 

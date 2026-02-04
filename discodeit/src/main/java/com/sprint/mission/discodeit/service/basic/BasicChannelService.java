@@ -43,6 +43,7 @@ public class BasicChannelService implements ChannelService {
         channelRepository.save(channel);
         return channel;
     }
+
     @Override
     public Channel createPrivateChannel(ChannelDTO.CreatePrivateChannelDTO dto){
         if (channelRepository.existsById(dto.channelId())){
@@ -164,7 +165,7 @@ public class BasicChannelService implements ChannelService {
         Channel channel = channelRepository.findByChannelId(ChannelId)
                 .orElseThrow(() -> new NoSuchElementException("Channel with id " + ChannelId + " not found"));
 
-        return  channel;
+        return channel;
     }
 
     @Override

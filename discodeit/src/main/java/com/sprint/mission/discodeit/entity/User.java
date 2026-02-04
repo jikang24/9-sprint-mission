@@ -21,6 +21,8 @@ public class User implements Serializable {
 
     private final UUID profileId;
     private String profileImage;
+    private boolean online;
+    private long lastOnline;
 
     public User(String userName, String email, String password, String profileImage) {
         this.id = UUID.randomUUID();
@@ -32,6 +34,7 @@ public class User implements Serializable {
 
         this.profileId = UUID.randomUUID();
         this.profileImage = profileImage;
+
     }
 
 
@@ -64,6 +67,8 @@ public class User implements Serializable {
         this.password = password;
         this.updatedAt = System.currentTimeMillis();
     }
+
+
 
     @Override
     public String toString() {

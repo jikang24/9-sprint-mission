@@ -30,9 +30,9 @@ public class UserStatus {
 //마지막 접속 시간을 기준으로 현재 로그인한 유저로 판단할 수 있는 메소드
     public boolean isOnline(){
         long now = Instant.now().toEpochMilli();
-        long FiveMinutes = 5 * 60 * 1000;
+        long fiveMinutes = 5 * 60 * 1000;
         //5분, 60초, 1000ms
-        return now - lastUpdatedAt <= FiveMinutes;
+        return now - lastUpdatedAt <= fiveMinutes;
     }
 
 

@@ -8,6 +8,7 @@ import com.sprint.mission.discodeit.service.Exception.ChannelCrudException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 public class JCFChannelService implements ChannelService {
@@ -22,12 +23,24 @@ public class JCFChannelService implements ChannelService {
 
     @Override
     public Channel createPublicChannel(ChannelDTO.CreatePublicChannelDTO dto) {
-        return null;
+       Channel channel = new Channel(dto.channelName(), dto.description(), ChannelType.PUBLIC);
+       data.add(channel);
+       return channel;
     }
 
     @Override
     public Channel createPrivateChannel(ChannelDTO.CreatePrivateChannelDTO dto) {
-        return null;
+        if (data.stream().anyMatch(c -> c.getChannelId().equals(dto.channelId()))) {
+            throw new IllegalArgumentException("이미 존재하는 채널입니다: " + dto.channelId());
+        }
+        for (UUID userId : dto.channelMembersIds()) {
+            if (!data.stream().anyMatch(c -> c.getUserId().equals(userId))) {
+                throw new NoSuchElementException("해당 채널에 속하지 않은 아이디 입니다: " + userId);
+            }
+        }
+        Channel channel = new Channel(ChannelType.PRIVATE);
+        data.add(channel);
+        return channel;
     }
 
     @Override

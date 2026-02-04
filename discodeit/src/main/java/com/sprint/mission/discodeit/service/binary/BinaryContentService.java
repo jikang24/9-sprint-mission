@@ -18,7 +18,9 @@ public class BinaryContentService {
 
         BinaryContent binaryContent = new BinaryContent(
                 dto.content(),
-                dto.contentType());
+                dto.contentType(),
+                dto.fileName()
+        );
 
         return binaryContentRepository.save(binaryContent);
     }

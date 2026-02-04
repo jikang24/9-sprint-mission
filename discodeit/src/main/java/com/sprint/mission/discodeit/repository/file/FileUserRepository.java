@@ -69,6 +69,10 @@ public class FileUserRepository implements UserRepository {
                 .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found")));
     }
 
+    @Override
+    public Optional<User> findByUserName(String userName) {
+        return Optional.empty();
+    }
 
 
     @Override
@@ -122,8 +126,20 @@ public class FileUserRepository implements UserRepository {
         }
     }
 
+    @Override
+    public boolean existsByEmail(String email) {
+        return false;
+    }
 
+    @Override
+    public boolean existsByUserName(String userName) {
+        return false;
+    }
 
+    @Override
+    public boolean existByProfileId(UUID profileId) {
+        return false;
+    }
 
 
 }

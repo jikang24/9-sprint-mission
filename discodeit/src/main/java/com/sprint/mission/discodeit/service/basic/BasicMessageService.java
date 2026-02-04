@@ -29,20 +29,21 @@ public class BasicMessageService implements MessageService {
 //        this.channelRepository = channelRepository;
 //    }
 
+//    @Override
+//    public Message createMessage(String text, UUID channelId, UUID authorId) {
+//        Message message = new Message(authorId, channelId, text, List.of());
+////        ReadStatus readStatus = ReadStatus.builder()
+////                .messageId(message.getMessageId())
+////                .userId(authorId)
+////                .channelId(channelId)
+////                .build();
+//
+//        messageRepository.save(message);
+////        readstatusRepositoty.save(readStatus);
+//        return message;
+//    }
+
     @Override
-    public Message createMessage(String text, UUID channelId, UUID authorId) {
-        Message message = new Message(authorId, channelId, text, List.of());
-//        ReadStatus readStatus = ReadStatus.builder()
-//                .messageId(message.getMessageId())
-//                .userId(authorId)
-//                .channelId(channelId)
-//                .build();
-
-        messageRepository.save(message);
-//        readstatusRepositoty.save(readStatus);
-        return message;
-    }
-
     public Message createMessage(MessageDTO.CreateMessageDTO dto){
         Message message = new Message(
                 dto.authorId(),

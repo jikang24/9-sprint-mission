@@ -1,9 +1,11 @@
 package com.sprint.mission.discodeit;
 
 import com.sprint.mission.discodeit.DTO.ChannelDTO;
+import com.sprint.mission.discodeit.DTO.MessageDTO;
 import com.sprint.mission.discodeit.DTO.UserDTO;
 import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.entity.ChannelType;
+import com.sprint.mission.discodeit.entity.Message;
 import com.sprint.mission.discodeit.entity.User;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -36,6 +38,13 @@ public class DiscodeitApplication {
 		return channel;
 	}
 
+	static void messageCRUDTest(MessageService messageService, Channel channel, User user) {
+		MessageDTO.CreateMessageDTO createMessageDTO
+				= new MessageDTO.CreateMessageDTO("안녕하세요", channel.getChannelId(),channel.getUserId(),null);
+		Message message = messageService.createMessage(createMessageDTO);
+		System.out.println("메시지 생성: " + message.getMessageId());
+    }
+
 	public static void main(String[] args) {
 //		SpringApplication.run(DiscodeitApplication.class, args);
 
@@ -61,6 +70,7 @@ public class DiscodeitApplication {
 		User user = setupUser(userService);
 		Channel channel = setupChannel(channelService);
 
+		messageCRUDTest(messageService, channel, user);
 
 
 
