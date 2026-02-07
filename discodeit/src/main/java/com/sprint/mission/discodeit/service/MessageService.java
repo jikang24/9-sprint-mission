@@ -13,7 +13,7 @@ public interface MessageService {
 
     Message findByMessageId(UUID messageId);
 
-    List<Message> findByChannelId(UUID channelId);
+    Message findByChannelId(UUID channelId);
 
     List<Message> findAllMessage();
 

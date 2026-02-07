@@ -18,12 +18,11 @@ public interface UserRepository {
 
     boolean existsById(UUID id);
 
-    void deleteById(UUID id);
-
     boolean existsByEmail(String email);
 
     boolean existsByUserName(String userName);
 
     boolean existByProfileId(UUID profileId);
 
+    void deleteById(UUID id);
 }

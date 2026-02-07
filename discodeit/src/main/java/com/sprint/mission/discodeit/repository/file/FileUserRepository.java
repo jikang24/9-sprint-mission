@@ -121,19 +121,6 @@ public class FileUserRepository implements UserRepository {
     }
 
     @Override
-    public void deleteById(UUID userId) {
-        Path path = resolvePath(userId);
-        if (Files.notExists(path)) {
-            throw new NoSuchElementException("User with id " + userId + " not found");
-        }
-        try {
-            Files.delete(path);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
     public boolean existsByEmail(String email) {
         try {
             return findAllUser().stream()
@@ -158,6 +145,19 @@ public class FileUserRepository implements UserRepository {
         try {
             return findAllUser().stream()
                     .anyMatch(user -> user.getProfileId().equals(profileId));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void deleteById(UUID userId) {
+        Path path = resolvePath(userId);
+        if (Files.notExists(path)) {
+            throw new NoSuchElementException("User with id " + userId + " not found");
+        }
+        try {
+            Files.delete(path);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

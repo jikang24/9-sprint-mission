@@ -26,21 +26,21 @@ import com.sprint.mission.discodeit.service.basic.BasicUserService;
 @SpringBootApplication
 public class DiscodeitApplication {
 	static User setupUser(UserService userService) {
-		UserDTO.CreateUserDTO createUserDTO = new UserDTO.CreateUserDTO("123", "456", "789","101112");
-		User user = userService.createUser(createUserDTO);
-        return user;
+		String unique = String.valueOf(System.currentTimeMillis());
+		UserDTO.CreateUserDTO createUserDTO = new UserDTO.CreateUserDTO(
+				"user: " + unique, "email: " + unique, "789","101112");
+		return userService.createUser(createUserDTO);
 	}
 
 	static Channel setupChannel(ChannelService channelService){
 		ChannelDTO.CreatePublicChannelDTO createPublicChannelDTO
 				= new ChannelDTO.CreatePublicChannelDTO("공지", ChannelType.PUBLIC,"공지채널입니다",null );
-		Channel channel = channelService.createPublicChannel(createPublicChannelDTO);
-		return channel;
+		return channelService.createPublicChannel(createPublicChannelDTO);
 	}
 
 	static void messageCRUDTest(MessageService messageService, Channel channel, User user) {
 		MessageDTO.CreateMessageDTO createMessageDTO
-				= new MessageDTO.CreateMessageDTO("안녕하세요", channel.getChannelId(),channel.getUserId(),null);
+				= new MessageDTO.CreateMessageDTO("안녕하세요",channel.getChannelId(), user.getUserId(),null);
 		Message message = messageService.createMessage(createMessageDTO);
 		System.out.println("메시지 생성: " + message.getMessageId());
     }
@@ -62,7 +62,6 @@ public class DiscodeitApplication {
 		MessageRepository messageRepository = new FileMessageRepository();
 
 		//서비스 초기화
-		// TODO context에서 Bean을 조회하여 각 서비스 구현체 할당 코드 작성하세요.
 		UserService userService = context.getBean(BasicUserService.class);
 		ChannelService channelService = context.getBean(BasicChannelService.class);
 		MessageService messageService= context.getBean(BasicMessageService.class);

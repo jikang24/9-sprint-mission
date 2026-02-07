@@ -36,11 +36,11 @@ public class JCFMessageService implements MessageService {
     }
 
     @Override
-    public List<Message> findByChannelId(UUID channelId) {
+    public Message findByChannelId(UUID channelId) {
         if (data.isEmpty()) {
             System.out.println("해당하는 채널이 없습니다.");
         }
-        return data;
+        return (Message) data;
     }
 
     @Override

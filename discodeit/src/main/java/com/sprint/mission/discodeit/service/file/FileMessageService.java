@@ -2,6 +2,7 @@ package com.sprint.mission.discodeit.service.file;
 
 import com.sprint.mission.discodeit.DTO.MessageDTO;
 import com.sprint.mission.discodeit.entity.Message;
+import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.service.ChannelService;
 import com.sprint.mission.discodeit.service.MessageService;
 import com.sprint.mission.discodeit.service.UserService;
@@ -30,7 +31,8 @@ public class FileMessageService implements MessageService{
         }
     }
 
-    private Path resolvePath(UUID id) {return DIRECTORY.resolve(id + EXTENSION);}
+    private Path resolvePath(UUID id) {
+        return DIRECTORY.resolve(id + EXTENSION);}
 
 //    @Override
 //    public Message createMessage(String text, UUID channelId, UUID authorId){
@@ -80,18 +82,50 @@ public class FileMessageService implements MessageService{
 
         }
         return Optional.ofNullable(messageNullable)
-                .orElseThrow(() -> new NoSuchElementException("Message with id " + messageId + " not found"));
+                .orElseThrow(() -> new NoSuchElementException("Message with messageId " + messageId + " not found"));
 
     }
 
     @Override
-    public List<Message> findByChannelId(UUID channelId) {
-        return List.of();
+    public Message findByChannelId(UUID channelId) {
+        Message messageNullable = null;
+        Path path = resolvePath(channelId);
+        if (Files.notExists(path)) {
+            try (
+                    FileInputStream fis = new FileInputStream(path.toFile());
+                    ObjectInputStream ois = new ObjectInputStream(fis)
+            ) {
+                return (Message) ois.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+        return Optional.ofNullable(messageNullable)
+                .orElseThrow(() -> new NoSuchElementException("Message with channelId " + channelId + " not found"));
+
     }
 
     @Override
     public List<Message> findAllMessage() {
-        return List.of();
+        try {
+            return Files.list(DIRECTORY)
+                    .filter(path -> path.toString().endsWith(EXTENSION))
+                    .map(path -> {
+                        try (
+                                FileInputStream fis = new FileInputStream(path.toFile());
+                                ObjectInputStream ois = new ObjectInputStream(fis)
+                        ) {
+                            System.out.println(path);
+                            return (Message) ois.readObject();
+                        } catch (IOException | ClassNotFoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+                    .toList();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

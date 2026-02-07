@@ -29,19 +29,7 @@ public class BasicMessageService implements MessageService {
 //        this.channelRepository = channelRepository;
 //    }
 
-//    @Override
-//    public Message createMessage(String text, UUID channelId, UUID authorId) {
-//        Message message = new Message(authorId, channelId, text, List.of());
-////        ReadStatus readStatus = ReadStatus.builder()
-////                .messageId(message.getMessageId())
-////                .userId(authorId)
-////                .channelId(channelId)
-////                .build();
-//
-//        messageRepository.save(message);
-////        readstatusRepositoty.save(readStatus);
-//        return message;
-//    }
+
 
     @Override
     public Message createMessage(MessageDTO.CreateMessageDTO dto){
@@ -72,11 +60,11 @@ public class BasicMessageService implements MessageService {
     }
 
     @Override
-    public List<Message> findByChannelId(UUID channelId) {
+    public Message findByChannelId(UUID channelId) {
         if (!channelRepository.existsById(channelId)) {
             throw new IllegalArgumentException("존재하지 않는 채널");
         }
-        return messageRepository.findByChannelId(channelId);
+        return (Message) messageRepository.findByChannelId(channelId);
     }
 
     @Override

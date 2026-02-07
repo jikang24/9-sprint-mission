@@ -33,7 +33,8 @@ public class UserDTO {
             String password
     ){}
 
-    public record deleteDTO(UUID id){}
+    public record deleteDTO(
+            UUID id){}
 
 
 }

@@ -33,6 +33,24 @@ public class FileUserStatusRepository implements UserStatusRepository {
     }
 
     @Override
+    public UserStatus save(UserStatus userStatus) {
+        Path path = resolvePath(userStatus.getUserId());
+        if (!Files.exists(path)) {
+            try (
+                    FileOutputStream fos = new FileOutputStream(path.toFile());
+                    ObjectOutputStream oos = new ObjectOutputStream(fos)
+            ) {
+                oos.writeObject(userStatus);
+                return userStatus;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        throw new IllegalStateException("UserStatus with id " + userStatus.getUserId() + " already exists");
+    }
+
+    @Override
     public Optional<UserStatus> findByUserId(UUID userId) {
         UserStatus userNullable = null;
         Path path = resolvePath(userId);
@@ -70,23 +88,7 @@ public class FileUserStatusRepository implements UserStatusRepository {
                 .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found")));
     }
 
-    @Override
-    public UserStatus save(UserStatus userStatus) {
-        Path path = resolvePath(userStatus.getUserId());
-        if (!Files.exists(path)) {
-            try (
-                    FileOutputStream fos = new FileOutputStream(path.toFile());
-                    ObjectOutputStream oos = new ObjectOutputStream(fos)
-            ) {
-                oos.writeObject(userStatus);
-                return userStatus;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
 
-        throw new IllegalStateException("UserStatus with id " + userStatus.getUserId() + " already exists");
-    }
 
     @Override
     public UserStatus update(UserStatus userStatus) {

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -69,6 +70,10 @@ public class FileUserService implements UserService {
 
     @Override
     public boolean deleteUser(UserDTO.deleteDTO dto) {
+        Optional<User> user = repository.findByUserId(dto.id());
+        if (user == null) {
+            throw new NoSuchElementException("User with id " + dto.id() + " not found");
+        }
         repository.deleteById(dto.id());
         return true;
     }

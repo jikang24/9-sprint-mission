@@ -9,11 +9,11 @@ import java.util.UUID;
 
 @Repository
 public interface UserStatusRepository {
+    UserStatus save(UserStatus userStatus);
+
     Optional<UserStatus> findByUserId(UUID userId);
 
     Optional<UserStatus> findAllByUserId(UUID userId);
-
-    UserStatus save(UserStatus userStatus);
 
     UserStatus update(UserStatus userStatus);
 
