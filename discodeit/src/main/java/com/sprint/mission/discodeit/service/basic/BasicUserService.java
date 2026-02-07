@@ -63,10 +63,10 @@ public class BasicUserService implements UserService {
                         new NoSuchElementException("UserStatus with id " + dto.id() + " not found"));
 
         return new UserServiceResponseDTO.FindUserId(
-                dto.id(),
-                dto.online(),
-                dto.lastOnline()
-                );
+                user.getUserId(),
+                userStatus.isOnline(),
+                userStatus.getLastUpdatedAt()
+        );
 
     }
 
@@ -86,34 +86,31 @@ public class BasicUserService implements UserService {
 //    }
 
     @Override
-    public Stream<UserDTO.FindUserDTO> findAllUser() {
+    public List<UserDTO.FindUserDTO> findAllUser() {
 
         List<User> users = userRepository.findAllUser();
 
-        return users.stream()
-                .map(user -> {
-                    UserStatus userStatus = userStatusRepository.findByUserId(user.getId())
-                            .orElseThrow(() -> new NoSuchElementException("UserStatus with id " + user.getId() + " not found"));
+        return users.stream().map(user -> {
+            UserStatus userStatus = userStatusRepository.findByUserId(user.getId())
+                    .orElseThrow(() -> new NoSuchElementException("UserStatus with id " + user.getId() + " not found"));
 
-                    return new UserDTO.FindUserDTO(
-                            user.getId(),
-                            userStatus.isOnline(),
-                            userStatus.getLastUpdatedAt()
-                    );
-
-                });
-
+            return new UserDTO.FindUserDTO(
+                    user.getId(),
+                    userStatus.isOnline(),
+                    userStatus.getLastUpdatedAt()
+            );
+        }).toList();
     }
 
     @Override
-    public User updateUser(UUID id, String userName, String email, String password) {
+    public User updateUser(UserDTO.updateUserDTO dto) {
 
 //        User user = userRepository.findByUserId(id)
 //                .orElseThrow(() -> new NoSuchElementException("User not found"));
 //        return userRepository.save(user);
-        User user = userRepository.findByUserId(id)
+        User user = userRepository.findByUserId(dto.id())
                 .orElseThrow(() ->
-                        new NoSuchElementException("User with id" + id + "not found"));
+                        new NoSuchElementException("User with id" + dto.id() + "not found"));
 
         return user;
     }
@@ -121,7 +118,7 @@ public class BasicUserService implements UserService {
 
 
     @Override
-    public boolean deleteUser(UserDTO.FindUserDTO dto) {
+    public boolean deleteUser(UserDTO.deleteDTO dto) {
         Optional<User> optionalUser = userRepository.findByUserId(dto.id());
         if (optionalUser.isEmpty()) {
             return false;

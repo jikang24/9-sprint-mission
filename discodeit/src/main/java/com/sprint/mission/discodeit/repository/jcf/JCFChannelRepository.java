@@ -26,6 +26,12 @@ public class JCFChannelRepository implements ChannelRepository {
     }
 
     @Override
+    public List<Channel> findAllByUserId(UUID userId) {
+        //TODO : 구현해야함
+        return List.of();
+    }
+
+    @Override
     public void deleteById(UUID channelId) {
         store.remove(channelId);
     }

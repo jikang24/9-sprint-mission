@@ -54,19 +54,22 @@ public class JCFUserService implements UserService {
 
     // 전체조회 오버라이드
     @Override
-    public Stream<UserDTO.FindUserDTO> findAllUser() {
+    public List<UserDTO.FindUserDTO> findAllUser() {
         if (data.isEmpty()) {
            System.out.println("유저가 없습니다.");
         }
-        return (Stream<UserDTO.FindUserDTO>) data;
+
+        return data.stream().map( user ->
+                new UserDTO.FindUserDTO(user.getId(), user.isOnline(), user.getUpdatedAt())
+        ).toList();
     }
 
     @Override
-    public User updateUser(UUID id, String userName, String email, String password) {
+    public User updateUser(UserDTO.updateUserDTO dto) {
 
         try {
             User user = this.data.stream().filter
-                    (u -> u.getUserId().equals(id)).findFirst().orElse(null);
+                    (u -> u.getUserId().equals(dto.id())).findFirst().orElse(null);
 
             if (user == null) {
                 throw new RuntimeException("해당 Id를 가진 유저가 없습니다.");
@@ -74,18 +77,18 @@ public class JCFUserService implements UserService {
 
             boolean updated = false;
 
-            if (userName != null) {
-                user.updateUserName(userName);
+            if (dto.userName() != null) {
+                user.updateUserName(dto.userName());
                 updated = true;
             }
 
-            if (email != null) {
-                user.updateEmail(email);
+            if (dto.email() != null) {
+                user.updateEmail(dto.email());
                 updated = true;
             }
 
-            if (password != null) {
-                user.updatePassword(password);
+            if (dto.password() != null) {
+                user.updatePassword(dto.password());
                 updated = true;
             }
 
@@ -102,12 +105,12 @@ public class JCFUserService implements UserService {
     }
 
     @Override
-    public boolean deleteUser(UserDTO.FindUserDTO id) {
-        UserServiceResponseDTO.FindUserId user = findByUserId(id);
-        if (user == null) {
-            System.out.println("삭제할 유저가 없습니다.");
-            return false;
-        }
-        return data.remove(user);
+    public boolean deleteUser(UserDTO.deleteDTO dto) {
+        User foundUser = data.stream()
+                .filter(user -> user.getId().equals(dto.id()))
+                .findFirst().orElseThrow(() -> new RuntimeException("삭제할 유저가 없습니다."));
+
+        data.remove(foundUser);
+        return true;
     }
 }

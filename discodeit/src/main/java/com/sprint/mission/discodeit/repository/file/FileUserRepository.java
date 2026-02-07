@@ -1,8 +1,8 @@
 package com.sprint.mission.discodeit.repository.file;
 
 import com.sprint.mission.discodeit.entity.User;
-import org.springframework.stereotype.Repository;
 import com.sprint.mission.discodeit.repository.UserRepository;
+import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -19,12 +19,12 @@ public class FileUserRepository implements UserRepository {
 
     public FileUserRepository() {
         this.DIRECTORY = Path.of(System.getProperty("user.dir"), "file-data-map", User.class.getSimpleName());
-        if (Files.notExists(DIRECTORY)) {
-            try {
-                Files.createDirectories(DIRECTORY);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            if (Files.notExists(DIRECTORY)) {
+                try {
+                    Files.createDirectories(DIRECTORY);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
         }
 
     }
@@ -34,7 +34,7 @@ public class FileUserRepository implements UserRepository {
     }
 
     @Override
-    public User save(@org.jetbrains.annotations.UnknownNullability User user) {
+    public User save(User user) {
         Path path = resolvePath(user.getUserId());
         try (
                 FileOutputStream fos = new FileOutputStream(path.toFile());
@@ -46,7 +46,6 @@ public class FileUserRepository implements UserRepository {
         }
 
         return user;
-
     }
 
 
@@ -71,12 +70,19 @@ public class FileUserRepository implements UserRepository {
 
     @Override
     public Optional<User> findByUserName(String userName) {
-        return Optional.empty();
+        try {
+            return findAllUser().stream()
+                    .filter(user -> user.getUserName().equals(userName))
+                    .findFirst();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
     @Override
     public List<User> findAllUser() {
+
         try {
             return Files.list(DIRECTORY)
                     .filter(path -> path.toString().endsWith(EXTENSION))
@@ -85,6 +91,7 @@ public class FileUserRepository implements UserRepository {
                                 FileInputStream fis = new FileInputStream(path.toFile());
                                 ObjectInputStream ois = new ObjectInputStream(fis)
                         ) {
+                            System.out.println(path);
                             return (User) ois.readObject();
                         } catch (IOException | ClassNotFoundException e) {
                             throw new RuntimeException(e);
@@ -128,17 +135,32 @@ public class FileUserRepository implements UserRepository {
 
     @Override
     public boolean existsByEmail(String email) {
-        return false;
+        try {
+            return findAllUser().stream()
+                    .anyMatch(user -> user.getEmail().equals(email));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public boolean existsByUserName(String userName) {
-        return false;
+        try {
+            return findAllUser().stream()
+                    .anyMatch(user -> user.getUserName().equals(userName));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public boolean existByProfileId(UUID profileId) {
-        return false;
+        try {
+            return findAllUser().stream()
+                    .anyMatch(user -> user.getProfileId().equals(profileId));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

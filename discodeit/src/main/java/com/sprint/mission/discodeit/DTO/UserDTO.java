@@ -20,7 +20,8 @@ public class UserDTO {
     ){}
 
 
-    public record UpdateUserDTO(
+    public record updateUserDTO(
+            UUID id,
             String userName,
             String email,
             String password,
@@ -29,7 +30,10 @@ public class UserDTO {
 
     public record loginDTO(
             String userName,
-            String password){}
+            String password
+    ){}
+
+    public record deleteDTO(UUID id){}
 
 
 }

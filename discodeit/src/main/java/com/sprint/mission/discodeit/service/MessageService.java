@@ -17,7 +17,7 @@ public interface MessageService {
 
     List<Message> findAllMessage();
 
-    MessageDTO.UpdateMessageDTO updateMessage(UUID messageId, String text);
+    Message updateMessage(UUID messageId, String text);
 
     boolean deleteMessage(UUID messageId);
 

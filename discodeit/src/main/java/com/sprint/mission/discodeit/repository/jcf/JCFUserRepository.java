@@ -20,7 +20,6 @@ public class JCFUserRepository implements UserRepository {
         return Optional.ofNullable(store.get(userId));
     }
 
-    @Override
     public Optional<User> findByUserName(String userName) {
         return Optional.ofNullable(store.get(userName));
     }
@@ -53,8 +52,6 @@ public class JCFUserRepository implements UserRepository {
     public boolean existByProfileId(UUID profileId) {
         return store.containsKey(profileId);
     }
-
-
 }
 
 

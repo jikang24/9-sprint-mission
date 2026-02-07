@@ -3,11 +3,14 @@ package com.sprint.mission.discodeit.entity.status;
 import com.sprint.mission.discodeit.DTO.UserDTO;
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.UUID;
 
 @Getter
-public class UserStatus {
+public class UserStatus implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private final UUID userId;
     private final Long createdAt;
     private Long lastUpdatedAt;
@@ -30,7 +33,7 @@ public class UserStatus {
 //마지막 접속 시간을 기준으로 현재 로그인한 유저로 판단할 수 있는 메소드
     public boolean isOnline(){
         long now = Instant.now().toEpochMilli();
-        long fiveMinutes = 5 * 60 * 1000;
+        long fiveMinutes = 5 * 60 * 1000L;
         //5분, 60초, 1000ms
         return now - lastUpdatedAt <= fiveMinutes;
     }

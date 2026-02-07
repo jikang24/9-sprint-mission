@@ -89,7 +89,7 @@ public class BasicMessageService implements MessageService {
     }
 
     @Override
-    public MessageDTO.UpdateMessageDTO updateMessage(UUID messageId, String text) {
+    public Message updateMessage(UUID messageId, String text) {
 //        Message message = messageRepository.findByMessageId(messageId)
 //                .orElseThrow(() -> new NoSuchElementException
 //                        ("Message with id " + messageId + "not found"));
@@ -99,9 +99,10 @@ public class BasicMessageService implements MessageService {
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException("Message with id " + messageId + "not found"));
 
-        return new MessageDTO.UpdateMessageDTO(
-                message.getMessageText()
-        );
+//        return new Message(
+//                message.getMessageText()
+//        );
+        return messageRepository.save(message);
     }
 
     @Override

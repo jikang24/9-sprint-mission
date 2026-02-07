@@ -18,9 +18,6 @@ public class AuthService {
         this.userRepository = userRepository;
     }
 
-
-
-
     public User login(UserDTO.loginDTO dto){
         User user = userRepository.findByUserName(dto.userName())
                 .orElseThrow(() ->

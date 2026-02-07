@@ -20,7 +20,6 @@ public interface UserRepository {
 
     void deleteById(UUID id);
 
-
     boolean existsByEmail(String email);
 
     boolean existsByUserName(String userName);

@@ -4,6 +4,7 @@ import com.sprint.mission.discodeit.DTO.UserDTO;
 import com.sprint.mission.discodeit.DTO.UserServiceResponseDTO;
 import com.sprint.mission.discodeit.entity.User;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -16,11 +17,11 @@ public interface UserService {
     UserServiceResponseDTO.FindUserId findByUserId(UserDTO.FindUserDTO dto);
 
     //전체 조회
-    Stream<UserDTO.FindUserDTO> findAllUser();
+    List<UserDTO.FindUserDTO> findAllUser();
 
     //수정
-    User updateUser(UUID id, String userName, String email, String password);
+    User updateUser(UserDTO.updateUserDTO dto);
     //삭제
-    boolean deleteUser(UserDTO.FindUserDTO id);
+    boolean deleteUser(UserDTO.deleteDTO dto);
 
 }
