@@ -1,6 +1,4 @@
-package com.sprint.mission.discodeit.DTO;
-
-import com.sprint.mission.discodeit.entity.Message;
+package com.sprint.mission.discodeit.dto;
 
 import java.util.List;
 import java.util.UUID;

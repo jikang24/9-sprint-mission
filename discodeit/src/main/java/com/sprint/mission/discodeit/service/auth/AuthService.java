@@ -1,22 +1,18 @@
-package com.sprint.mission.discodeit.service.Auth;
+package com.sprint.mission.discodeit.service.auth;
 
-import com.sprint.mission.discodeit.DTO.UserDTO;
+import com.sprint.mission.discodeit.dto.UserDTO;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.repository.UserRepository;
-import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
-import java.util.UUID;
 
+@RequiredArgsConstructor
 @Service
 public class AuthService {
    private final UserRepository userRepository;
 
-
-    public AuthService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     public User login(UserDTO.loginDTO dto){
         User user = userRepository.findByUserName(dto.userName())

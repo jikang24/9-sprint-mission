@@ -2,15 +2,19 @@ package com.sprint.mission.discodeit.repository.file;
 
 import com.sprint.mission.discodeit.entity.BinaryContent;
 import com.sprint.mission.discodeit.repository.BinaryContentRepository;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
+@ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "file")
 @Repository
 public class FileBinaryContentRepository implements BinaryContentRepository {
     private final Path DIRECTORY;
@@ -63,6 +67,12 @@ public class FileBinaryContentRepository implements BinaryContentRepository {
     }
 
     @Override
+    public boolean existsById(UUID id) {
+        Path path = resolvePath(id);
+        return Files.exists(path);
+    }
+
+    @Override
     public Optional<BinaryContent> findById(UUID id) {
         BinaryContent binaryContent = null;
         Path path = resolvePath(id);
@@ -83,24 +93,46 @@ public class FileBinaryContentRepository implements BinaryContentRepository {
     }
 
     @Override
-    public Optional<BinaryContent> findAllByIdIn(Iterable<UUID> ids) {
-        BinaryContent binaryContent = null;
-        Path path = resolvePath(ids.iterator().next());
-        if (Files.exists(path)) {
-            try (
-                    FileInputStream fis = new FileInputStream(path.toFile());
-                    ObjectInputStream ois = new ObjectInputStream(fis)
-            ) {
-                binaryContent = (BinaryContent) ois.readObject();
-            } catch (IOException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+    public List<BinaryContent> findAllByIdIn(List<UUID> ids) {
+        try (Stream<Path> paths = Files.list(DIRECTORY)) {
+            return paths
+                    .filter(path -> path.toString().endsWith(EXTENSION))
+                    .map(path -> {
+                        try (
+                                FileInputStream fis = new FileInputStream(path.toFile());
+                                ObjectInputStream ois = new ObjectInputStream(fis)
+                        ) {
+                            return (BinaryContent) ois.readObject();
+                        } catch (IOException | ClassNotFoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+                    .filter(content -> ids.contains(content.getId()))
+                    .toList();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-
-        return Optional.ofNullable(Optional.ofNullable(binaryContent)
-                .orElseThrow(() -> new NoSuchElementException("User with id " + ids + " not found")));
-
     }
+
+//    @Override
+//    public Optional<BinaryContent> findAllByIdIn(Iterable<UUID> ids) {
+//        BinaryContent binaryContent = null;
+//        Path path = resolvePath(ids.iterator().next());
+//        if (Files.exists(path)) {
+//            try (
+//                    FileInputStream fis = new FileInputStream(path.toFile());
+//                    ObjectInputStream ois = new ObjectInputStream(fis)
+//            ) {
+//                binaryContent = (BinaryContent) ois.readObject();
+//            } catch (IOException | ClassNotFoundException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
+//
+//        return Optional.ofNullable(Optional.ofNullable(binaryContent)
+//                .orElseThrow(() -> new NoSuchElementException("User with id " + ids + " not found")));
+//
+//    }
 
 
     @Override

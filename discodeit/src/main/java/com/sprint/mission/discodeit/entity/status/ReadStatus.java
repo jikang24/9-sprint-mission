@@ -11,7 +11,7 @@ import java.util.UUID;
 @Getter
 public class ReadStatus implements Serializable {
     private static final long serialVersionUID = 1L;
-
+    private UUID id;
     private final UUID userId;
     private final UUID channelId;
     private final UUID messageId;
@@ -22,6 +22,7 @@ public class ReadStatus implements Serializable {
 
     @Builder
     public ReadStatus(UUID userId, UUID channelId, UUID messageId) {
+        this.id = UUID.randomUUID();
         this.userId = userId;
         this.channelId = channelId;
         this.messageId = messageId;

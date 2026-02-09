@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.repository.file;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 import com.sprint.mission.discodeit.repository.ChannelRepository;
 
@@ -13,6 +14,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
+@ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "file")
 @Repository
 public class FileChannelRepository implements ChannelRepository {
     private final Path DIRECTORY;

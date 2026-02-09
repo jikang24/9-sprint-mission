@@ -1,6 +1,6 @@
 package com.sprint.mission.discodeit.service.status;
 
-import com.sprint.mission.discodeit.DTO.UserStatusDTO;
+import com.sprint.mission.discodeit.dto.UserStatusDTO;
 import com.sprint.mission.discodeit.entity.status.UserStatus;
 import com.sprint.mission.discodeit.repository.UserRepository;
 import com.sprint.mission.discodeit.repository.UserStatusRepository;

@@ -1,6 +1,6 @@
 package com.sprint.mission.discodeit.service.status;
 
-import com.sprint.mission.discodeit.DTO.ReadStatusDTO;
+import com.sprint.mission.discodeit.dto.ReadStatusDTO;
 import com.sprint.mission.discodeit.entity.status.ReadStatus;
 import com.sprint.mission.discodeit.repository.ChannelRepository;
 import com.sprint.mission.discodeit.repository.ReadStatusRepository;
@@ -8,6 +8,7 @@ import com.sprint.mission.discodeit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -45,9 +46,9 @@ public class ReadStatusService {
                 .orElseThrow(() -> new NoSuchElementException("ReadStatus with userId " + userId + " and channelId " + channelId + " not found"));
     }
 
-    public ReadStatus findAllByUserId(UUID userId){
-        return readStatusRepository.findAllByUserId(userId)
-                .orElseThrow(() -> new NoSuchElementException("ReadStatus with userId " + userId + " not found"));
+    public List<ReadStatus> findAllByUserId(UUID userId) {
+        return readStatusRepository.findAllByUserId(userId).stream()
+                .toList();
     }
 
     public ReadStatus updateReadStatus(ReadStatusDTO.UpdateReadStatusDTO dto ){

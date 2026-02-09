@@ -1,12 +1,10 @@
 package com.sprint.mission.discodeit.service;
 
-import com.sprint.mission.discodeit.DTO.UserDTO;
-import com.sprint.mission.discodeit.DTO.UserServiceResponseDTO;
+import com.sprint.mission.discodeit.dto.UserDTO;
+import com.sprint.mission.discodeit.dto.UserServiceResponseDTO;
 import com.sprint.mission.discodeit.entity.User;
 
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Stream;
 
 public interface UserService {
     //생성

@@ -1,6 +1,5 @@
 package com.sprint.mission.discodeit.entity.status;
 
-import com.sprint.mission.discodeit.DTO.UserDTO;
 import lombok.Getter;
 
 import java.io.Serializable;
@@ -11,12 +10,15 @@ import java.util.UUID;
 public class UserStatus implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    private final UUID id;
+
     private final UUID userId;
     private final Long createdAt;
     private Long lastUpdatedAt;
 
 
     public UserStatus(UUID userId) {
+        this.id = UUID.randomUUID();
         this.userId = userId;
         this.createdAt = Instant.now().toEpochMilli();
         this.lastUpdatedAt = this.createdAt;
