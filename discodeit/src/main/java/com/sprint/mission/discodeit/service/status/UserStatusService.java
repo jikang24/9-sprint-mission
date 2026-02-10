@@ -26,8 +26,8 @@ public class UserStatusService {
         }
 
         UserStatus userStatus = new UserStatus(
-                dto.userId()
-        );
+                dto.userId(),
+                now);
         userStatusRepository.save(userStatus);
         return userStatus;
     }
@@ -48,7 +48,7 @@ public class UserStatusService {
             throw new NoSuchElementException("can't find user with id " + dto.userId());
         }
         if (userStatusRepository.equals(dto.userId())){
-            return new UserStatus(dto.userId());
+            return new UserStatus(dto.userId(), now);
         }
         return null;
     }

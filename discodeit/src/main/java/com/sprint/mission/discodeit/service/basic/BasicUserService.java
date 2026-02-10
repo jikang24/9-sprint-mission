@@ -1,7 +1,9 @@
 package com.sprint.mission.discodeit.service.basic;
 
+import com.sprint.mission.discodeit.dto.BinaryContentDTO;
 import com.sprint.mission.discodeit.dto.UserDTO;
 import com.sprint.mission.discodeit.dto.UserServiceResponseDTO;
+import com.sprint.mission.discodeit.entity.BinaryContent;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.entity.status.UserStatus;
 import com.sprint.mission.discodeit.repository.BinaryContentRepository;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.sprint.mission.discodeit.repository.UserRepository;
 import com.sprint.mission.discodeit.service.UserService;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -24,48 +27,78 @@ public class BasicUserService implements UserService {
     private final UserStatusRepository userStatusRepository;
 
 //    @Override
-//    public User createUser(String username, String email, String password){
-//        User user = new User(username, email, password,null);
-//        return userRepository.save(user);
+//    public User createUser(UserDTO.CreateUserDTO userCreateRequest) {
+//        if(userRepository.existsByEmail(userCreateRequest.email())){
+//            throw new IllegalArgumentException("이미 존재하는 email 입니다: " + userCreateRequest.email());
+//        }
+//        if(userRepository.existsByUserName(userCreateRequest.userName())){
+//            throw new IllegalArgumentException("이미 존재하는 username 입니다: " + userCreateRequest.userName());
+//        }
+//
+//        User user = new User(
+//                userCreateRequest.userName(),
+//                userCreateRequest.email(),
+//                userCreateRequest.password()
+//        );
+//
+//        UserStatus userStatus = new UserStatus(user.getUserId(), now);
+//        userStatusRepository.save(userStatus);
+//        userRepository.save(user);
+//        return user;
 //    }
 
     @Override
-    public User createUser(UserDTO.CreateUserDTO dto) {
-        if(userRepository.existsByEmail(dto.email())){
-            throw new IllegalArgumentException("이미 존재하는 email 입니다: " + dto.email());
+    public User createUser(UserDTO.CreateUserDTO userCreateRequest, Optional<BinaryContentDTO.CreateBinaryContentDTO> optionalProfileCreateRequest) {
+        String username = userCreateRequest.userName();
+        String email = userCreateRequest.email();
+
+        if(userRepository.existsByEmail(userCreateRequest.email())){
+            throw new IllegalArgumentException("이미 존재하는 email 입니다: " + userCreateRequest.email());
         }
-        if(userRepository.existsByUserName(dto.userName())){
-            throw new IllegalArgumentException("이미 존재하는 username 입니다: " + dto.userName());
+        if(userRepository.existsByUserName(userCreateRequest.userName())){
+            throw new IllegalArgumentException("이미 존재하는 username 입니다: " + userCreateRequest.userName());
         }
 
-        User user = new User(
-                dto.userName(),
-                dto.email(),
-                dto.password(),
-                dto.profileImage()
-        );
+        UUID nullableProfileId = optionalProfileCreateRequest
+                .map(profileRequest -> {
+                    String profileFileName = profileRequest.fileName();
+                    String profileContentType = profileRequest.contentType();
+                    byte[] profileContent = profileRequest.content();
+                    BinaryContent binaryContent = new BinaryContent(profileContent, profileContentType, profileFileName);
+                    return binaryContentRepository.save(binaryContent).getId();
+                })
+                .orElse(null);
+        String password = userCreateRequest.password();
 
-        UserStatus userStatus = new UserStatus(user.getUserId());
+        User user = new User(username, email, password, nullableProfileId);
+        User createdUser = userRepository.save(user);
+
+        Instant now = Instant.now();
+        UserStatus userStatus = new UserStatus(createdUser.getUserId(), now);
         userStatusRepository.save(userStatus);
-        userRepository.save(user);
-        return user;
+
+        return createdUser;
+
+
+
     }
 
     @Override
     public UserServiceResponseDTO.FindUserId findByUserId(UserDTO.FindUserDTO dto) {
-        User user = userRepository.findByUserId(dto.id())
+        return userRepository.findByUserId(dto.id())
+                .map(this::)
                 .orElseThrow(() ->
                         new NoSuchElementException("User with id" + dto.id() + "not found"));
 
-        UserStatus userStatus = userStatusRepository.findByUserId(dto.id())
-                .orElseThrow(() ->
-                        new NoSuchElementException("UserStatus with id " + dto.id() + " not found"));
+//        UserStatus userStatus = userStatusRepository.findByUserId(dto.id())
+//                .orElseThrow(() ->
+//                        new NoSuchElementException("UserStatus with id " + dto.id() + " not found"));
 
-        return new UserServiceResponseDTO.FindUserId(
-                user.getUserId(),
-                userStatus.isOnline(),
-                userStatus.getLastUpdatedAt()
-        );
+//        return new UserServiceResponseDTO.FindUserId(
+//                user.getUserId(),
+//                userStatus.isOnline(),
+//                userStatus.getLastUpdatedAt()
+//        );
 
     }
 
@@ -135,6 +168,23 @@ public class BasicUserService implements UserService {
         userRepository.deleteById(dto.id());
         return true;
     }
+
+//    private UserDTO toDto(User user) {
+//        Boolean online = userStatusRepository.findByUserId(user.getId())
+//                .map(UserStatus::isOnline)
+//                .orElse(null);
+//
+//        return new UserDTO(
+//                user.getId(),
+//                user.getCreatedAt(),
+//                user.getUpdatedAt(),
+//                user.getUserName(),
+//                user.getEmail(),
+//                user.getProfileId(),
+//                online
+//        );
+//    }
+
 
 
 }

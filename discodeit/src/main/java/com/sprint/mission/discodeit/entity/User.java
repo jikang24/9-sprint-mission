@@ -24,7 +24,7 @@ public class User implements Serializable {
     private boolean online;
     private long lastOnline;
 
-    public User(String userName, String email, String password, String profileImage) {
+    public User(String userName, String email, String password, UUID profileId) {
         this.id = UUID.randomUUID();
         this.createdAt = Instant.now().toEpochMilli();
         this.updatedAt = this.createdAt;
@@ -33,7 +33,7 @@ public class User implements Serializable {
         this.password = password;
 
         this.profileId = UUID.randomUUID();
-        this.profileImage = profileImage;
+
 
     }
 

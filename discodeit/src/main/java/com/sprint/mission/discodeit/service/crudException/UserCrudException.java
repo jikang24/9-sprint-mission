@@ -1,4 +1,4 @@
-package com.sprint.mission.discodeit.service.exception;
+package com.sprint.mission.discodeit.service.crudException;
 
 public class UserCrudException extends RuntimeException {
     public UserCrudException(String message) {

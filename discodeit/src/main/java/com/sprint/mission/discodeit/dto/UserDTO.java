@@ -8,8 +8,7 @@ public class UserDTO {
     public record CreateUserDTO(
             String userName,
             String email,
-            String password,
-            String profileImage
+            String password
     ) {
     }
 
@@ -24,8 +23,7 @@ public class UserDTO {
             UUID id,
             String userName,
             String email,
-            String password,
-            String profileImage
+            String password
     ) {}
 
     public record loginDTO(
