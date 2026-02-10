@@ -1,0 +1,82 @@
+package com.sprint.mission.discodeit.controller;
+
+
+import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
+import com.sprint.mission.discodeit.dto.request.MessageCreateRequest;
+import com.sprint.mission.discodeit.dto.request.MessageUpdateRequest;
+import com.sprint.mission.discodeit.entity.Message;
+import com.sprint.mission.discodeit.service.MessageService;
+import com.sprint.mission.discodeit.service.ReadStatusService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+@ResponseBody
+@RequestMapping("/api/message")
+@RequiredArgsConstructor
+@Controller
+public class MessageController {
+    private final MessageService messageService;
+
+    @RequestMapping(
+            path = "create",
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
+    )
+    public ResponseEntity<Message> create(
+            @RequestParam("channelId") UUID channelId,
+            @RequestParam("message") String message,
+            @RequestPart("messageCreateRequest")MessageCreateRequest messageCreateRequest
+
+    ){
+        List<BinaryContentCreateRequest> binaryAttachments = new ArrayList<>();
+        Message createdMessage = messageService.create(messageCreateRequest,binaryAttachments);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(createdMessage);
+    }
+
+    @RequestMapping(
+            path = "update",
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
+    )
+    public ResponseEntity<Message> update(
+            @RequestParam("messageId") UUID messageId,
+            @RequestParam("message")MessageUpdateRequest messageUpdateRequest
+            ){
+        Message updatedMessage = messageService.update(messageId, messageUpdateRequest);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(updatedMessage);
+    }
+
+    @RequestMapping(path = "delete")
+    public ResponseEntity<Message> delete(
+            @RequestParam("messageId") UUID messageId
+    ){
+        messageService.delete(messageId);
+        return ResponseEntity.ok().build();
+    }
+
+    @RequestMapping(
+            path = "findAllByChannleId",
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
+    )
+    public ResponseEntity<Iterable<Message>> findAllByChannleId(
+            @RequestParam("channelId") UUID channelId
+    ){
+        Iterable<Message> messages = messageService.findAllByChannelId(channelId);
+        return ResponseEntity.ok(messages);
+    }
+
+
+}
