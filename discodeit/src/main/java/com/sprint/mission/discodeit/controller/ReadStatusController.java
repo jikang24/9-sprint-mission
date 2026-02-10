@@ -13,8 +13,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
 import java.util.UUID;
 
 @ResponseBody
@@ -30,8 +32,11 @@ public class ReadStatusController {
     )
     public ResponseEntity<ReadStatus> createFromChannel(
             @RequestParam("channelId") UUID channelId,
-            @RequestParam("readStatusCreateRequest")ReadStatusCreateRequest readStatusCreateRequest
+            @RequestPart("readStatusCreateRequest")ReadStatusCreateRequest readStatusCreateRequest
     ){
+        if (channelId == null) {
+            return ResponseEntity.badRequest().build();
+        }
         ReadStatus createdReadStatusFromChannel
                 = readStatusService.create(readStatusCreateRequest);
         return ResponseEntity.
@@ -45,8 +50,11 @@ public class ReadStatusController {
     )
     public ResponseEntity<ReadStatus> updateFromChannel(
             @RequestParam("readStatusId") UUID readStatusId,
-            @RequestParam("readStatusUpdateRequest") ReadStatusUpdateRequest readStatusUpdateRequest
+            @RequestPart("readStatusUpdateRequest") ReadStatusUpdateRequest readStatusUpdateRequest
     ){
+        if (readStatusId == null) {
+            return ResponseEntity.badRequest().build();
+        }
         ReadStatus updatedReadStatusFromChannel
                 = readStatusService.update(readStatusId,readStatusUpdateRequest);
         return ResponseEntity.
@@ -54,10 +62,7 @@ public class ReadStatusController {
                 .body(updatedReadStatusFromChannel);
     }
 
-    @RequestMapping(
-            path = "findById",
-            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
-    )
+    @RequestMapping(path = "findById")
     public ResponseEntity<ReadStatus> findById(
             @RequestParam("readStatusId") UUID readStatusId
     ){
@@ -67,4 +72,13 @@ public class ReadStatusController {
                 .body(readStatus);
     }
 
+    @RequestMapping(path = "findAllByUserId")
+    public ResponseEntity<List<ReadStatus>> findAllByUserId(
+            @RequestParam("userId") UUID userId
+    ){
+        List<ReadStatus> readStatus = readStatusService.findAllByUserId(userId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(readStatus);
+    }
 }

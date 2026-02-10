@@ -2,10 +2,9 @@ package com.sprint.mission.discodeit.controller;
 
 
 import com.sprint.mission.discodeit.entity.BinaryContent;
-import com.sprint.mission.discodeit.entity.ReadStatus;
 import com.sprint.mission.discodeit.service.BinaryContentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,25 +21,25 @@ import java.util.UUID;
 public class BinaryContentController {
     private final BinaryContentService binaryContentService;
 
-    @RequestMapping(
-            path = "find",
-            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
-    )
+    @RequestMapping(path = "find")
     public ResponseEntity<BinaryContent> find(
             @RequestParam("binaryContentId") UUID binaryContentId
     ){
-        BinaryContent binaryContent = binaryContentService.find(binaryContentId);
-        return ResponseEntity.ok(binaryContent);
+        BinaryContent binaryContent
+                = binaryContentService.find(binaryContentId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(binaryContent);
     }
 
-    @RequestMapping(
-            path = "findAll",
-            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
-    )
+    @RequestMapping(path = "findAll")
     public ResponseEntity<List<BinaryContent>> findAllByIdIn(
             @RequestParam("binaryContentIds") List<UUID> binaryContentIds
     ){
-        List<BinaryContent> binaryContents = binaryContentService.findAllByIdIn(binaryContentIds);
-        return ResponseEntity.ok(binaryContents);
+        List<BinaryContent> binaryContents
+                = binaryContentService.findAllByIdIn(binaryContentIds);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(binaryContents);
     }
 }

@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.controller;
 
+import com.sprint.mission.discodeit.dto.data.ChannelDto;
 import com.sprint.mission.discodeit.dto.request.PrivateChannelCreateRequest;
 import com.sprint.mission.discodeit.dto.request.PublicChannelCreateRequest;
 import com.sprint.mission.discodeit.dto.request.PublicChannelUpdateRequest;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.UUID;
 
 @ResponseBody
@@ -33,7 +35,8 @@ public class ChannelController {
     public ResponseEntity<Channel> publicChannelCreate(
             @RequestPart("PublicChannelCreateRequest") PublicChannelCreateRequest request
     ){
-        PublicChannelCreateRequest publicChannelCreateRequest = new PublicChannelCreateRequest(request.name(), request.description());
+        PublicChannelCreateRequest publicChannelCreateRequest
+                = new PublicChannelCreateRequest(request.name(), request.description());
         Channel publicChannel = channelService.create(publicChannelCreateRequest);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -45,9 +48,11 @@ public class ChannelController {
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
     public ResponseEntity<Channel> privateChannelCreate(
-            @RequestPart("PrivateChannelCreateRequest") PrivateChannelCreateRequest request
+            @RequestPart("PrivateChannelCreateRequest")
+            PrivateChannelCreateRequest request
     ){
-        PrivateChannelCreateRequest privateChannelCreateRequest = new PrivateChannelCreateRequest(request.participantIds());
+        PrivateChannelCreateRequest privateChannelCreateRequest
+                = new PrivateChannelCreateRequest(request.participantIds());
         Channel privateChannel = channelService.create(privateChannelCreateRequest);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -60,45 +65,50 @@ public class ChannelController {
     )
     public ResponseEntity<Channel> publicChannelUpdate(
             @RequestParam("channelId") UUID channelId,
-            @RequestPart("PublicChannelCreateRequest") PublicChannelCreateRequest request
+            @RequestPart("PublicChannelUpdateRequest") PublicChannelUpdateRequest request
     ){
-        PublicChannelUpdateRequest publicChannelUpdateRequest = new PublicChannelUpdateRequest(request.name(), request.description());
+        PublicChannelUpdateRequest publicChannelUpdateRequest = new PublicChannelUpdateRequest(request.newName(), request.newDescription());
         Channel updatedchannel = channelService.update(channelId, publicChannelUpdateRequest);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(updatedchannel);
     }
     @RequestMapping(
-            path = "delete",
-            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
+            path = "delete"
     )
-    public ResponseEntity<Void> deleteChannel(
+    public ResponseEntity<Channel> deleteChannel(
             @RequestParam("channelId") UUID channelId
     ){
         channelService.delete(channelId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @RequestMapping(
-            path = "find",
-            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
-    )
-    public ResponseEntity<Channel> find(
+    @RequestMapping(path = "find")
+    public ResponseEntity<ChannelDto> find(
             @RequestParam("channelId") UUID channelId
     ){
-        channelService.find(channelId);
-        return ResponseEntity.ok().build();
+        if (channelId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        ChannelDto channel = channelService.find(channelId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(channel);
     }
 
     @RequestMapping(
-            path = "findAllByUserId",
-            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
+            path = "findAllByUserId"
     )
-    public ResponseEntity<Iterable<Channel>> findAllByUserId(
+    public ResponseEntity<List<ChannelDto>> findAllByUserId(
             @RequestParam("userId") UUID userId
     ){
-        channelService.findAllByUserId(userId);
-        return ResponseEntity.ok().build();
+        if (userId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        List<ChannelDto> channel = channelService.findAllByUserId(userId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(channel);
     }
 
 }

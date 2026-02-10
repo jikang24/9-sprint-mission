@@ -21,16 +21,17 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Controller
 public class AuthController {
-//    private final BasicAuthService basicAuthService;
+    private final BasicAuthService basicAuthService;
     private final AuthService authService;
 
     @RequestMapping(
-            path = "login",
-            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
+            path = "login"
     )
     public ResponseEntity login(
             @RequestPart("loginRequest") LoginRequest loginRequest
     ){
+
+
         User Dto = authService.login(loginRequest);
         return ResponseEntity.ok(Dto);
     }

@@ -3,6 +3,7 @@ package com.sprint.mission.discodeit.controller;
 import com.sprint.mission.discodeit.dto.data.UserDto;
 import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.dto.request.UserCreateRequest;
+import com.sprint.mission.discodeit.dto.request.UserStatusUpdateRequest;
 import com.sprint.mission.discodeit.dto.request.UserUpdateRequest;
 import com.sprint.mission.discodeit.entity.BinaryContent;
 import com.sprint.mission.discodeit.entity.User;
@@ -64,56 +65,44 @@ public class UserController {
                 .body(updatedUser);
     }
 
-    @RequestMapping(
-            path = "delete",
-            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
-    )
+    @RequestMapping(path = "delete")
     public ResponseEntity<User> delete(
             @RequestParam("userId") UUID userId
     ){
         userService.delete(userId);
-        userStatusService.delete(userId);
         return ResponseEntity
-                .noContent()
+                .status(HttpStatus.OK)
                 .build();
     }
 
-    @RequestMapping(
-            path = "find",
-            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
-    )
+    @RequestMapping(path = "find")
     public ResponseEntity<UserDto> find(
             @RequestParam("userId") UUID userId
     ){
-        userService.find(userId);
+        UserDto user = userService.find(userId);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .build();
+                .body(user);
     }
 
-    @RequestMapping(
-            path = "findAll",
-            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
-    )
+    @RequestMapping(path = "findAll")
     public ResponseEntity<List<UserDto>> findAll(){
-        userService.findAll();
+        List<UserDto> users =  userService.findAll();
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(List.of());
+                .body(users);
     }
 
-    @RequestMapping(
-            path = "online",
-            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
-    )
-    public ResponseEntity<UserStatus> isOnline(){
-        UserStatus userStatus = userStatusService.find(UUID.randomUUID());
-        userStatus.isOnline();
+    @RequestMapping(path = "online")
+    public ResponseEntity<UserStatus> isOnline(
+            @RequestParam("userId") UUID userId,
+            @RequestPart("UserStatusUpdateRequest") UserStatusUpdateRequest userStatusUpdateRequest){
+        UserStatus updatedUserStatus
+                = userStatusService.updateByUserId(userId,userStatusUpdateRequest);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(userStatus);
-    }
-
+                .body(updatedUserStatus);
+        }
 
 
     private Optional<BinaryContentCreateRequest> resolveProfileRequest(MultipartFile profileFile) {
