@@ -10,47 +10,41 @@ import java.util.*;
 @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "jcf", matchIfMissing = true)
 @Repository
 public class JCFMessageRepository implements MessageRepository {
-    private final Map<UUID, Message> store = new HashMap<>();
+    private final Map<UUID, Message> data;
+
+    public JCFMessageRepository() {
+        this.data = new HashMap<>();
+    }
 
     @Override
     public Message save(Message message) {
-        store.put(message.getMessageId(),message);
+        this.data.put(message.getId(), message);
         return message;
     }
 
     @Override
-    public Optional<Message> findByMessageId(UUID messageId) {
-        return Optional.ofNullable
-                (store.get(messageId));
-    }
-
-    @Override
-    public List<Message> findBySenderId(UUID userId) {
-        return new ArrayList<>(store.values());
-    }
-
-    @Override
-    public List<Message> findByChannelId(UUID channelId) {
-        return new ArrayList<>(store.values());
-    }
-
-    @Override
-    public List<Message> findAllMessage() {
-        return new ArrayList<>(store.values());
+    public Optional<Message> findById(UUID id) {
+        return Optional.ofNullable(this.data.get(id));
     }
 
     @Override
     public List<Message> findAllByChannelId(UUID channelId) {
-        return new ArrayList<>(store.values());
+        return this.data.values().stream().filter(message -> message.getChannelId().equals(channelId)).toList();
     }
 
     @Override
-    public void deleteById(UUID messageId) {
-        store.remove(messageId);
+    public boolean existsById(UUID id) {
+        return this.data.containsKey(id);
     }
 
     @Override
-    public boolean existsById(UUID messageId) {
-        return store.containsKey(messageId);
+    public void deleteById(UUID id) {
+        this.data.remove(id);
+    }
+
+    @Override
+    public void deleteAllByChannelId(UUID channelId) {
+        this.findAllByChannelId(channelId)
+                .forEach(message -> this.deleteById(message.getId()));
     }
 }

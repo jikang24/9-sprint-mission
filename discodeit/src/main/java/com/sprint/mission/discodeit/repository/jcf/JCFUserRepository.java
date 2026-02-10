@@ -10,51 +10,52 @@ import java.util.*;
 @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "jcf", matchIfMissing = true)
 @Repository
 public class JCFUserRepository implements UserRepository {
-    private final Map<UUID, User> store = new HashMap<>();
+    private final Map<UUID, User> data;
+
+    public JCFUserRepository() {
+        this.data = new HashMap<>();
+    }
 
     @Override
-    public User save (User user) {
-        store.put(user.getUserId(), user);
+    public User save(User user) {
+        this.data.put(user.getId(), user);
         return user;
     }
 
     @Override
-    public Optional<User> findByUserId(UUID userId) {
-        return Optional.ofNullable(store.get(userId));
-    }
-
-    public Optional<User> findByUserName(String userName) {
-        return Optional.ofNullable(store.get(userName));
+    public Optional<User> findById(UUID id) {
+        return Optional.ofNullable(this.data.get(id));
     }
 
     @Override
-    public List<User> findAllUser() {
-        return new ArrayList<>(store.values());
-    }
-    @Override
-    public boolean existsById(UUID userId) {
-        return store.containsKey(userId);
+    public Optional<User> findByUsername(String username) {
+        return this.findAll().stream()
+                .filter(user -> user.getUsername().equals(username))
+                .findFirst();
     }
 
     @Override
-    public void deleteById(UUID userId) {
-        store.remove(userId);
+    public List<User> findAll() {
+        return this.data.values().stream().toList();
+    }
+
+    @Override
+    public boolean existsById(UUID id) {
+        return this.data.containsKey(id);
+    }
+
+    @Override
+    public void deleteById(UUID id) {
+        this.data.remove(id);
     }
 
     @Override
     public boolean existsByEmail(String email) {
-        return store.containsKey(email);
+        return this.findAll().stream().anyMatch(user -> user.getEmail().equals(email));
     }
 
     @Override
-    public boolean existsByUserName(String userName) {
-        return store.containsKey(userName);
-    }
-
-    @Override
-    public boolean existByProfileId(UUID profileId) {
-        return store.containsKey(profileId);
+    public boolean existsByUsername(String username) {
+        return this.findAll().stream().anyMatch(user -> user.getUsername().equals(username));
     }
 }
-
-

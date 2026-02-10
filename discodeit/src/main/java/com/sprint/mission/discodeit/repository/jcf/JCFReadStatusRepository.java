@@ -1,8 +1,6 @@
 package com.sprint.mission.discodeit.repository.jcf;
 
-import com.sprint.mission.discodeit.entity.Channel;
-import com.sprint.mission.discodeit.entity.User;
-import com.sprint.mission.discodeit.entity.status.ReadStatus;
+import com.sprint.mission.discodeit.entity.ReadStatus;
 import com.sprint.mission.discodeit.repository.ReadStatusRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
@@ -18,27 +16,15 @@ public class JCFReadStatusRepository implements ReadStatusRepository {
         this.data = new HashMap<>();
     }
 
-
     @Override
-    public ReadStatus read(User userId, Channel channelId) {
-        return null;
-    }
-
-    @Override
-    public Optional<ReadStatus> findByUserIdAndChannelId(UUID userId, UUID channelId) {
-        return Optional.empty();
+    public ReadStatus save(ReadStatus readStatus) {
+        this.data.put(readStatus.getId(), readStatus);
+        return readStatus;
     }
 
     @Override
     public Optional<ReadStatus> findById(UUID id) {
         return Optional.ofNullable(this.data.get(id));
-    }
-
-    @Override
-    public List<ReadStatus> findAllByChannelId(UUID channelId) {
-        return this.data.values().stream()
-                .filter(readStatus -> readStatus.getChannelId().equals(channelId))
-                .toList();
     }
 
     @Override
@@ -49,25 +35,15 @@ public class JCFReadStatusRepository implements ReadStatusRepository {
     }
 
     @Override
-    public ReadStatus update(ReadStatus readStatus) {
-        return null;
+    public List<ReadStatus> findAllByChannelId(UUID channelId) {
+        return this.data.values().stream()
+                .filter(readStatus -> readStatus.getChannelId().equals(channelId))
+                .toList();
     }
 
     @Override
-    public ReadStatus save(ReadStatus readStatus) {
-        this.data.put(readStatus.getId(), readStatus);
-        return readStatus;
-    }
-
-
-    @Override
-    public boolean existsById(UUID messageId) {
-        return this.data.containsKey(messageId);
-    }
-
-    @Override
-    public ReadStatus delete(ReadStatus readStatus) {
-        return null;
+    public boolean existsById(UUID id) {
+        return this.data.containsKey(id);
     }
 
     @Override

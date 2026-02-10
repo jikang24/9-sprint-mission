@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
-@ConditionalOnProperty(name = "discodeit.storage.type", havingValue = "jcf", matchIfMissing = true)
+@ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "jcf", matchIfMissing = true)
 @Repository
 public class JCFBinaryContentRepository implements BinaryContentRepository {
     private final Map<UUID, BinaryContent> data;
@@ -15,8 +15,9 @@ public class JCFBinaryContentRepository implements BinaryContentRepository {
     public JCFBinaryContentRepository() {
         this.data = new HashMap<>();
     }
+
     @Override
-    public BinaryContent create(BinaryContent binaryContent) {
+    public BinaryContent save(BinaryContent binaryContent) {
         this.data.put(binaryContent.getId(), binaryContent);
         return binaryContent;
     }
@@ -31,12 +32,6 @@ public class JCFBinaryContentRepository implements BinaryContentRepository {
         return this.data.values().stream()
                 .filter(content -> ids.contains(content.getId()))
                 .toList();
-    }
-
-    @Override
-    public BinaryContent save(BinaryContent binaryContent) {
-        this.data.put(binaryContent.getId(), binaryContent);
-        return binaryContent;
     }
 
     @Override
