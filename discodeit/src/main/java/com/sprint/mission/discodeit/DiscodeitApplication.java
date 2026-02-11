@@ -48,7 +48,10 @@ public class DiscodeitApplication {
 
 	public static void main(String[] args) {
 
-		ConfigurableApplicationContext context = SpringApplication.run(DiscodeitApplication.class, args);
+		SpringApplication.run(DiscodeitApplication.class, args);
+
+//		ConfigurableApplicationContext context =
+
 //		// 서비스 초기화
 //		UserService userService = context.getBean(UserService.class);
 //		ChannelService channelService = context.getBean(ChannelService.class);

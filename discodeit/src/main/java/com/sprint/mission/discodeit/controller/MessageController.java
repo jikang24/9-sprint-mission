@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -32,17 +34,35 @@ public class MessageController {
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
     public ResponseEntity<Message> create(
-            @RequestPart("messageCreateRequest")MessageCreateRequest messageCreateRequest
-
+            @RequestPart("messageCreateRequest") MessageCreateRequest messageCreateRequest,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files
     ){
-        List<BinaryContentCreateRequest> binaryAttachments
-                = new ArrayList<>();
-        Message createdMessage
-                = messageService.create(messageCreateRequest,binaryAttachments);
+        List<BinaryContentCreateRequest> binaryAttachments = new ArrayList<>();
+
+        if (files != null) {
+            for (MultipartFile file : files) {
+                try {
+                    binaryAttachments.add(
+                            new BinaryContentCreateRequest(
+                                    file.getOriginalFilename(),
+                                    file.getContentType(),
+                                    file.getBytes()
+                            )
+                    );
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        Message createdMessage =
+                messageService.create(messageCreateRequest, binaryAttachments);
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(createdMessage);
     }
+
 
     @RequestMapping(
             path = "update",

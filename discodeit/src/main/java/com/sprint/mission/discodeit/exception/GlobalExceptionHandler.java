@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
 
 @ControllerAdvice
 @ResponseBody
-public class GlobalExceptionHandeler {
+public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
         return ResponseEntity
