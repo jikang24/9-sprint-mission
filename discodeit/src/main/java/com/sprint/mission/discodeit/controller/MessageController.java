@@ -52,6 +52,10 @@ public class MessageController {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
+                System.out.println(file.getOriginalFilename());
+                System.out.println(file.getSize());
+                System.out.println(file.getContentType());
+
             }
         }
 
@@ -61,6 +65,8 @@ public class MessageController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(createdMessage);
+
+
     }
 
 
@@ -70,13 +76,33 @@ public class MessageController {
     )
     public ResponseEntity<Message> update(
             @RequestParam("messageId") UUID messageId,
-            @RequestPart("message")MessageUpdateRequest messageUpdateRequest
-            ){
-        Message updatedMessage = messageService.update(messageId, messageUpdateRequest);
+            @RequestPart("message") MessageUpdateRequest messageUpdateRequest,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files
+    ){
+        List<BinaryContentCreateRequest> binaryAttachments = new ArrayList<>();
+
+        if (files != null) {
+            for (MultipartFile file : files) {
+                try {
+                    binaryAttachments.add(
+                            new BinaryContentCreateRequest(
+                                    file.getOriginalFilename(),
+                                    file.getContentType(),
+                                    file.getBytes()
+                            )
+                    );
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        Message updatedMessage = messageService.update(messageId, messageUpdateRequest, binaryAttachments);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(updatedMessage);
     }
+
 
     @RequestMapping(path = "delete")
     public ResponseEntity<Message> delete(

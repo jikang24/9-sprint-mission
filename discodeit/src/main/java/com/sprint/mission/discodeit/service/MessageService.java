@@ -12,6 +12,6 @@ public interface MessageService {
     Message create(MessageCreateRequest messageCreateRequest, List<BinaryContentCreateRequest> binaryContentCreateRequests);
     Message find(UUID messageId);
     List<Message> findAllByChannelId(UUID channelId);
-    Message update(UUID messageId, MessageUpdateRequest request);
+    Message update(UUID messageId, MessageUpdateRequest request, List<BinaryContentCreateRequest> binaryAttachments);
     void delete(UUID messageId);
 }

@@ -42,4 +42,9 @@ public class Message implements Serializable {
             this.updatedAt = Instant.now();
         }
     }
+
+    public void updateAttachmentIds(List<UUID> merged) {
+        this.attachmentIds = merged;
+        this.updatedAt = Instant.now();
+    }
 }
