@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -21,7 +22,10 @@ import java.util.UUID;
 public class BinaryContentController {
     private final BinaryContentService binaryContentService;
 
-    @RequestMapping(path = "find")
+    @RequestMapping(
+            path = "find",
+            method = {RequestMethod.GET}
+    )
     public ResponseEntity<BinaryContent> find(
             @RequestParam("binaryContentId") UUID binaryContentId
     ){
@@ -34,7 +38,10 @@ public class BinaryContentController {
 
     }
 
-    @RequestMapping(path = "findAll")
+    @RequestMapping(
+            path = "findAll",
+            method = {RequestMethod.GET}
+    )
     public ResponseEntity<List<BinaryContent>> findAllByIdIn(
             @RequestParam("binaryContentIds") List<UUID> binaryContentIds
     ){
