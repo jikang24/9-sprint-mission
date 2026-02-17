@@ -36,7 +36,9 @@ public class ChannelController {
             @RequestPart("PublicChannelCreateRequest") PublicChannelCreateRequest request
     ){
         PublicChannelCreateRequest publicChannelCreateRequest
-                = new PublicChannelCreateRequest(request.name(), request.description());
+                = new PublicChannelCreateRequest(request.name(), request.description()
+//                , request.channelType()
+        );
         Channel publicChannel = channelService.create(publicChannelCreateRequest);
         return ResponseEntity
                 .status(HttpStatus.CREATED)

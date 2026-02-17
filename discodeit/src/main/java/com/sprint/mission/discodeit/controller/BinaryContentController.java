@@ -26,7 +26,7 @@ public class BinaryContentController {
             path = "find",
             method = {RequestMethod.GET}
     )
-    public ResponseEntity<BinaryContent> find(
+    public ResponseEntity<BinaryContent> findByIdIn(
             @RequestParam("binaryContentId") UUID binaryContentId
     ){
         BinaryContent binaryContent
