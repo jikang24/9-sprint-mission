@@ -109,7 +109,7 @@ public class MessageController {
             @RequestParam("messageId") UUID messageId
     ){
         messageService.delete(messageId);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @RequestMapping(

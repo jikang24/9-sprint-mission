@@ -83,7 +83,7 @@ public class ChannelController {
             @RequestParam("channelId") UUID channelId
     ){
         channelService.delete(channelId);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @RequestMapping(path = "find")
