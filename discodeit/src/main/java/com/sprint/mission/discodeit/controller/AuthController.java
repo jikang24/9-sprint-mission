@@ -8,24 +8,24 @@ import com.sprint.mission.discodeit.service.basic.BasicAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@ResponseBody
+
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@Controller
+@RestController
 public class AuthController {
-    private final BasicAuthService basicAuthService;
-    private final AuthService authService;
 
-    @RequestMapping(
-            path = "login"
-    )
-    public ResponseEntity login(@RequestPart("loginRequest") LoginRequest loginRequest){
-        User user = authService.login(loginRequest);
-        return ResponseEntity.status(HttpStatus.OK).body(user);
-    }
+  private final BasicAuthService basicAuthService;
+  private final AuthService authService;
+
+  @RequestMapping(
+      path = "login"
+  )
+  public ResponseEntity login(@RequestPart("loginRequest") LoginRequest loginRequest) {
+    User user = authService.login(loginRequest);
+    return ResponseEntity.status(HttpStatus.OK).body(user);
+  }
 }
