@@ -9,13 +9,11 @@ import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.service.ChannelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -39,6 +37,7 @@ public class ChannelController implements ChannelApi {
   }
 
   @RequestMapping(path = "createPrivate")
+  @Override
   public ResponseEntity<Channel> privateChannelCreate(
       @RequestBody PrivateChannelCreateRequest request) {
     Channel privateChannel = channelService.create(request);
@@ -48,6 +47,7 @@ public class ChannelController implements ChannelApi {
   }
 
   @RequestMapping(path = "updatePublic")
+  @Override
   public ResponseEntity<Channel> publicChannelUpdate(
       @RequestParam("channelId") UUID channelId,
       @RequestBody PublicChannelUpdateRequest request) {
@@ -58,14 +58,17 @@ public class ChannelController implements ChannelApi {
   }
 
   @RequestMapping(path = "delete")
-  public ResponseEntity<Void> deleteChannel(@RequestParam("channelId") UUID channelId) {
+  @Override
+  public ResponseEntity<Void> delete(@RequestParam("channelId") UUID channelId) {
     channelService.delete(channelId);
     return ResponseEntity
         .status(HttpStatus.NO_CONTENT)
         .build();
   }
 
+
   @RequestMapping(path = "find")
+  @Override
   public ResponseEntity<ChannelDto> find(@RequestParam("channelId") UUID channelId) {
     if (channelId == null) {
       return ResponseEntity.badRequest().build();
@@ -76,7 +79,9 @@ public class ChannelController implements ChannelApi {
         .body(channel);
   }
 
+
   @RequestMapping(path = "findAllByUserId")
+  @Override
   public ResponseEntity<List<ChannelDto>> findAllByUserId(
       @RequestParam("userId") UUID userId
   ) {
