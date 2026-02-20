@@ -1,6 +1,7 @@
 package com.sprint.mission.discodeit.controller;
 
 
+import com.sprint.mission.discodeit.controller.api.MessageApi;
 import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageUpdateRequest;
@@ -11,11 +12,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -23,18 +27,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@ResponseBody
 @RequestMapping("/api/v2/message")
 @RequiredArgsConstructor
-@Controller
-public class MessageController {
+@RestController
+public class MessageController implements MessageApi {
 
   private final MessageService messageService;
 
-  @RequestMapping(
+  @PostMapping(
       path = "create",
       consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
   )
+  @Override
   public ResponseEntity<Message> create(
       @RequestPart("messageCreateRequest") MessageCreateRequest messageCreateRequest,
       @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments
@@ -61,19 +65,26 @@ public class MessageController {
   }
 
 
-  @RequestMapping(
+  @Override
+  public ResponseEntity<Message> update(UUID messageId, MessageCreateRequest messageCreateRequest,
+      List<MultipartFile> attachments) {
+    return null;
+  }
+
+  @PatchMapping(
       path = "update",
       consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
   )
+
   public ResponseEntity<Message> update(
       @RequestParam("messageId") UUID messageId,
       @RequestPart("message") MessageUpdateRequest messageUpdateRequest,
-      @RequestPart(value = "files", required = false) List<MultipartFile> files
+      @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments
   ) {
     List<BinaryContentCreateRequest> binaryAttachments = new ArrayList<>();
 
-    if (files != null) {
-      for (MultipartFile file : files) {
+    if (attachments != null) {
+      for (MultipartFile file : attachments) {
         try {
           binaryAttachments.add(
               new BinaryContentCreateRequest(
@@ -96,7 +107,7 @@ public class MessageController {
   }
 
 
-  @RequestMapping(path = "delete")
+  @DeleteMapping(path = "delete")
   public ResponseEntity<Void> delete(
       @RequestParam("messageId") UUID messageId
   ) {
@@ -104,7 +115,7 @@ public class MessageController {
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 
-  @RequestMapping(
+  @GetMapping(
       path = "findAllByChannelId"
   )
   public ResponseEntity<List<Message>> findAllByChannelId(
