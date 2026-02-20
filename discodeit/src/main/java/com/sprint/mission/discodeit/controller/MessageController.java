@@ -27,102 +27,104 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Controller
 public class MessageController {
-    private final MessageService messageService;
 
-    @RequestMapping(
-            path = "create",
-            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
-    )
-    public ResponseEntity<Message> create(
-            @RequestPart("messageCreateRequest") MessageCreateRequest messageCreateRequest,
-            @RequestPart(value = "files", required = false) List<MultipartFile> files
-    ){
-        List<BinaryContentCreateRequest> binaryAttachments = new ArrayList<>();
+  private final MessageService messageService;
 
-        if (files != null) {
-            for (MultipartFile file : files) {
-                try {
-                    binaryAttachments.add(
-                            new BinaryContentCreateRequest(
-                                    file.getOriginalFilename(),
-                                    file.getContentType(),
-                                    file.getBytes()
-                            )
-                    );
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                System.out.println(file.getOriginalFilename());
-                System.out.println(file.getSize());
-                System.out.println(file.getContentType());
+  @RequestMapping(
+      path = "create",
+      consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
+  )
+  public ResponseEntity<Message> create(
+      @RequestPart("messageCreateRequest") MessageCreateRequest messageCreateRequest,
+      @RequestPart(value = "files", required = false) List<MultipartFile> files
+  ) {
+    List<BinaryContentCreateRequest> binaryAttachments = new ArrayList<>();
 
-            }
+    if (files != null) {
+      for (MultipartFile file : files) {
+        try {
+          binaryAttachments.add(
+              new BinaryContentCreateRequest(
+                  file.getOriginalFilename(),
+                  file.getContentType(),
+                  file.getBytes()
+              )
+          );
+        } catch (IOException e) {
+          throw new RuntimeException(e);
         }
+        System.out.println(file.getOriginalFilename());
+        System.out.println(file.getSize());
+        System.out.println(file.getContentType());
 
-        Message createdMessage =
-                messageService.create(messageCreateRequest, binaryAttachments);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(createdMessage);
-
-
+      }
     }
 
+    Message createdMessage =
+        messageService.create(messageCreateRequest, binaryAttachments);
 
-    @RequestMapping(
-            path = "update",
-            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
-    )
-    public ResponseEntity<Message> update(
-            @RequestParam("messageId") UUID messageId,
-            @RequestPart("message") MessageUpdateRequest messageUpdateRequest,
-            @RequestPart(value = "files", required = false) List<MultipartFile> files
-    ){
-        List<BinaryContentCreateRequest> binaryAttachments = new ArrayList<>();
+    return ResponseEntity
+        .status(HttpStatus.CREATED)
+        .body(createdMessage);
 
-        if (files != null) {
-            for (MultipartFile file : files) {
-                try {
-                    binaryAttachments.add(
-                            new BinaryContentCreateRequest(
-                                    file.getOriginalFilename(),
-                                    file.getContentType(),
-                                    file.getBytes()
-                            )
-                    );
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+
+  }
+
+
+  @RequestMapping(
+      path = "update",
+      consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
+  )
+  public ResponseEntity<Message> update(
+      @RequestParam("messageId") UUID messageId,
+      @RequestPart("message") MessageUpdateRequest messageUpdateRequest,
+      @RequestPart(value = "files", required = false) List<MultipartFile> files
+  ) {
+    List<BinaryContentCreateRequest> binaryAttachments = new ArrayList<>();
+
+    if (files != null) {
+      for (MultipartFile file : files) {
+        try {
+          binaryAttachments.add(
+              new BinaryContentCreateRequest(
+                  file.getOriginalFilename(),
+                  file.getContentType(),
+                  file.getBytes()
+              )
+          );
+        } catch (IOException e) {
+          throw new RuntimeException(e);
         }
-
-        Message updatedMessage = messageService.update(messageId, messageUpdateRequest, binaryAttachments);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(updatedMessage);
+      }
     }
 
+    Message updatedMessage = messageService.update(messageId, messageUpdateRequest,
+        binaryAttachments);
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(updatedMessage);
+  }
 
-    @RequestMapping(path = "delete")
-    public ResponseEntity<Message> delete(
-            @RequestParam("messageId") UUID messageId
-    ){
-        messageService.delete(messageId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
 
-    @RequestMapping(
-            path = "findAllByChannelId"
-    )
-    public ResponseEntity<List<Message>> findAllByChannelId(
-            @RequestParam("channelId") UUID channelId
-    ){
-        List<Message> messages = messageService.findAllByChannelId(channelId);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(messages);
-    }
+  @RequestMapping(path = "delete")
+  public ResponseEntity<Void> delete(
+      @RequestParam("messageId") UUID messageId
+  ) {
+    messageService.delete(messageId);
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+  }
+
+  @RequestMapping(
+      path = "findAllByChannelId"
+  )
+  public ResponseEntity<List<Message>> findAllByChannelId(
+      @RequestParam("channelId") UUID channelId
+  ) {
+    List<Message> messages = messageService.findAllByChannelId(channelId);
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(messages);
+  }
 
 
 }
