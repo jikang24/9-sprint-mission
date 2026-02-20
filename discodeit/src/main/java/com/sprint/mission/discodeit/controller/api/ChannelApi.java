@@ -1,18 +1,26 @@
 package com.sprint.mission.discodeit.controller.api;
 
+import com.sprint.mission.discodeit.dto.data.ChannelDto;
+import com.sprint.mission.discodeit.dto.request.PrivateChannelCreateRequest;
 import com.sprint.mission.discodeit.dto.request.PublicChannelCreateRequest;
+import com.sprint.mission.discodeit.dto.request.PublicChannelUpdateRequest;
 import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+import java.util.UUID;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "publicChannel", description = "publicChannel API")
@@ -25,15 +33,81 @@ public interface ChannelApi {
           content = @Content(schema = @Schema(implementation = Channel.class))
       ),
       @ApiResponse(
-          responseCode = "400", description = "같은 Channelname을 사용하는 Channel이 이미 존재함",
+          responseCode = "400", description = "같은 name을 사용하는 Channel이 이미 존재함",
           content = @Content(examples = @ExampleObject(value = "Channel with name {name} already exists"))
-      ),
+      )
   })
   ResponseEntity<Channel> create(
-      @Parameter(
-          description = "",
-          content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+      @Parameter(description = "publicChannel 생성 정보"
       ) PublicChannelCreateRequest request
   );
 
+  @Operation(summary = "privateChannel 등록")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "201", description = "privateChannel이 성공적으로 생성됨",
+          content = @Content(schema = @Schema(implementation = Channel.class))
+      ),
+      @ApiResponse(
+          responseCode = "400", description = "같은 name을 사용하는 Channel이 이미 존재함",
+          content = @Content(examples = @ExampleObject(value = "Channel with name {name} already exists"))
+      ),
+      @ApiResponse(
+          responseCode = "403", description = "해당 User의 접근권한이 확인되지 않습니다",
+          content = @Content(examples = @ExampleObject(value = "User {userId} does not have permission to create privateChannel"))
+      )
+  })
+  ResponseEntity<Channel> privateChannelCreate(
+      @Parameter(description = "privateChannel 생성 정보")
+      PrivateChannelCreateRequest request
+  );
+
+  @Operation(summary = "Channel 정보 수정")
+  @ApiResponses(value = {
+      @ApiResponse(
+
+      )
+  })
+  ResponseEntity<Channel> publicChannelUpdate(
+      @Parameter(description = "수정할 Channel ID") UUID channelId,
+      @Parameter(description = "수정할 Channel 정보") PublicChannelUpdateRequest request
+  );
+
+  @Operation(summary = "Channel 삭제")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "204",
+          description = "Channel이 성공적으로 삭제됨"
+      ),
+      @ApiResponse(
+          responseCode = "404",
+          description = "Channel을 찾을 수 없음",
+          content = @Content(examples = @ExampleObject("Channel with id {channelId} not found"))
+      )
+  })
+  ResponseEntity<Void> delete(
+      @Parameter(description = "삭제할 Channel ID") UUID channelId
+  );
+
+  @Operation(summary = "전체 Channel 목록 조회")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "200", description = "Channel 목록 조회 성공",
+          content = @Content(array = @ArraySchema(schema = @Schema(implementation = Channel.class)))
+      )
+  })
+  ResponseEntity<ChannelDto> find(
+      @RequestParam("channelId") UUID channelId
+  );
+
+  @Operation(summary = "전체 Channel 목록 조회")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "200", description = "Channel 목록 조회 성공",
+          content = @Content(array = @ArraySchema(schema = @Schema(implementation = Channel.class)))
+      )
+  })
+  ResponseEntity<List<ChannelDto>> findAllByUserId(
+      @RequestParam("userId") UUID userId
+  );
 }
