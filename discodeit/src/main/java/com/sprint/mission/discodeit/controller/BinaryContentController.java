@@ -20,35 +20,29 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Controller
 public class BinaryContentController {
-    private final BinaryContentService binaryContentService;
 
-    @RequestMapping(
-            path = "find",
-            method = {RequestMethod.GET}
-    )
-    public ResponseEntity<BinaryContent> findByIdIn(
-            @RequestParam("binaryContentId") UUID binaryContentId
-    ){
-        BinaryContent binaryContent
-                = binaryContentService.find(binaryContentId);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(binaryContent);
+  private final BinaryContentService binaryContentService;
 
+  @RequestMapping(path = "find")
+  public ResponseEntity<BinaryContent> findByIdIn(
+      @RequestParam("binaryContentId") UUID binaryContentId
+  ) {
+    BinaryContent binaryContent
+        = binaryContentService.find(binaryContentId);
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(binaryContent);
 
-    }
+  }
 
-    @RequestMapping(
-            path = "findAll",
-            method = {RequestMethod.GET}
-    )
-    public ResponseEntity<List<BinaryContent>> findAllByIdIn(
-            @RequestParam("binaryContentIds") List<UUID> binaryContentIds
-    ){
-        List<BinaryContent> binaryContents
-                = binaryContentService.findAllByIdIn(binaryContentIds);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(binaryContents);
-    }
+  @RequestMapping(path = "findAll")
+  public ResponseEntity<List<BinaryContent>> findAllByIdIn(
+      @RequestParam("binaryContentIds") List<UUID> binaryContentIds
+  ) {
+    List<BinaryContent> binaryContents
+        = binaryContentService.findAllByIdIn(binaryContentIds);
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(binaryContents);
+  }
 }
