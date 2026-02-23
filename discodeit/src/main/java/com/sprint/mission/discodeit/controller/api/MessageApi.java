@@ -63,7 +63,7 @@ public interface MessageApi {
       ),
       @ApiResponse(
           responseCode = "404",
-          description = "Message를 찾을 수  없음"
+          description = "Message를 찾을 수 없음"
       )
   })
   ResponseEntity<Void> delete(

@@ -23,15 +23,14 @@ public interface ReadStatusApi {
   @Operation(summary = "ReadStatus 등록")
   @ApiResponses(value = {
       @ApiResponse(
-          responseCode = "201", description = "readStatus가 성공적으로 생성됨"
-
+          responseCode = "201", description = "readStatus가 성공적으로 생성됨",
+          content = @Content(schema = @Schema(implementation = ReadStatus.class))
       )
   })
   ResponseEntity<ReadStatus> create(
       @Parameter(
           description = "ReadStatus 생성 정보",
           content = @Content(schema = @Schema(implementation = ReadStatusCreateRequest.class))
-
       ) ReadStatusCreateRequest readStatusCreateRequest
   );
 
@@ -47,7 +46,19 @@ public interface ReadStatusApi {
       )
   })
   ResponseEntity<ReadStatus> update(
+      @Parameter(name = "readStatusId") UUID readStatusId,
       @Parameter(description = "수정할 ReadStatus 정보") ReadStatusUpdateRequest readStatusUpdateRequest
+  );
+
+  @Operation(summary = "ReadStatus 단건 조회")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "200", description = "ReadStatus 개별 조회",
+          content = @Content(schema = @Schema(implementation = ReadStatus.class))
+      )
+  })
+  ResponseEntity<ReadStatus> findById(
+      @RequestParam(name = "userId") UUID userId
   );
 
   @Operation(summary = "ReadStatus 전체 조회")
@@ -57,9 +68,8 @@ public interface ReadStatusApi {
           content = @Content(array = @ArraySchema(schema = @Schema(implementation = ReadStatus.class)))
       )
   })
-  ResponseEntity<List<ReadStatus>> findAll(
-//      @RequestHeader(name = "Authorization", required = true) String token
-      @RequestParam(name = "userId", required = true) UUID userId
+  ResponseEntity<List<ReadStatus>> findAllByUserId(
+      @RequestParam(name = "userId") UUID userId
   );
 
 }
