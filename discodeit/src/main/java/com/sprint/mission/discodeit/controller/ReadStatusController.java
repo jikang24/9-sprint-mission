@@ -41,10 +41,7 @@ public class ReadStatusController implements ReadStatusApi {
   }
 
 
-  @PatchMapping(
-      path = "update",
-      consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
-  )
+  @PatchMapping(path = "update")
   @Override
   public ResponseEntity<ReadStatus> update(
       @RequestParam("readStatusId") UUID readStatusId,
