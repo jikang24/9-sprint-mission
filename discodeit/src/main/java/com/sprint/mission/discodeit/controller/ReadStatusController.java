@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/api/v2/readStatus")
+@RequestMapping("/api/readStatus")
 @RequiredArgsConstructor
 @RestController
 public class ReadStatusController implements ReadStatusApi {

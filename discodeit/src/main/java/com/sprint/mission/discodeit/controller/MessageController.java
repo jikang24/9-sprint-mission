@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@RequestMapping("/api/v2/message")
+@RequestMapping("/api/message")
 @RequiredArgsConstructor
 @RestController
 public class MessageController implements MessageApi {

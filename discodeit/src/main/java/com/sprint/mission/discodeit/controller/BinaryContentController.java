@@ -15,7 +15,7 @@ import java.util.UUID;
 import org.springframework.web.bind.annotation.RestController;
 
 
-@RequestMapping("/api/v2/binaryContent")
+@RequestMapping("/api/binaryContent")
 @RequiredArgsConstructor
 @RestController
 public class BinaryContentController implements BinaryContentApi {

@@ -26,7 +26,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v2/users")
+@RequestMapping("/api/users")
 public class UserController implements UserApi {
 
   private final UserService userService;
