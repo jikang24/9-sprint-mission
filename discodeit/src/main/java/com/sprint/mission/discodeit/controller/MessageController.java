@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -65,42 +66,13 @@ public class MessageController implements MessageApi {
   }
 
 
+  @PatchMapping(path = "update")
   @Override
-  public ResponseEntity<Message> update(UUID messageId, MessageCreateRequest messageCreateRequest,
-      List<MultipartFile> attachments) {
-    return null;
-  }
-
-  @PatchMapping(
-      path = "update",
-      consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
-  )
-
   public ResponseEntity<Message> update(
       @RequestParam("messageId") UUID messageId,
-      @RequestPart("message") MessageUpdateRequest messageUpdateRequest,
-      @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments
+      @RequestBody MessageUpdateRequest messageUpdateRequest
   ) {
-    List<BinaryContentCreateRequest> binaryAttachments = new ArrayList<>();
-
-    if (attachments != null) {
-      for (MultipartFile file : attachments) {
-        try {
-          binaryAttachments.add(
-              new BinaryContentCreateRequest(
-                  file.getOriginalFilename(),
-                  file.getContentType(),
-                  file.getBytes()
-              )
-          );
-        } catch (IOException e) {
-          throw new RuntimeException(e);
-        }
-      }
-    }
-
-    Message updatedMessage = messageService.update(messageId, messageUpdateRequest,
-        binaryAttachments);
+    Message updatedMessage = messageService.update(messageId, messageUpdateRequest);
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(updatedMessage);
@@ -108,6 +80,7 @@ public class MessageController implements MessageApi {
 
 
   @DeleteMapping(path = "delete")
+  @Override
   public ResponseEntity<Void> delete(
       @RequestParam("messageId") UUID messageId
   ) {
@@ -118,6 +91,7 @@ public class MessageController implements MessageApi {
   @GetMapping(
       path = "findAllByChannelId"
   )
+  @Override
   public ResponseEntity<List<Message>> findAllByChannelId(
       @RequestParam("channelId") UUID channelId
   ) {
