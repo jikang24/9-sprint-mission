@@ -52,7 +52,8 @@ public interface MessageApi {
   })
   ResponseEntity<Message> update(
       @Parameter(description = "수정할 Message Id") UUID messageId,
-      @Parameter(description = "수정할 Message 정보") MessageUpdateRequest messageUpdateRequest
+      @Parameter(description = "수정할 Message 정보") MessageUpdateRequest messageUpdateRequest,
+      @Parameter(required = false) List<MultipartFile> attachments
   );
 
 

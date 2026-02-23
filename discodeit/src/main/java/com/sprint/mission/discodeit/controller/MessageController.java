@@ -66,11 +66,15 @@ public class MessageController implements MessageApi {
   }
 
 
-  @PatchMapping(path = "update")
+  @PatchMapping(
+      path = "update",
+      consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
+  )
   @Override
   public ResponseEntity<Message> update(
       @RequestParam("messageId") UUID messageId,
-      @RequestBody MessageUpdateRequest messageUpdateRequest
+      @RequestPart("message") MessageUpdateRequest messageUpdateRequest,
+      @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments
   ) {
     Message updatedMessage = messageService.update(messageId, messageUpdateRequest);
     return ResponseEntity
