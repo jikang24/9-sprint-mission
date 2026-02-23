@@ -29,7 +29,7 @@ public interface BinaryContentApi {
       @Parameter(
           description = "BinaryContent 단건 정보",
           content = @Content(schema = @Schema(implementation = BinaryContentCreateRequest.class))
-      ) BinaryContentCreateRequest request
+      ) UUID binaryContentId
   );
 
   @Operation(summary = "BinaryContent 전체 조회")
@@ -40,6 +40,6 @@ public interface BinaryContentApi {
       )
   })
   ResponseEntity<List<BinaryContent>> findAllByIdIn(
-      @RequestParam("binaryContentId") UUID binaryContentId
+      @RequestParam("binaryContentId") List<UUID> binaryContentId
   );
 }
