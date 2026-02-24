@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,17 +29,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@RequestMapping("/api/message")
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/api/messages")
 public class MessageController implements MessageApi {
 
   private final MessageService messageService;
 
-  @PostMapping(
-      path = "create",
-      consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
-  )
+  @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   @Override
   public ResponseEntity<Message> create(
       @RequestPart("messageCreateRequest") MessageCreateRequest messageCreateRequest,
@@ -67,12 +65,12 @@ public class MessageController implements MessageApi {
 
 
   @PatchMapping(
-      path = "update",
+      path = "{messageId}",
       consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
   )
   @Override
   public ResponseEntity<Message> update(
-      @RequestParam("messageId") UUID messageId,
+      @PathVariable("messageId") UUID messageId,
       @RequestPart("message") MessageUpdateRequest messageUpdateRequest,
       @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments
   ) {
@@ -83,18 +81,16 @@ public class MessageController implements MessageApi {
   }
 
 
-  @DeleteMapping(path = "delete")
+  @DeleteMapping(path = "{messageId}")
   @Override
   public ResponseEntity<Void> delete(
-      @RequestParam("messageId") UUID messageId
+      @PathVariable("messageId") UUID messageId
   ) {
     messageService.delete(messageId);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 
-  @GetMapping(
-      path = "findAllByChannelId"
-  )
+  @GetMapping
   @Override
   public ResponseEntity<List<Message>> findAllByChannelId(
       @RequestParam("channelId") UUID channelId

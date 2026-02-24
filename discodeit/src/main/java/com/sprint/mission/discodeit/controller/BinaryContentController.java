@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
@@ -15,17 +16,17 @@ import java.util.UUID;
 import org.springframework.web.bind.annotation.RestController;
 
 
-@RequestMapping("/api/binaryContent")
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/api/binaryContents")
 public class BinaryContentController implements BinaryContentApi {
 
   private final BinaryContentService binaryContentService;
 
-  @GetMapping(path = "find")
+  @GetMapping(path = "{binaryContentId}")
   @Override
   public ResponseEntity<BinaryContent> findByIdIn(
-      @RequestParam("binaryContentId") UUID binaryContentId
+      @PathVariable("binaryContentId") UUID binaryContentId
   ) {
     BinaryContent binaryContent
         = binaryContentService.find(binaryContentId);
@@ -35,10 +36,10 @@ public class BinaryContentController implements BinaryContentApi {
 
   }
 
-  @GetMapping(path = "findAllByIdIn")
+  @GetMapping(path = "{binaryContentIds}")
   @Override
   public ResponseEntity<List<BinaryContent>> findAllByIdIn(
-      @RequestParam("binaryContentIds") List<UUID> binaryContentIds
+      @PathVariable("binaryContentIds") List<UUID> binaryContentIds
   ) {
     List<BinaryContent> binaryContents
         = binaryContentService.findAllByIdIn(binaryContentIds);

@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,14 +22,14 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/api/readStatus")
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/api/readStatuses")
 public class ReadStatusController implements ReadStatusApi {
 
   private final ReadStatusService readStatusService;
 
-  @PostMapping(path = "create")
+  @PostMapping
   @Override
   public ResponseEntity<ReadStatus> create(
       @RequestBody ReadStatusCreateRequest readStatusCreateRequest
@@ -41,10 +42,10 @@ public class ReadStatusController implements ReadStatusApi {
   }
 
 
-  @PatchMapping(path = "update")
+  @PatchMapping(path = "{readStatusId}")
   @Override
   public ResponseEntity<ReadStatus> update(
-      @RequestParam("readStatusId") UUID readStatusId,
+      @PathVariable("readStatusId") UUID readStatusId,
       @RequestBody ReadStatusUpdateRequest readStatusUpdateRequest
   ) {
     ReadStatus updatedReadStatusFromChannel
@@ -55,10 +56,10 @@ public class ReadStatusController implements ReadStatusApi {
   }
 
 
-  @GetMapping(path = "findById")
+  @GetMapping(path = "{readStatusId}")
   @Override
   public ResponseEntity<ReadStatus> findById(
-      @RequestParam("readStatusId") UUID readStatusId
+      @PathVariable("readStatusId") UUID readStatusId
   ) {
     ReadStatus readStatus = readStatusService.find(readStatusId);
     return ResponseEntity
@@ -66,10 +67,10 @@ public class ReadStatusController implements ReadStatusApi {
         .body(readStatus);
   }
 
-  @GetMapping(path = "findAllByUserId")
+  @GetMapping(path = "{userId}")
   @Override
   public ResponseEntity<List<ReadStatus>> findAllByUserId(
-      @RequestParam("userId") UUID userId
+      @PathVariable("userId") UUID userId
   ) {
     List<ReadStatus> readStatus = readStatusService.findAllByUserId(userId);
     return ResponseEntity
