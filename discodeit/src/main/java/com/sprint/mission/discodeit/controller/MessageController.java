@@ -64,10 +64,7 @@ public class MessageController implements MessageApi {
   }
 
 
-  @PatchMapping(
-      path = "{messageId}",
-      consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
-  )
+  @PatchMapping(path = "{messageId}")
   @Override
   public ResponseEntity<Message> update(
       @PathVariable("messageId") UUID messageId,
@@ -83,9 +80,7 @@ public class MessageController implements MessageApi {
 
   @DeleteMapping(path = "{messageId}")
   @Override
-  public ResponseEntity<Void> delete(
-      @PathVariable("messageId") UUID messageId
-  ) {
+  public ResponseEntity<Void> delete(@PathVariable("messageId") UUID messageId) {
     messageService.delete(messageId);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }

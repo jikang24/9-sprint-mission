@@ -25,13 +25,19 @@ public interface ReadStatusApi {
       @ApiResponse(
           responseCode = "201", description = "readStatus가 성공적으로 생성됨",
           content = @Content(schema = @Schema(implementation = ReadStatus.class))
+      ),
+      @ApiResponse(
+          responseCode = "404", description = "Channel 또는 User를 찾을 수 없음",
+          content = @Content(examples = @ExampleObject(value = "Channel | User with id {channelId | userId} not found"))
+      ),
+      @ApiResponse(
+          responseCode = "400", description = "이미 읽음 상태가 존재함",
+          content = @Content(examples = @ExampleObject(value = "ReadStatus with userId {userId} and channelId {channelId} already exists"))
       )
   })
   ResponseEntity<ReadStatus> create(
-      @Parameter(
-          description = "ReadStatus 생성 정보",
-          content = @Content(schema = @Schema(implementation = ReadStatusCreateRequest.class))
-      ) ReadStatusCreateRequest readStatusCreateRequest
+      @Parameter(description = "ReadStatus 생성 정보")
+      ReadStatusCreateRequest readStatusCreateRequest
   );
 
   @Operation(summary = "ReadStatus 수정")
@@ -69,7 +75,7 @@ public interface ReadStatusApi {
       )
   })
   ResponseEntity<List<ReadStatus>> findAllByUserId(
-      @RequestParam(name = "userId") UUID userId
+      @Parameter(description = "조회할 User ID") UUID userId
   );
 
 }

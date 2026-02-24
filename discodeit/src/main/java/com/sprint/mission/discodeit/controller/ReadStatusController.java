@@ -67,10 +67,10 @@ public class ReadStatusController implements ReadStatusApi {
         .body(readStatus);
   }
 
-  @GetMapping(path = "{userId}")
+  @GetMapping
   @Override
   public ResponseEntity<List<ReadStatus>> findAllByUserId(
-      @PathVariable("userId") UUID userId
+      @RequestParam("userId") UUID userId
   ) {
     List<ReadStatus> readStatus = readStatusService.findAllByUserId(userId);
     return ResponseEntity

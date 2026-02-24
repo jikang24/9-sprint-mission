@@ -42,7 +42,7 @@ public class ChannelController implements ChannelApi {
 
   @PostMapping(path = "private")
   @Override
-  public ResponseEntity<Channel> privateChannelCreate(
+  public ResponseEntity<Channel> create(
       @RequestBody PrivateChannelCreateRequest request) {
     Channel privateChannel = channelService.create(request);
     return ResponseEntity
@@ -52,7 +52,7 @@ public class ChannelController implements ChannelApi {
 
   @PatchMapping(path = "{channelId}")
   @Override
-  public ResponseEntity<Channel> publicChannelUpdate(
+  public ResponseEntity<Channel> update(
       @PathVariable("channelId") UUID channelId,
       @RequestBody PublicChannelUpdateRequest request) {
     Channel updatedchannel = channelService.update(channelId, request);
@@ -70,32 +70,26 @@ public class ChannelController implements ChannelApi {
         .build();
   }
 
+//  @GetMapping(path = "{channelId}")
+//  @Override
+//  public ResponseEntity<ChannelDto> find(@PathVariable("channelId") UUID channelId) {
+//    if (channelId == null) {
+//      return ResponseEntity.badRequest().build();
+//    }
+//    ChannelDto channel = channelService.find(channelId);
+//    return ResponseEntity
+//        .status(HttpStatus.OK)
+//        .body(channel);
+//  }
 
-  @GetMapping(path = "{channelId}")
+
+  @GetMapping
   @Override
-  public ResponseEntity<ChannelDto> find(@PathVariable("channelId") UUID channelId) {
-    if (channelId == null) {
-      return ResponseEntity.badRequest().build();
-    }
-    ChannelDto channel = channelService.find(channelId);
+  public ResponseEntity<List<ChannelDto>> findAllByUserId(@RequestParam("userId") UUID userId) {
+    List<ChannelDto> channels = channelService.findAllByUserId(userId);
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(channel);
-  }
-
-
-  @GetMapping(path = "{userId}")
-  @Override
-  public ResponseEntity<List<ChannelDto>> findAllByUserId(
-      @PathVariable("userId") UUID userId
-  ) {
-    if (userId == null) {
-      return ResponseEntity.badRequest().build();
-    }
-    List<ChannelDto> channel = channelService.findAllByUserId(userId);
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(channel);
+        .body(channels);
   }
 
 }

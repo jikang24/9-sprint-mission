@@ -33,10 +33,12 @@ public interface MessageApi {
       @Parameter(
           description = "Message 생성 정보",
           content = @Content(
-              mediaType = MediaType.APPLICATION_JSON_VALUE,
-              schema = @Schema(implementation = MessageCreateRequest.class))
+              mediaType = MediaType.APPLICATION_JSON_VALUE)
       ) MessageCreateRequest messageCreateRequest,
-      @Parameter(required = false) List<MultipartFile> attachments
+      @Parameter(
+          description = "Message 첨부 파일",
+          content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)
+      ) List<MultipartFile> attachments
   );
 
   @Operation(summary = "Message 정보 수정")
@@ -60,12 +62,11 @@ public interface MessageApi {
   @Operation(summary = "Message 삭제")
   @ApiResponses(value = {
       @ApiResponse(
-          responseCode = "204",
-          description = "Message가 성공적으로 삭제됨"
+          responseCode = "204", description = "Message가 성공적으로 삭제됨"
       ),
       @ApiResponse(
-          responseCode = "404",
-          description = "Message를 찾을 수 없음"
+          responseCode = "404", description = "Message를 찾을 수 없음",
+          content = @Content(examples = @ExampleObject(value = "Message with id {messageId} not found"))
       )
   })
   ResponseEntity<Void> delete(
@@ -80,7 +81,7 @@ public interface MessageApi {
       )
   })
   ResponseEntity<List<Message>> findAllByChannelId(
-      @RequestParam("channelId") UUID channelId
+      @Parameter(description = "조회할 ChannelId") UUID channelId
   );
 
 }

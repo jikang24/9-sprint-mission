@@ -24,11 +24,7 @@ public class AuthController implements AuthApi {
 
   private final AuthService authService;
 
-  @PostMapping(
-      path = "login",
-      consumes = MediaType.APPLICATION_JSON_VALUE,
-      produces = MediaType.APPLICATION_JSON_VALUE
-  )
+  @PostMapping(path = "login")
   @Override
   public ResponseEntity<User> login(@RequestBody LoginRequest loginRequest) {
     User user = authService.login(loginRequest);

@@ -5,6 +5,7 @@ import com.sprint.mission.discodeit.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -15,18 +16,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Tag(name = "Auth", description = "Auth API")
 public interface AuthApi {
 
-  @Operation(summary = "Login 등록")
+  @Operation(summary = "Login")
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "200", description = "Login 성공",
           content = @Content(schema = @Schema(implementation = User.class))
       ),
       @ApiResponse(
-          responseCode = "401", description = "Login 실패"
+          responseCode = "401", description = "User를 찾을 수 없음",
+          content = @Content(examples = @ExampleObject(value = "User with username {username} not found"))
+      ),
+      @ApiResponse(
+          responseCode = "400", description = "password가 일치하지 않음",
+          content = @Content(examples = @ExampleObject(value = "Incorrect password"))
       )
   })
   ResponseEntity<User> login(
-      @RequestBody LoginRequest loginRequest
+      @Parameter(description = "Login 정보") LoginRequest loginRequest
   );
 
 }
