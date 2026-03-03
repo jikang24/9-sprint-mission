@@ -68,8 +68,7 @@ public class MessageController implements MessageApi {
   @Override
   public ResponseEntity<Message> update(
       @PathVariable("messageId") UUID messageId,
-      @RequestPart("message") MessageUpdateRequest messageUpdateRequest,
-      @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments
+      @RequestBody MessageUpdateRequest messageUpdateRequest
   ) {
     Message updatedMessage = messageService.update(messageId, messageUpdateRequest);
     return ResponseEntity

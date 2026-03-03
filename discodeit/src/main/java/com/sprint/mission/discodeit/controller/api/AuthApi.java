@@ -23,7 +23,7 @@ public interface AuthApi {
           content = @Content(schema = @Schema(implementation = User.class))
       ),
       @ApiResponse(
-          responseCode = "401", description = "User를 찾을 수 없음",
+          responseCode = "404", description = "User를 찾을 수 없음",
           content = @Content(examples = @ExampleObject(value = "User with username {username} not found"))
       ),
       @ApiResponse(

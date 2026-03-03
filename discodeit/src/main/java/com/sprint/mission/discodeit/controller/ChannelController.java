@@ -70,22 +70,10 @@ public class ChannelController implements ChannelApi {
         .build();
   }
 
-//  @GetMapping(path = "{channelId}")
-//  @Override
-//  public ResponseEntity<ChannelDto> find(@PathVariable("channelId") UUID channelId) {
-//    if (channelId == null) {
-//      return ResponseEntity.badRequest().build();
-//    }
-//    ChannelDto channel = channelService.find(channelId);
-//    return ResponseEntity
-//        .status(HttpStatus.OK)
-//        .body(channel);
-//  }
-
 
   @GetMapping
   @Override
-  public ResponseEntity<List<ChannelDto>> findAllByUserId(@RequestParam("userId") UUID userId) {
+  public ResponseEntity<List<ChannelDto>> findAll(@RequestParam("userId") UUID userId) {
     List<ChannelDto> channels = channelService.findAllByUserId(userId);
     return ResponseEntity
         .status(HttpStatus.OK)

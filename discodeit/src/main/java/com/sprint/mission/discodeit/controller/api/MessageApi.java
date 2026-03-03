@@ -27,6 +27,10 @@ public interface MessageApi {
       @ApiResponse(
           responseCode = "201", description = "Message가 성공적으로 생성됨",
           content = @Content(schema = @Schema(implementation = Message.class))
+      ),
+      @ApiResponse(
+          responseCode = "404", description = "Channel 또는 User를 찾을 수 없음",
+          content = @Content(examples = @ExampleObject(value = "Channel | Author with id {channelId | authorId} not found"))
       )
   })
   ResponseEntity<Message> create(
@@ -41,7 +45,7 @@ public interface MessageApi {
       ) List<MultipartFile> attachments
   );
 
-  @Operation(summary = "Message 정보 수정")
+  @Operation(summary = "Message 내용 수정")
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "200", description = "Message가 성공적으로 수정됨",
@@ -54,8 +58,7 @@ public interface MessageApi {
   })
   ResponseEntity<Message> update(
       @Parameter(description = "수정할 Message Id") UUID messageId,
-      @Parameter(description = "수정할 Message 정보") MessageUpdateRequest messageUpdateRequest,
-      @Parameter(required = false) List<MultipartFile> attachments
+      @Parameter(description = "수정할 Message 정보") MessageUpdateRequest messageUpdateRequest
   );
 
 
@@ -73,7 +76,7 @@ public interface MessageApi {
       @Parameter(description = "삭제할 Message ID") UUID messageId
   );
 
-  @Operation(summary = "Message 전체 조회")
+  @Operation(summary = "Channel의 Message 전체 조회")
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "200", description = "Message 목록 조회 성공",

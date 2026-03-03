@@ -94,17 +94,6 @@ public interface ChannelApi {
       @Parameter(description = "삭제할 Channel ID") UUID channelId
   );
 
-//  @Operation(summary = "단일 Channel 조회")
-//  @ApiResponses(value = {
-//      @ApiResponse(
-//          responseCode = "200", description = "Channel 조회 성공",
-//          content = @Content(schema = @Schema(implementation = Channel.class))
-//      )
-//  })
-//  ResponseEntity<ChannelDto> find(
-//      @RequestParam("channelId") UUID channelId
-//  );
-
   @Operation(summary = "User가 참여 중인 전체 Channel 목록 조회")
   @ApiResponses(value = {
       @ApiResponse(
@@ -112,7 +101,7 @@ public interface ChannelApi {
           content = @Content(array = @ArraySchema(schema = @Schema(implementation = Channel.class)))
       )
   })
-  ResponseEntity<List<ChannelDto>> findAllByUserId(
+  ResponseEntity<List<ChannelDto>> findAll(
       @Parameter(description = "조회할 userId") UUID userId
   );
 }

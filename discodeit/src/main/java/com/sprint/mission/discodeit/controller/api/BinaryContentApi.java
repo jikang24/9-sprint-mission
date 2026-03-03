@@ -30,15 +30,15 @@ public interface BinaryContentApi {
           content = @Content(examples = @ExampleObject(value = "BinaryContent with id {binaryContentId} not found"))
       )
   })
-  ResponseEntity<BinaryContent> findByIdIn(
-      @Parameter(description = "BinaryContent 단건 정보") UUID binaryContentId
+  ResponseEntity<BinaryContent> find(
+      @Parameter(description = "BinaryContent 조회할 첨부 파일 ID") UUID binaryContentId
   );
 
-  @Operation(summary = "BinaryContent 전체 조회")
+  @Operation(summary = "BinaryContent 여러 첨부 파일 조회")
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "200", description = "BinaryContent 전체 조회",
-          content = @Content(array = @ArraySchema(schema = @Schema(implementation = BinaryContentApi.class)))
+          content = @Content(array = @ArraySchema(schema = @Schema(implementation = BinaryContent.class)))
       )
   })
   ResponseEntity<List<BinaryContent>> findAllByIdIn(
