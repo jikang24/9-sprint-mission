@@ -6,8 +6,6 @@ import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.dto.request.UserCreateRequest;
 import com.sprint.mission.discodeit.dto.request.UserStatusUpdateRequest;
 import com.sprint.mission.discodeit.dto.request.UserUpdateRequest;
-import com.sprint.mission.discodeit.entity.BinaryContent;
-import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.entity.UserStatus;
 import com.sprint.mission.discodeit.service.UserService;
 import com.sprint.mission.discodeit.service.UserStatusService;
@@ -15,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,13 +31,19 @@ public class UserController implements UserApi {
 
   @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   @Override
-  public ResponseEntity<User> create(
+  public ResponseEntity<UserDto> create(
       @RequestPart("userCreateRequest") UserCreateRequest userCreateRequest,
       @RequestPart(value = "profile", required = false) MultipartFile profile
   ) {
     Optional<BinaryContentCreateRequest> profileRequest = Optional.ofNullable(profile)
         .flatMap(this::resolveProfileRequest);
-    User createdUser = userService.create(userCreateRequest, profileRequest);
+
+//    User createdUser = userService.create(userCreateRequest, profileRequest);
+//
+//    // 방금 만든 유저를 DTO로 다시 조회해서 내려줌 (profile 포함)
+//    UserDto createdUserDto = userService.find(createdUser.getId());
+
+    UserDto createdUser = userService.create(userCreateRequest, profileRequest);
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .body(createdUser);
@@ -51,14 +54,20 @@ public class UserController implements UserApi {
       consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
   )
   @Override
-  public ResponseEntity<User> update(
+  public ResponseEntity<UserDto> update(
       @PathVariable("userId") UUID userId,
       @RequestPart("userUpdateRequest") UserUpdateRequest userUpdateRequest,
       @RequestPart(value = "profile", required = false) MultipartFile profile
   ) {
     Optional<BinaryContentCreateRequest> profileRequest = Optional.ofNullable(profile)
         .flatMap(this::resolveProfileRequest);
-    User updatedUser = userService.update(userId, userUpdateRequest, profileRequest);
+
+//    userService.update(userId, userUpdateRequest, profileRequest);
+//
+//    // 업데이트 후 DTO로 다시 조회해서 내려줌 (profile 포함)
+//    UserDto updatedUserDto = userService.find(userId);
+
+    UserDto updatedUser = userService.update(userId, userUpdateRequest, profileRequest);
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(updatedUser);
@@ -82,6 +91,7 @@ public class UserController implements UserApi {
         .body(users);
   }
 
+  //TODO ResponseEntity<UserStatus> => UserStatusDto
   @PatchMapping(path = "{userId}/userStatus")
   @Override
   public ResponseEntity<UserStatus> updateUserStatusByUserId(@PathVariable("userId") UUID userId,
