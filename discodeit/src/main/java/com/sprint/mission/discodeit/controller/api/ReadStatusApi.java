@@ -56,17 +56,6 @@ public interface ReadStatusApi {
       @Parameter(description = "수정할 ReadStatus 정보") ReadStatusUpdateRequest readStatusUpdateRequest
   );
 
-  @Operation(summary = "ReadStatus 단건 조회")
-  @ApiResponses(value = {
-      @ApiResponse(
-          responseCode = "200", description = "ReadStatus 개별 조회",
-          content = @Content(schema = @Schema(implementation = ReadStatus.class))
-      )
-  })
-  ResponseEntity<ReadStatus> findById(
-      @RequestParam(name = "userId") UUID userId
-  );
-
   @Operation(summary = "ReadStatus 전체 조회")
   @ApiResponses(value = {
       @ApiResponse(
