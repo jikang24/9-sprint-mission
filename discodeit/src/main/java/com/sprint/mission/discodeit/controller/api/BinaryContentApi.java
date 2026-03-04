@@ -23,7 +23,7 @@ public interface BinaryContentApi {
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "200", description = "BinaryContent 단건 조회 완료",
-          content = @Content(schema = @Schema(implementation = BinaryContentApi.class))
+          content = @Content(schema = @Schema(implementation = BinaryContent.class))
       ),
       @ApiResponse(
           responseCode = "404", description = "BinaryContent를 찾을 수 없음",
