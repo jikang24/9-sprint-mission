@@ -19,7 +19,7 @@ import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@Tag(name = "publicChannel", description = "publicChannel API")
+@Tag(name = "Channel", description = "Channel API")
 public interface ChannelApi {
 
   @Operation(summary = "publicChannel 등록")
