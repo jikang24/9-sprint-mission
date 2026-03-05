@@ -57,6 +57,7 @@ public class MessageController implements MessageApi {
             })
             .toList())
         .orElse(new ArrayList<>());
+
     Message createdMessage = messageService.create(messageCreateRequest, attachmentRequests);
     return ResponseEntity
         .status(HttpStatus.CREATED)

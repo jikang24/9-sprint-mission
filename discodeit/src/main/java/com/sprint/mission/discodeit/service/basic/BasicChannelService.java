@@ -8,6 +8,7 @@ import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.entity.ChannelType;
 import com.sprint.mission.discodeit.entity.Message;
 import com.sprint.mission.discodeit.entity.ReadStatus;
+import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.repository.ChannelRepository;
 import com.sprint.mission.discodeit.repository.MessageRepository;
 import com.sprint.mission.discodeit.repository.ReadStatusRepository;
@@ -37,12 +38,12 @@ public class BasicChannelService implements ChannelService {
   }
 
   @Override
-  public Channel create(PrivateChannelCreateRequest request) {
+  public Channel create(PrivateChannelCreateRequest request, User user) {
     Channel channel = new Channel(ChannelType.PRIVATE, null, null);
     Channel createdChannel = channelRepository.save(channel);
 
     request.participantIds().stream()
-        .map(userId -> new ReadStatus(userId, createdChannel.getId(), channel.getCreatedAt()))
+        .map(userId -> new ReadStatus(user, createdChannel, channel.getCreatedAt()))
         .forEach(readStatusRepository::save);
 
     return createdChannel;
@@ -59,7 +60,7 @@ public class BasicChannelService implements ChannelService {
   @Override
   public List<ChannelDto> findAllByUserId(UUID userId) {
     List<UUID> mySubscribedChannelIds = readStatusRepository.findAllByUserId(userId).stream()
-        .map(ReadStatus::getChannelId)
+        .map(ReadStatus -> ReadStatus.getChannel().getId())
         .toList();
 
     return channelRepository.findAll().stream()
@@ -110,7 +111,7 @@ public class BasicChannelService implements ChannelService {
     if (channel.getType().equals(ChannelType.PRIVATE)) {
       readStatusRepository.findAllByChannelId(channel.getId())
           .stream()
-          .map(ReadStatus::getUserId)
+          .map(ReadStatus -> ReadStatus.getUser().getId())
           .forEach(participantIds::add);
     }
 
