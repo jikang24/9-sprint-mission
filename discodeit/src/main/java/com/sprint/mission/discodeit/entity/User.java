@@ -20,7 +20,6 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)  // JPA를 위한 기본 생성자
 public class User extends BaseUpdatableEntity {
 
-
   @Column(length = 50, nullable = false, unique = true)
   private String username;
 
