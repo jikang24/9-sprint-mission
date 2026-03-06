@@ -2,10 +2,10 @@ package com.sprint.mission.discodeit.controller;
 
 
 import com.sprint.mission.discodeit.controller.api.MessageApi;
+import com.sprint.mission.discodeit.dto.data.MessageDto;
 import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageUpdateRequest;
-import com.sprint.mission.discodeit.entity.Message;
 import com.sprint.mission.discodeit.service.MessageService;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ public class MessageController implements MessageApi {
 
   @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   @Override
-  public ResponseEntity<Message> create(
+  public ResponseEntity<MessageDto> create(
       @RequestPart("messageCreateRequest") MessageCreateRequest messageCreateRequest,
       @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments
   ) {
@@ -58,7 +58,13 @@ public class MessageController implements MessageApi {
             .toList())
         .orElse(new ArrayList<>());
 
-    Message createdMessage = messageService.create(messageCreateRequest, attachmentRequests);
+    MessageDto createdMessage = messageService.create(
+        messageCreateRequest,
+        attachmentRequests.isEmpty()
+            ? Optional.empty()
+            : Optional.of(attachmentRequests)
+    );
+
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .body(createdMessage);
@@ -67,11 +73,11 @@ public class MessageController implements MessageApi {
 
   @PatchMapping(path = "{messageId}")
   @Override
-  public ResponseEntity<Message> update(
+  public ResponseEntity<MessageDto> update(
       @PathVariable("messageId") UUID messageId,
       @RequestBody MessageUpdateRequest messageUpdateRequest
   ) {
-    Message updatedMessage = messageService.update(messageId, messageUpdateRequest);
+    MessageDto updatedMessage = messageService.update(messageId, messageUpdateRequest);
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(updatedMessage);
@@ -87,10 +93,10 @@ public class MessageController implements MessageApi {
 
   @GetMapping
   @Override
-  public ResponseEntity<List<Message>> findAllByChannelId(
+  public ResponseEntity<List<MessageDto>> findAllByChannelId(
       @RequestParam("channelId") UUID channelId
   ) {
-    List<Message> messages = messageService.findAllByChannelId(channelId);
+    List<MessageDto> messages = messageService.findAllByChannelId(channelId);
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(messages);
