@@ -5,14 +5,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
-
-import java.io.Serializable;
-import java.time.Instant;
-import java.util.UUID;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -22,13 +17,13 @@ import lombok.NoArgsConstructor;
 public class Channel extends BaseUpdatableEntity {
 
   @Enumerated(EnumType.STRING)
-  @Column(columnDefinition = "type", nullable = false, length = 10)
+  @Column(nullable = false, length = 10)
   private ChannelType type;
 
-  @Column(length = 100, nullable = false, unique = true)
+  @Column(length = 100, unique = true)
   private String name;
 
-  @Column(length = 500, nullable = false)
+  @Column(length = 500)
   private String description;
 
   public Channel(ChannelType type, String name, String description) {
