@@ -124,26 +124,10 @@ public class BasicUserService implements UserService {
   @Transactional
   @Override
   public void delete(UUID userId) {
-    if (userRepository.existsById(userId)) {
+    if (!userRepository.existsById(userId)) {
       throw new NoSuchElementException("User with id " + userId + " not found");
     }
-
     userRepository.deleteById(userId);
   }
 
-//  private UserDto toDto(User user) {
-//    Boolean online = userStatusRepository.findByUserId(user.getId())
-//        .map(UserStatus::isOnline)
-//        .orElse(null);
-//
-//    return new UserDto(
-//        user.getId(),
-//        user.getCreatedAt(),
-//        user.getUpdatedAt(),
-//        user.getUsername(),
-//        user.getEmail(),
-//        user.getProfileId(),
-//        online
-//    );
-//  }
 }
