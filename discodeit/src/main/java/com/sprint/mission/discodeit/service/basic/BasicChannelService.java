@@ -65,9 +65,11 @@ public class BasicChannelService implements ChannelService {
       throw new NoSuchElementException("Users not found: " + missingIds);
     }
 
+    Instant now = Instant.now();
+
     participants.forEach(participant ->
         readStatusRepository.save(
-            new ReadStatus(participant, createdChannel, Instant.MIN)
+            new ReadStatus(participant, createdChannel, now)
         )
     );
 
