@@ -6,28 +6,26 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
-
-import java.io.Serializable;
 import java.time.Instant;
-import java.util.UUID;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "read_statuses")
+@Table(name = "read_statuses", uniqueConstraints = @UniqueConstraint(
+    name = "uk_read_status_user-channel", columnNames = {"user_id", "channel_id"}))
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReadStatus extends BaseUpdatableEntity {
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "user_id", nullable = false, unique = true)
+  @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "channel_id", nullable = false, unique = true)
+  @JoinColumn(name = "channel_id", nullable = false)
   private Channel channel;
 
   @Column(name = "last_read_at", columnDefinition = "timestamp with time zone", nullable = false)
