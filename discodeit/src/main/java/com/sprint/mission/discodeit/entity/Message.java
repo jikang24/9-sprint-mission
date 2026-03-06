@@ -1,24 +1,17 @@
 package com.sprint.mission.discodeit.entity;
 
 import com.sprint.mission.discodeit.entity.base.BaseUpdatableEntity;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import lombok.AccessLevel;
 import lombok.Getter;
-
-import java.io.Serializable;
-import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -31,14 +24,14 @@ public class Message extends BaseUpdatableEntity {
   private String content;
 
   @ManyToOne(optional = false)
-  @JoinColumn(name = "channel_id", columnDefinition = "uuid", nullable = false)
+  @JoinColumn(name = "channel_id", nullable = false)
   private Channel channel;
 
   @ManyToOne(optional = false)
-  @JoinColumn(name = "author_id", columnDefinition = "uuid", nullable = false)
+  @JoinColumn(name = "author_id", nullable = false)
   private User author;
 
-  @ManyToMany(mappedBy = "messages")
+  @ManyToMany
   @JoinTable(
       name = "message_attachments",
       joinColumns = @JoinColumn(name = "message_id"),
