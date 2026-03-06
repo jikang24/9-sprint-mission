@@ -7,7 +7,6 @@ public record UserStatusDto(
     UUID id,
     UUID userId,
     Instant lastActiveAt
-
 ) {
 
 }
