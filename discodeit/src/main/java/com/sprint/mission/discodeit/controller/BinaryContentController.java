@@ -4,7 +4,6 @@ package com.sprint.mission.discodeit.controller;
 import com.sprint.mission.discodeit.controller.api.BinaryContentApi;
 import com.sprint.mission.discodeit.entity.BinaryContent;
 import com.sprint.mission.discodeit.service.BinaryContentService;
-import com.sprint.mission.discodeit.storage.local.LocalBinaryContentStorage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +49,7 @@ public class BinaryContentController implements BinaryContentApi {
   }
 
   @GetMapping(path = "{binaryContentId}/download")
+  @Override
   public ResponseEntity<?> download(
       @PathVariable("binaryContentId") UUID binaryContentId
   ) {
