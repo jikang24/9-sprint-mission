@@ -27,8 +27,8 @@ public class Message extends BaseUpdatableEntity {
   @JoinColumn(name = "channel_id", nullable = false)
   private Channel channel;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(name = "author_id", nullable = false)
+  @ManyToOne
+  @JoinColumn(name = "author_id")
   private User author;
 
   @ManyToMany
