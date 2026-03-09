@@ -64,8 +64,8 @@ public class BasicMessageService implements MessageService {
           String fileName = attachmentRequest.fileName();
           String contentType = attachmentRequest.contentType();
 
-          BinaryContent binaryContent = new BinaryContent(fileName, (long) bytes.length,
-              contentType);
+          BinaryContent binaryContent = new BinaryContent(
+              fileName, (long) bytes.length, contentType);
           BinaryContent saved = binaryContentRepository.save(binaryContent);
           binaryContentStorage.put(saved.getId(), bytes);
 
@@ -73,9 +73,8 @@ public class BasicMessageService implements MessageService {
         })
         .toList();
 
-    String content = messageCreateRequest.content();
     Message message = new Message(
-        content,
+        messageCreateRequest.content(),
         channel,
         author,
         attachments
@@ -95,7 +94,10 @@ public class BasicMessageService implements MessageService {
 
   @Override
   public List<MessageDto> findAllByChannelId(UUID channelId) {
-    return messageRepository.findAllByChannelId(channelId).stream()
+    return messageRepository.findAllByChannelIdOrderByCreatedAtDesc(
+            channelId,
+            PageRequest.of(0, Integer.MAX_VALUE)
+        ).stream()
         .map(messageMapper::toDto)
         .toList();
   }
@@ -103,13 +105,11 @@ public class BasicMessageService implements MessageService {
   @Transactional
   @Override
   public MessageDto update(UUID messageId, MessageUpdateRequest request) {
-    String newContent = request.newContent();
-
     Message message = messageRepository.findById(messageId)
-        .orElseThrow(
-            () -> new NoSuchElementException("Message with id " + messageId + " not found"));
+        .orElseThrow(() ->
+            new NoSuchElementException("Message with id " + messageId + " not found"));
 
-    message.update(newContent);
+    message.update(request.newContent());
 
     Message savedMessage = messageRepository.save(message);
     return messageMapper.toDto(savedMessage);
@@ -119,9 +119,6 @@ public class BasicMessageService implements MessageService {
   @Transactional
   @Override
   public void delete(UUID messageId) {
-//    Message message = messageRepository.findById(messageId)
-//        .orElseThrow(
-//            () -> new NoSuchElementException("Message with id " + messageId + " not found"));
     if (!messageRepository.existsById(messageId)) {
       throw new NoSuchElementException("Message with id " + messageId + " not found");
     }
