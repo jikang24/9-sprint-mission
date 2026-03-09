@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.controller.api;
 
+import com.sprint.mission.discodeit.dto.data.UserDto;
 import com.sprint.mission.discodeit.dto.request.LoginRequest;
 import com.sprint.mission.discodeit.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,7 +12,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "Auth", description = "Auth API")
 public interface AuthApi {
@@ -31,7 +31,7 @@ public interface AuthApi {
           content = @Content(examples = @ExampleObject(value = "Incorrect password"))
       )
   })
-  ResponseEntity<User> login(
+  ResponseEntity<UserDto> login(
       @Parameter(description = "Login 정보") LoginRequest loginRequest
   );
 
