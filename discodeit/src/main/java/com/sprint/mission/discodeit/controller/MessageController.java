@@ -6,6 +6,7 @@ import com.sprint.mission.discodeit.dto.data.MessageDto;
 import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageUpdateRequest;
+import com.sprint.mission.discodeit.dto.response.PageResponse;
 import com.sprint.mission.discodeit.service.MessageService;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -93,13 +94,25 @@ public class MessageController implements MessageApi {
 
   @GetMapping
   @Override
-  public ResponseEntity<List<MessageDto>> findAllByChannelId(
-      @RequestParam("channelId") UUID channelId
+  public ResponseEntity<PageResponse<MessageDto>> findAllByChannelId(
+      @RequestParam("channelId") UUID channelId,
+      @RequestParam(value = "page", defaultValue = "0") int page
   ) {
-    List<MessageDto> messages = messageService.findAllByChannelId(channelId);
+    PageResponse<MessageDto> messages = messageService.findMessages(channelId, page);
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(messages);
+  }
+
+  @GetMapping("/channels/{channelId}")
+  public ResponseEntity<PageResponse<MessageDto>> findMessages(
+      @PathVariable("channelId") UUID channelId,
+      @RequestParam(value = "page", defaultValue = "0") int page
+  ) {
+    PageResponse<MessageDto> response = messageService.findMessages(channelId, page);
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(response);
   }
 
 

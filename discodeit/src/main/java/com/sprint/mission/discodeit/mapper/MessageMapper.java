@@ -5,6 +5,7 @@ import com.sprint.mission.discodeit.dto.data.MessageDto;
 import com.sprint.mission.discodeit.dto.data.UserDto;
 import com.sprint.mission.discodeit.entity.Message;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +21,9 @@ public class MessageMapper {
         .map(binaryContentMapper::toDto)
         .toList();
 
-    UserDto author = userMapper.toDto(message.getAuthor());
+    UserDto author = Optional.ofNullable(message.getAuthor())
+        .map(userMapper::toDto)
+        .orElse(null);
 
     return new MessageDto(
         message.getId(),
