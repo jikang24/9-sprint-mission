@@ -28,8 +28,7 @@ public class AuthController implements AuthApi {
   @PostMapping(path = "login")
   @Override
   public ResponseEntity<UserDto> login(@RequestBody LoginRequest loginRequest) {
-    User user = authService.login(loginRequest);
-    UserDto userDto = userMapper.toDto(user);
+    UserDto userDto = authService.login(loginRequest);
     return ResponseEntity.status(HttpStatus.OK).body(userDto);
   }
 }
