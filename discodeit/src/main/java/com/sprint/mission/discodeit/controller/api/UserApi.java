@@ -10,8 +10,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,6 +28,17 @@ import java.util.UUID;
 public interface UserApi {
 
   @Operation(summary = "User 등록")
+  @RequestBody(
+      required = true,
+      content = @Content(
+          mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+          schema = @Schema(type = "object"),
+          encoding = {
+              @Encoding(name = "userCreateRequest", contentType = MediaType.APPLICATION_JSON_VALUE),
+              @Encoding(name = "profile", contentType = "image/png, image/jpeg, image/jpg")
+          }
+      )
+  )
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "201", description = "User가 성공적으로 생성됨",
@@ -37,17 +50,22 @@ public interface UserApi {
       ),
   })
   ResponseEntity<UserDto> create(
-      @Parameter(
-          description = "User 생성 정보",
-          content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
-      ) UserCreateRequest userCreateRequest,
-      @Parameter(
-          description = "User 프로필 이미지",
-          content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)
-      ) MultipartFile profile
+      @Parameter(description = "User 생성 정보") UserCreateRequest userCreateRequest,
+      @Parameter(description = "User 프로필 이미지") MultipartFile profile
   );
 
   @Operation(summary = "User 정보 수정")
+  @RequestBody(
+      required = true,
+      content = @Content(
+          mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+          schema = @Schema(type = "object"),
+          encoding = {
+              @Encoding(name = "userUpdateRequest", contentType = MediaType.APPLICATION_JSON_VALUE),
+              @Encoding(name = "profile", contentType = "image/png, image/jpeg, image/jpg")
+          }
+      )
+  )
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "200", description = "User 정보가 성공적으로 수정됨",

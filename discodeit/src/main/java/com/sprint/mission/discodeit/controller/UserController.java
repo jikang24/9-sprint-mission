@@ -38,11 +38,6 @@ public class UserController implements UserApi {
     Optional<BinaryContentCreateRequest> profileRequest = Optional.ofNullable(profile)
         .flatMap(this::resolveProfileRequest);
 
-//    User createdUser = userService.create(userCreateRequest, profileRequest);
-//
-//    // 방금 만든 유저를 DTO로 다시 조회해서 내려줌 (profile 포함)
-//    UserDto createdUserDto = userService.find(createdUser.getId());
-
     UserDto createdUser = userService.create(userCreateRequest, profileRequest);
     return ResponseEntity
         .status(HttpStatus.CREATED)
@@ -61,11 +56,6 @@ public class UserController implements UserApi {
   ) {
     Optional<BinaryContentCreateRequest> profileRequest = Optional.ofNullable(profile)
         .flatMap(this::resolveProfileRequest);
-
-//    userService.update(userId, userUpdateRequest, profileRequest);
-//
-//    // 업데이트 후 DTO로 다시 조회해서 내려줌 (profile 포함)
-//    UserDto updatedUserDto = userService.find(userId);
 
     UserDto updatedUser = userService.update(userId, userUpdateRequest, profileRequest);
     return ResponseEntity
