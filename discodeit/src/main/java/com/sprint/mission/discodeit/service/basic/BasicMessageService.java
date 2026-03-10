@@ -83,6 +83,7 @@ public class BasicMessageService implements MessageService {
     return messageMapper.toDto(savedMessage);
   }
 
+  @Transactional(readOnly = true)
   @Override
   public MessageDto find(UUID messageId) {
     Message message = messageRepository.findById(messageId)
@@ -91,7 +92,7 @@ public class BasicMessageService implements MessageService {
     return messageMapper.toDto(message);
   }
 
-
+  @Transactional(readOnly = true)
   @Override
   public List<MessageDto> findAllByChannelId(UUID channelId) {
     return messageRepository.findAllByChannelIdOrderByCreatedAtDesc(
@@ -125,6 +126,7 @@ public class BasicMessageService implements MessageService {
     messageRepository.deleteById(messageId);
   }
 
+  @Transactional(readOnly = true)
   @Override
   public PageResponse<MessageDto> findMessages(UUID channelId, int page) {
     Pageable pageable = PageRequest.of(page, 50);

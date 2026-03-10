@@ -14,6 +14,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -22,7 +23,7 @@ public class BasicUserStatusService implements UserStatusService {
   private final UserStatusRepository userStatusRepository;
   private final UserRepository userRepository;
 
-
+  @Transactional
   @Override
   public UserStatus create(UserStatusCreateRequest request, User user) {
     UUID userId = request.userId();
@@ -39,6 +40,7 @@ public class BasicUserStatusService implements UserStatusService {
     return userStatusRepository.save(userStatus);
   }
 
+  @Transactional(readOnly = true)
   @Override
   public UserStatus find(UUID userStatusId) {
     return userStatusRepository.findById(userStatusId)
@@ -46,12 +48,14 @@ public class BasicUserStatusService implements UserStatusService {
             () -> new NoSuchElementException("UserStatus with id " + userStatusId + " not found"));
   }
 
+  @Transactional(readOnly = true)
   @Override
   public List<UserStatus> findAll() {
     return userStatusRepository.findAll().stream()
         .toList();
   }
 
+  @Transactional
   @Override
   public UserStatus update(UUID userStatusId, UserStatusUpdateRequest request) {
     Instant newLastActiveAt = request.newLastActiveAt();
@@ -64,6 +68,7 @@ public class BasicUserStatusService implements UserStatusService {
     return userStatusRepository.save(userStatus);
   }
 
+  @Transactional
   @Override
   public UserStatus updateByUserId(UUID userId, UserStatusUpdateRequest request) {
     Instant newLastActiveAt = request.newLastActiveAt();
@@ -76,6 +81,7 @@ public class BasicUserStatusService implements UserStatusService {
     return userStatusRepository.save(userStatus);
   }
 
+  @Transactional
   @Override
   public void delete(UUID userStatusId) {
     if (!userStatusRepository.existsById(userStatusId)) {

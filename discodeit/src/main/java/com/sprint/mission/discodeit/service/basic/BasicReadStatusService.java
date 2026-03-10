@@ -58,6 +58,7 @@ public class BasicReadStatusService implements ReadStatusService {
     return readStatusMapper.toDto(savedReadStatus);
   }
 
+  @Transactional(readOnly = true)
   @Override
   public ReadStatusDto find(UUID readStatusId) {
     ReadStatus readStatus = readStatusRepository.findById(readStatusId)
@@ -67,6 +68,7 @@ public class BasicReadStatusService implements ReadStatusService {
     return readStatusMapper.toDto(readStatus);
   }
 
+  @Transactional(readOnly = true)
   @Override
   public List<ReadStatusDto> findAllByUserId(UUID userId) {
     return readStatusRepository.findAllByUserId(userId).stream()
