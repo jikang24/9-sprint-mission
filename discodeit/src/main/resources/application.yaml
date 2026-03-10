@@ -8,6 +8,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   # JPA 설정
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: none
     show-sql: false
