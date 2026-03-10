@@ -8,6 +8,7 @@ import com.sprint.mission.discodeit.dto.request.MessageCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageUpdateRequest;
 import com.sprint.mission.discodeit.dto.response.PageResponse;
 import com.sprint.mission.discodeit.service.MessageService;
+import java.time.Instant;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -95,25 +96,33 @@ public class MessageController implements MessageApi {
   @GetMapping
   @Override
   public ResponseEntity<PageResponse<MessageDto>> findAllByChannelId(
-      @RequestParam("channelId") UUID channelId,
-      @RequestParam(value = "page", defaultValue = "0") int page
+      @RequestParam UUID channelId,
+      @RequestParam(required = false) Instant cursor,
+      @RequestParam(defaultValue = "50") int size,
+      @RequestParam(defaultValue = "createdAt,desc") String sort
   ) {
-    PageResponse<MessageDto> messages = messageService.findMessages(channelId, page);
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(messages);
+    if (!"createdAt,desc".equals(sort)) {
+      throw new IllegalArgumentException("Only createdAt,desc is supported");
+    }
+    
+    PageResponse<MessageDto> response = messageService.findMessages(
+        channelId,
+        cursor,
+        size
+    );
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
-  @GetMapping("/channels/{channelId}")
-  public ResponseEntity<PageResponse<MessageDto>> findMessages(
-      @PathVariable("channelId") UUID channelId,
-      @RequestParam(value = "page", defaultValue = "0") int page
-  ) {
-    PageResponse<MessageDto> response = messageService.findMessages(channelId, page);
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(response);
-  }
+//  @GetMapping("/channels/{channelId}")
+//  public ResponseEntity<PageResponse<MessageDto>> findMessages(
+//      @PathVariable("channelId") UUID channelId,
+//      @RequestParam(value = "page", defaultValue = "0") int page
+//  ) {
+//    PageResponse<MessageDto> response = messageService.findMessages(channelId, page);
+//    return ResponseEntity
+//        .status(HttpStatus.OK)
+//        .body(response);
+//  }
 
 
 }

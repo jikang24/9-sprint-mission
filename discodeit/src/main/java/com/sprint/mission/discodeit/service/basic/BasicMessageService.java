@@ -4,6 +4,7 @@ import com.sprint.mission.discodeit.dto.data.MessageDto;
 import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageUpdateRequest;
+import com.sprint.mission.discodeit.dto.response.MessageCursor;
 import com.sprint.mission.discodeit.dto.response.PageResponse;
 import com.sprint.mission.discodeit.entity.BinaryContent;
 import com.sprint.mission.discodeit.entity.Channel;
@@ -17,6 +18,7 @@ import com.sprint.mission.discodeit.repository.MessageRepository;
 import com.sprint.mission.discodeit.repository.UserRepository;
 import com.sprint.mission.discodeit.service.MessageService;
 import com.sprint.mission.discodeit.storage.BinaryContentStorage;
+import java.time.Instant;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -92,16 +94,16 @@ public class BasicMessageService implements MessageService {
     return messageMapper.toDto(message);
   }
 
-  @Transactional(readOnly = true)
-  @Override
-  public List<MessageDto> findAllByChannelId(UUID channelId) {
-    return messageRepository.findAllByChannelIdOrderByCreatedAtDesc(
-            channelId,
-            PageRequest.of(0, Integer.MAX_VALUE)
-        ).stream()
-        .map(messageMapper::toDto)
-        .toList();
-  }
+//  @Transactional(readOnly = true)
+//  @Override
+//  public List<MessageDto> findAllByChannelId(UUID channelId) {
+//    return messageRepository.findAllByChannelIdOrderByCreatedAtDesc(
+//            channelId,
+//            PageRequest.of(0, Integer.MAX_VALUE)
+//        ).stream()
+//        .map(messageMapper::toDto)
+//        .toList();
+//  }
 
   @Transactional
   @Override
@@ -128,14 +130,47 @@ public class BasicMessageService implements MessageService {
 
   @Transactional(readOnly = true)
   @Override
-  public PageResponse<MessageDto> findMessages(UUID channelId, int page) {
-    Pageable pageable = PageRequest.of(page, 50);
+  public PageResponse<MessageDto> findMessages(
+      UUID channelId,
+      Instant cursor,
+      int size
+  ) {
+    int pageSize = Math.min(size, 50);
+    Pageable pageable = PageRequest.of(0, pageSize + 1);
 
-    Slice<Message> messageSlice =
-        messageRepository.findAllByChannelIdOrderByCreatedAtDesc(channelId, pageable);
+    List<Message> messages;
 
-    Slice<MessageDto> dtoSlice = messageSlice.map(messageMapper::toDto);
+    if (cursor == null) {
+      messages = messageRepository.findAllByChannelIdOrderByCreatedAtDesc(channelId, pageable);
+    } else {
+      messages = messageRepository.findAllByChannelIdAndCreatedAtBeforeOrderByCreatedAtDesc(
+          channelId,
+          cursor,
+          pageable
+      );
+    }
 
-    return pageResponseMapper.fromSlice(dtoSlice);
+    boolean hasNext = messages.size() > pageSize;
+
+    List<Message> pageMessages = hasNext
+        ? messages.subList(0, pageSize)
+        : messages;
+
+    List<MessageDto> content = pageMessages.stream()
+        .map(messageMapper::toDto)
+        .toList();
+
+    Instant nextCursor = null;
+    if (hasNext) {
+      Message last = pageMessages.get(pageMessages.size() - 1);
+      nextCursor = last.getCreatedAt();
+    }
+
+    return pageResponseMapper.fromCursor(
+        content,
+        nextCursor,
+        pageSize,
+        hasNext
+    );
   }
 }

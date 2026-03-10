@@ -2,12 +2,16 @@ package com.sprint.mission.discodeit.repository;
 
 import com.sprint.mission.discodeit.entity.Message;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface MessageRepository extends JpaRepository<Message, UUID> {
 
@@ -19,11 +23,8 @@ public interface MessageRepository extends JpaRepository<Message, UUID> {
       "attachments",
       "channel"
   })
-  List<Message> findAllByChannelId(UUID channelId);
+  List<Message> findAllByChannelIdOrderByCreatedAtDesc(UUID channelId, Pageable pageable);
 
-  void deleteAllByChannelId(UUID channelId);
-
-  //페이지 관련 추가
   @EntityGraph(attributePaths = {
       "author",
       "author.status",
@@ -31,5 +32,25 @@ public interface MessageRepository extends JpaRepository<Message, UUID> {
       "attachments",
       "channel"
   })
-  Slice<Message> findAllByChannelIdOrderByCreatedAtDesc(UUID channelId, Pageable pageable);
+  List<Message> findAllByChannelIdAndCreatedAtBeforeOrderByCreatedAtDesc(
+      UUID channelId,
+      Instant cursor,
+      Pageable pageable
+  );
+
+  Optional<Message> findTopByChannelIdOrderByCreatedAtDescIdDesc(UUID channelId);
+
+
+  void deleteAllByChannelId(UUID channelId);
+
+  //페이지 관련 추가
+  //페이지네이션 변경으로 주석처리
+//  @EntityGraph(attributePaths = {
+//      "author",
+//      "author.status",
+//      "author.profile",
+//      "attachments",
+//      "channel"
+//  })
+//  Slice<Message> findAllByChannelIdOrderByCreatedAtDesc(UUID channelId, Pageable pageable);
 }

@@ -75,7 +75,7 @@ public class BasicChannelService implements ChannelService {
 
     return toChannelDto(createdChannel);
   }
-  
+
   @Transactional(readOnly = true)
   @Override
   public List<ChannelDto> findAllByUserId(UUID userId) {
@@ -122,9 +122,9 @@ public class BasicChannelService implements ChannelService {
   }
 
   private ChannelDto toChannelDto(Channel channel) {
-    Instant lastMessageAt = messageRepository.findAllByChannelId(channel.getId()).stream()
+    Instant lastMessageAt = messageRepository
+        .findTopByChannelIdOrderByCreatedAtDescIdDesc(channel.getId())
         .map(Message::getCreatedAt)
-        .max(Instant::compareTo)
         .orElse(null);
 
     List<UUID> participantIds = new ArrayList<>();
