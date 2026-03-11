@@ -1,6 +1,5 @@
 package com.sprint.mission.discodeit.controller;
 
-
 import com.sprint.mission.discodeit.controller.api.MessageApi;
 import com.sprint.mission.discodeit.dto.data.MessageDto;
 import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
@@ -104,7 +103,7 @@ public class MessageController implements MessageApi {
     if (!"createdAt,desc".equals(sort)) {
       throw new IllegalArgumentException("Only createdAt,desc is supported");
     }
-    
+
     PageResponse<MessageDto> response = messageService.findMessages(
         channelId,
         cursor,
