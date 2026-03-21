@@ -40,17 +40,6 @@ public interface MessageRepository extends JpaRepository<Message, UUID> {
 
   Optional<Message> findTopByChannelIdOrderByCreatedAtDescIdDesc(UUID channelId);
 
-
   void deleteAllByChannelId(UUID channelId);
 
-  //페이지 관련 추가
-  //페이지네이션 변경으로 주석처리
-//  @EntityGraph(attributePaths = {
-//      "author",
-//      "author.status",
-//      "author.profile",
-//      "attachments",
-//      "channel"
-//  })
-//  Slice<Message> findAllByChannelIdOrderByCreatedAtDesc(UUID channelId, Pageable pageable);
 }
