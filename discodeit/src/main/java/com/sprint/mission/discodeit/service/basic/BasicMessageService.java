@@ -92,17 +92,6 @@ public class BasicMessageService implements MessageService {
     return messageMapper.toDto(message);
   }
 
-//  @Transactional(readOnly = true)
-//  @Override
-//  public List<MessageDto> findAllByChannelId(UUID channelId) {
-//    return messageRepository.findAllByChannelIdOrderByCreatedAtDesc(
-//            channelId,
-//            PageRequest.of(0, Integer.MAX_VALUE)
-//        ).stream()
-//        .map(messageMapper::toDto)
-//        .toList();
-//  }
-
   @Transactional
   @Override
   public MessageDto update(UUID messageId, MessageUpdateRequest request) {

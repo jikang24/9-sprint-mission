@@ -22,27 +22,6 @@ public class PageResponseMapper {
     );
   }
 
-  //페이지네이션 변경으로 인한 주석처리
-/*  public <T> PageResponse<T> fromSlice(Slice<T> slice) {
-//    return new PageResponse<>(
-//        slice.getContent(),
-//        slice.getNumber(),
-//        slice.getSize(),
-//        slice.hasNext(),
-//        null
-//    );
-//  }
-//
-//  public <T> PageResponse<T> fromPage(Page<T> page) {
-//    return new PageResponse<>(
-//        page.getContent(),
-//        page.getNumber(),
-//        page.getSize(),
-//        page.hasNext(),
-//        page.getTotalElements()
-//    );
-//  }
-*/
 
 }
 

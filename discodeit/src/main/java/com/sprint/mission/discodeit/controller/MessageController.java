@@ -112,16 +112,5 @@ public class MessageController implements MessageApi {
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
-//  @GetMapping("/channels/{channelId}")
-//  public ResponseEntity<PageResponse<MessageDto>> findMessages(
-//      @PathVariable("channelId") UUID channelId,
-//      @RequestParam(value = "page", defaultValue = "0") int page
-//  ) {
-//    PageResponse<MessageDto> response = messageService.findMessages(channelId, page);
-//    return ResponseEntity
-//        .status(HttpStatus.OK)
-//        .body(response);
-//  }
-
 
 }
