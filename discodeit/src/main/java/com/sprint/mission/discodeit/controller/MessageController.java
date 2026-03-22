@@ -5,9 +5,9 @@ import com.sprint.mission.discodeit.dto.data.MessageDto;
 import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageUpdateRequest;
+import com.sprint.mission.discodeit.dto.response.MessageCursor;
 import com.sprint.mission.discodeit.dto.response.PageResponse;
 import com.sprint.mission.discodeit.service.MessageService;
-import java.time.Instant;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -96,7 +96,7 @@ public class MessageController implements MessageApi {
   @Override
   public ResponseEntity<PageResponse<MessageDto>> findAllByChannelId(
       @RequestParam UUID channelId,
-      @RequestParam(required = false) Instant cursor,
+      @RequestParam(required = false) MessageCursor cursor,
       @RequestParam(defaultValue = "50") int size,
       @RequestParam(defaultValue = "createdAt,desc") String sort
   ) {

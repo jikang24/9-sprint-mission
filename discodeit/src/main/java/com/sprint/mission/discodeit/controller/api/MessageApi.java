@@ -3,6 +3,7 @@ package com.sprint.mission.discodeit.controller.api;
 import com.sprint.mission.discodeit.dto.data.MessageDto;
 import com.sprint.mission.discodeit.dto.request.MessageCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageUpdateRequest;
+import com.sprint.mission.discodeit.dto.response.MessageCursor;
 import com.sprint.mission.discodeit.dto.response.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,7 +13,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.MediaType;
@@ -84,38 +84,10 @@ public interface MessageApi {
   )
   ResponseEntity<PageResponse<MessageDto>> findAllByChannelId(
       @Parameter(description = "조회할 ChannelId") UUID channelId,
-      @Parameter(description = "다음 조회 기준 cursor") Instant cursor,
+      @Parameter(description = "다음 조회 기준 cursor") MessageCursor cursor,
       @Parameter(description = "조회 개수") int size,
       @Parameter(description = "조회 분류") String sort
   );
 
-//  @Operation(summary = "Channel의 Message 전체 조회")
-//  @ApiResponses(value = {
-//      @ApiResponse(
-//          responseCode = "200", description = "Message 목록 조회 성공",
-//          content = @Content(array = @ArraySchema(schema = @Schema(implementation = MessageDto.class)))
-//      )
-//  })
-//  ResponseEntity<PageResponse<MessageDto>> findAllByChannelId(
-//      @Parameter(description = "조회할 ChannelId") UUID channelId,
-//      @Parameter(description = "페이지 번호") int page
-//  );
-//
-//  @Operation(summary = "Channel의 Message 페이징 조회")
-//  @ApiResponses(value = {
-//      @ApiResponse(
-//          responseCode = "200", description = "Message 페이지 조회 성공",
-//          content = @Content(schema = @Schema(implementation = PageResponse.class))
-//      ),
-//      @ApiResponse(
-//          responseCode = "404", description = "Channel을 찾을 수 없음",
-//          content = @Content(examples = @ExampleObject(value = "Channel with id {channelId} not found")
-//          )
-//      )
-//  })
-//  ResponseEntity<PageResponse<MessageDto>> findMessages(
-//      @Parameter(description = "조회할 ChannelId") UUID channelId,
-//      @Parameter(description = "페이지 번호") int page
-//  );
 
 }

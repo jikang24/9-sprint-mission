@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -25,16 +24,16 @@ public interface MessageRepository extends JpaRepository<Message, UUID> {
   })
   List<Message> findAllByChannelIdOrderByCreatedAtDesc(UUID channelId, Pageable pageable);
 
-  @EntityGraph(attributePaths = {
-      "author",
-      "author.status",
-      "author.profile",
-      "attachments",
-      "channel"
-  })
-  List<Message> findAllByChannelIdAndCreatedAtBeforeOrderByCreatedAtDesc(
-      UUID channelId,
-      Instant cursor,
+
+  @Query("SELECT m FROM Message m " +
+      "WHERE m.channel.id = :channelId " +
+      "AND (m.createdAt < :createdAt " +
+      "  OR (m.createdAt = :createdAt AND m.id < :lastId)) " +
+      "ORDER BY m.createdAt DESC, m.id DESC")
+  List<Message> findAllByChannelIdWithCursor(
+      @Param("channelId") UUID channelId,
+      @Param("createdAt") Instant createdAt,
+      @Param("lastId") UUID lastId,
       Pageable pageable
   );
 

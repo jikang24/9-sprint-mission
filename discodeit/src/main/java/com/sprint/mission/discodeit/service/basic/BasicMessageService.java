@@ -4,6 +4,7 @@ import com.sprint.mission.discodeit.dto.data.MessageDto;
 import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageUpdateRequest;
+import com.sprint.mission.discodeit.dto.response.MessageCursor;
 import com.sprint.mission.discodeit.dto.response.PageResponse;
 import com.sprint.mission.discodeit.entity.BinaryContent;
 import com.sprint.mission.discodeit.entity.Channel;
@@ -17,7 +18,6 @@ import com.sprint.mission.discodeit.repository.MessageRepository;
 import com.sprint.mission.discodeit.repository.UserRepository;
 import com.sprint.mission.discodeit.service.MessageService;
 import com.sprint.mission.discodeit.storage.BinaryContentStorage;
-import java.time.Instant;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -119,7 +119,7 @@ public class BasicMessageService implements MessageService {
   @Override
   public PageResponse<MessageDto> findMessages(
       UUID channelId,
-      Instant cursor,
+      MessageCursor cursor,
       int size
   ) {
     int pageSize = Math.min(size, 50);
@@ -130,9 +130,10 @@ public class BasicMessageService implements MessageService {
     if (cursor == null) {
       messages = messageRepository.findAllByChannelIdOrderByCreatedAtDesc(channelId, pageable);
     } else {
-      messages = messageRepository.findAllByChannelIdAndCreatedAtBeforeOrderByCreatedAtDesc(
+      messages = messageRepository.findAllByChannelIdWithCursor(
           channelId,
-          cursor,
+          cursor.createdAt(),
+          cursor.id(),
           pageable
       );
     }
@@ -147,10 +148,10 @@ public class BasicMessageService implements MessageService {
         .map(messageMapper::toDto)
         .toList();
 
-    Instant nextCursor = null;
+    MessageCursor nextCursor = null;
     if (hasNext) {
       Message last = pageMessages.get(pageMessages.size() - 1);
-      nextCursor = last.getCreatedAt();
+      nextCursor = new MessageCursor(last.getCreatedAt(), last.getId());
     }
 
     return pageResponseMapper.fromCursor(
