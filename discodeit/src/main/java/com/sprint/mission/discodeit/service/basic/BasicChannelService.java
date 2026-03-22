@@ -1,6 +1,7 @@
 package com.sprint.mission.discodeit.service.basic;
 
 import com.sprint.mission.discodeit.dto.data.ChannelDto;
+import com.sprint.mission.discodeit.dto.data.UserDto;
 import com.sprint.mission.discodeit.dto.request.PrivateChannelCreateRequest;
 import com.sprint.mission.discodeit.dto.request.PublicChannelCreateRequest;
 import com.sprint.mission.discodeit.dto.request.PublicChannelUpdateRequest;
@@ -10,6 +11,7 @@ import com.sprint.mission.discodeit.entity.Message;
 import com.sprint.mission.discodeit.entity.ReadStatus;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.mapper.ChannelMapper;
+import com.sprint.mission.discodeit.mapper.UserMapper;
 import com.sprint.mission.discodeit.repository.ChannelRepository;
 import com.sprint.mission.discodeit.repository.MessageRepository;
 import com.sprint.mission.discodeit.repository.ReadStatusRepository;
@@ -32,6 +34,8 @@ public class BasicChannelService implements ChannelService {
   private final MessageRepository messageRepository;
   private final UserRepository userRepository;
   private final ChannelMapper channelMapper;
+  private final UserMapper userMapper;
+
 
   @Transactional
   @Override
@@ -42,7 +46,7 @@ public class BasicChannelService implements ChannelService {
     Channel channel = new Channel(ChannelType.PUBLIC, name, description);
     Channel savedChannel = channelRepository.save(channel);
 
-    return toChannelDto(savedChannel);
+    return toChannelDto(savedChannel, null);
   }
 
   @Transactional
@@ -73,7 +77,7 @@ public class BasicChannelService implements ChannelService {
         )
     );
 
-    return toChannelDto(createdChannel);
+    return toChannelDto(createdChannel, null);
   }
 
   @Transactional(readOnly = true)
@@ -83,12 +87,20 @@ public class BasicChannelService implements ChannelService {
         .map(readStatus -> readStatus.getChannel().getId())
         .toList();
 
-    return channelRepository.findAll().stream()
-        .filter(channel ->
-            channel.getType().equals(ChannelType.PUBLIC)
-                || mySubscribedChannelIds.contains(channel.getId())
-        )
-        .map(this::toChannelDto)
+    List<Channel> channels = channelRepository.findAllByTypeOrIdIn(ChannelType.PUBLIC,
+        mySubscribedChannelIds);
+
+    List<UUID> channelIds = channels.stream().map(Channel::getId).toList();
+    Map<UUID, Instant> lastMessageAtMap = messageRepository
+        .findLatestMessageAtByChannelIds(channelIds)
+        .stream()
+        .collect(Collectors.toMap(
+            row -> (UUID) row[0],
+            row -> (Instant) row[1]
+        ));
+
+    return channels.stream()
+        .map(channel -> toChannelDto(channel, lastMessageAtMap.get(channel.getId())))
         .toList();
   }
 
@@ -106,7 +118,11 @@ public class BasicChannelService implements ChannelService {
     channel.update(newName, newDescription);
     Channel savedChannel = channelRepository.save(channel);
 
-    return toChannelDto(savedChannel);
+    Instant lastMessageAt = messageRepository
+        .findTopByChannelIdOrderByCreatedAtDescIdDesc(savedChannel.getId())
+        .map(Message::getCreatedAt)
+        .orElse(null);
+    return toChannelDto(savedChannel, lastMessageAt);
   }
 
   @Transactional
@@ -121,18 +137,15 @@ public class BasicChannelService implements ChannelService {
     channelRepository.deleteById(channelId);
   }
 
-  private ChannelDto toChannelDto(Channel channel) {
-    Instant lastMessageAt = messageRepository
-        .findTopByChannelIdOrderByCreatedAtDescIdDesc(channel.getId())
-        .map(Message::getCreatedAt)
-        .orElse(null);
+  private ChannelDto toChannelDto(Channel channel, Instant lastMessageAt) {
 
-    List<UUID> participantIds = new ArrayList<>();
+    List<UserDto> participantIds = new ArrayList<>();
     if (channel.getType() == ChannelType.PRIVATE) {
-      participantIds = readStatusRepository.findAllByChannelId(channel.getId()).stream()
-          .map(readStatus -> readStatus.getUser().getId())
-          .distinct()
-          .toList();
+      readStatusRepository.findAllByChannelIdWithUser(channel.getId())
+          .stream()
+          .map(ReadStatus::getUser)
+          .map(userMapper::toDto)
+          .forEach(participantIds::add);
     }
 
     return channelMapper.toDto(channel, participantIds, lastMessageAt);

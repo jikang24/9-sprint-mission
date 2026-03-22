@@ -40,6 +40,11 @@ public interface MessageRepository extends JpaRepository<Message, UUID> {
 
   Optional<Message> findTopByChannelIdOrderByCreatedAtDescIdDesc(UUID channelId);
 
+  @Query("SELECT m.channel.id, MAX(m.createdAt) FROM Message m "
+      + "WHERE m.channel.id IN :channelIds "
+      + "GROUP BY m.channel.id")
+  List<Object[]> findLatestMessageAtByChannelIds(@Param("channelIds") List<UUID> channelIds);
+
   void deleteAllByChannelId(UUID channelId);
 
 }
