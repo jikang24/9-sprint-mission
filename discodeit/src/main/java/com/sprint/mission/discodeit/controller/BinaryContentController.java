@@ -1,6 +1,5 @@
 package com.sprint.mission.discodeit.controller;
 
-
 import com.sprint.mission.discodeit.controller.api.BinaryContentApi;
 import com.sprint.mission.discodeit.entity.BinaryContent;
 import com.sprint.mission.discodeit.service.BinaryContentService;
@@ -25,7 +24,7 @@ public class BinaryContentController implements BinaryContentApi {
 
   @GetMapping(path = "{binaryContentId}")
   @Override
-  public ResponseEntity<BinaryContent> findByIdIn(
+  public ResponseEntity<BinaryContent> find(
       @PathVariable("binaryContentId") UUID binaryContentId
   ) {
     BinaryContent binaryContent
@@ -46,5 +45,13 @@ public class BinaryContentController implements BinaryContentApi {
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(binaryContents);
+  }
+
+  @GetMapping(path = "{binaryContentId}/download")
+  @Override
+  public ResponseEntity<?> download(
+      @PathVariable("binaryContentId") UUID binaryContentId
+  ) {
+    return binaryContentService.download(binaryContentId);
   }
 }

@@ -1,11 +1,12 @@
 package com.sprint.mission.discodeit.controller;
 
-
 import com.sprint.mission.discodeit.controller.api.MessageApi;
+import com.sprint.mission.discodeit.dto.data.MessageDto;
 import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageUpdateRequest;
-import com.sprint.mission.discodeit.entity.Message;
+import com.sprint.mission.discodeit.dto.response.MessageCursor;
+import com.sprint.mission.discodeit.dto.response.PageResponse;
 import com.sprint.mission.discodeit.service.MessageService;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ public class MessageController implements MessageApi {
 
   @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   @Override
-  public ResponseEntity<Message> create(
+  public ResponseEntity<MessageDto> create(
       @RequestPart("messageCreateRequest") MessageCreateRequest messageCreateRequest,
       @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments
   ) {
@@ -57,7 +58,14 @@ public class MessageController implements MessageApi {
             })
             .toList())
         .orElse(new ArrayList<>());
-    Message createdMessage = messageService.create(messageCreateRequest, attachmentRequests);
+
+    MessageDto createdMessage = messageService.create(
+        messageCreateRequest,
+        attachmentRequests.isEmpty()
+            ? Optional.empty()
+            : Optional.of(attachmentRequests)
+    );
+
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .body(createdMessage);
@@ -66,11 +74,11 @@ public class MessageController implements MessageApi {
 
   @PatchMapping(path = "{messageId}")
   @Override
-  public ResponseEntity<Message> update(
+  public ResponseEntity<MessageDto> update(
       @PathVariable("messageId") UUID messageId,
-      @RequestPart("message") MessageUpdateRequest messageUpdateRequest
+      @RequestBody MessageUpdateRequest messageUpdateRequest
   ) {
-    Message updatedMessage = messageService.update(messageId, messageUpdateRequest);
+    MessageDto updatedMessage = messageService.update(messageId, messageUpdateRequest);
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(updatedMessage);
@@ -86,13 +94,22 @@ public class MessageController implements MessageApi {
 
   @GetMapping
   @Override
-  public ResponseEntity<List<Message>> findAllByChannelId(
-      @RequestParam("channelId") UUID channelId
+  public ResponseEntity<PageResponse<MessageDto>> findAllByChannelId(
+      @RequestParam UUID channelId,
+      @RequestParam(required = false) MessageCursor cursor,
+      @RequestParam(defaultValue = "50") int size,
+      @RequestParam(defaultValue = "createdAt,desc") String sort
   ) {
-    List<Message> messages = messageService.findAllByChannelId(channelId);
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(messages);
+    if (!"createdAt,desc".equals(sort)) {
+      throw new IllegalArgumentException("Only createdAt,desc is supported");
+    }
+
+    PageResponse<MessageDto> response = messageService.findMessages(
+        channelId,
+        cursor,
+        size
+    );
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
 
