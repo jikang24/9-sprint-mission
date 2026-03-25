@@ -19,9 +19,11 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class BasicUserService implements UserService {
@@ -39,10 +41,14 @@ public class BasicUserService implements UserService {
     String username = userCreateRequest.username();
     String email = userCreateRequest.email();
 
+    log.debug("Creating user - username: {}, email: {}", username, email);
+
     if (userRepository.existsByEmail(email)) {
+      log.warn("User creation failed - email already exists: {}", email);
       throw new IllegalArgumentException("User with email " + email + " already exists");
     }
     if (userRepository.existsByUsername(username)) {
+      log.warn("User creation failed - username already exists: {}", username);
       throw new IllegalArgumentException("User with username " + username + " already exists");
     }
 
@@ -60,12 +66,23 @@ public class BasicUserService implements UserService {
         .orElse(null);
     String password = userCreateRequest.password();
 
-    User user = new User(username, email, password, nullableProfile);
-    Instant now = Instant.now();
-    UserStatus userStatus = new UserStatus(user, now);
+    try {
+      User user = new User(username, email, password, nullableProfile);
+      Instant now = Instant.now();
+      UserStatus userStatus = new UserStatus(user, now);
 
-    userRepository.save(user);
-    return userMapper.toDto(user);
+      userRepository.save(user);
+
+      log.info("User created - username: {}, email: {}", username, email);
+      if (nullableProfile != null) {
+        log.debug("Profile uploaded - id: {}", nullableProfile.getId());
+      }
+
+      return userMapper.toDto(user);
+    } catch (Exception e) {
+      log.error("Error creating user: {}", e.getMessage());
+      throw e;
+    }
   }
 
   @Override
@@ -87,15 +104,23 @@ public class BasicUserService implements UserService {
   @Override
   public UserDto update(UUID userId, UserUpdateRequest userUpdateRequest,
       Optional<BinaryContentCreateRequest> optionalProfileCreateRequest) {
+
+    log.debug("Updating user - userId: {}", userId);
+
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found"));
+        .orElseThrow(() -> {
+          log.warn("User update failed - user not found: {}", userId);
+          return new NoSuchElementException("User with id " + userId + " not found");
+        });
 
     String newUsername = userUpdateRequest.newUsername();
     String newEmail = userUpdateRequest.newEmail();
     if (userRepository.existsByEmail(newEmail)) {
+      log.warn("User update failed - email already exists: {}", newEmail);
       throw new IllegalArgumentException("User with email " + newEmail + " already exists");
     }
     if (userRepository.existsByUsername(newUsername)) {
+      log.warn("User update failed - username already exists: {}", newUsername);
       throw new IllegalArgumentException("User with username " + newUsername + " already exists");
     }
 
@@ -112,20 +137,39 @@ public class BasicUserService implements UserService {
           return binaryContent;
         })
         .orElse(null);
+    try {
 
-    String newPassword = userUpdateRequest.newPassword();
-    user.update(newUsername, newEmail, newPassword, nullableProfile);
+      String newPassword = userUpdateRequest.newPassword();
+      user.update(newUsername, newEmail, newPassword, nullableProfile);
 
-    return userMapper.toDto(user);
+      log.info("User updated - username: {}, email: {}", newUsername, newEmail);
+      if (nullableProfile != null) {
+        log.debug("Profile uploaded - id: {}", nullableProfile.getId());
+      }
+      return userMapper.toDto(user);
+    } catch (Exception e) {
+      log.error("Error updating user: {}", e.getMessage());
+      throw e;
+    }
   }
 
   @Transactional
   @Override
   public void delete(UUID userId) {
-    if (userRepository.existsById(userId)) {
+    log.debug("Deleting user - userId: {}", userId);
+
+    if (!userRepository.existsById(userId)) {
+      log.warn("User deletion failed - user not found: {}", userId);
       throw new NoSuchElementException("User with id " + userId + " not found");
     }
-
-    userRepository.deleteById(userId);
+    try {
+      User user = userRepository.findById(userId)
+          .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found"));
+      log.info("User deleted - username: {}", user.getUsername());
+      userRepository.deleteById(userId);
+    } catch (Exception e) {
+      log.error("Error deleting user: {}", e.getMessage());
+      throw e;
+    }
   }
 }
