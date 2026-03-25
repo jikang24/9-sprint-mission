@@ -22,9 +22,10 @@ spring:
   profiles:
     active: dev  # 기본값은 dev로 설정
 
-#
-#logging:
-#  level:
+
+logging:
+  level:
+    root: info
 #    org.hibernate.SQL: debug
 #    org.hibernate.orm.jdbc.bind: trace
 #
