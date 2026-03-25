@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+  <!-- 로그 패턴을 변수로 정의해두면 아래에서 재사용 가능 -->
+  <!-- %d: 날짜/시간, [%thread]: 스레드명, %-5level: 5글자 맞춤 레벨, %logger{36}: 최대 36글자 로거명 -->
+  <property name="LOG_PATTERN"
+    value="%d{yy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+
+  <!-- 로그 파일이 저장될 경로 (프로젝트 루트/.logs) -->
+  <property name="LOG_PATH" value=".logs"/>
+
+  <!-- ============================== -->
+  <!--  1. 콘솔 출력 Appender         -->
+  <!-- ============================== -->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${LOG_PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <!-- ============================== -->
+  <!--  2. 파일 출력 Appender (롤링)  -->
+  <!-- ============================== -->
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!-- 현재 로그 파일 경로 -->
+    <file>${LOG_PATH}/discodeit.log</file>
+
+    <encoder>
+      <pattern>${LOG_PATTERN}</pattern>
+    </encoder>
+
+    <!-- 롤링 정책: 날짜가 바뀌면 새 파일로 교체 -->
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- 날짜별 파일명 패턴 (.gz는 자동 압축) -->
+      <fileNamePattern>${LOG_PATH}/discodeit.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+      <!-- 30일 지난 파일은 자동 삭제 -->
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+  </appender>
+
+  <!-- ============================== -->
+  <!--  3. 프로파일별 로그 레벨 설정  -->
+  <!-- ============================== -->
+
+  <!-- dev 프로파일일 때 적용 -->
+  <springProfile name="dev">
+    <!-- 우리 프로젝트 패키지는 debug 레벨로 -->
+    <logger name="com.codeit.mission.discodeit" level="DEBUG"/>
+    <!-- Hibernate SQL 로그 -->
+    <logger name="org.hibernate.SQL" level="DEBUG"/>
+    <logger name="org.hibernate.orm.jdbc.bind" level="TRACE"/>
+    <!-- 전체 기본 레벨: info, 콘솔+파일 동시 출력 -->
+    <root level="INFO">
+      <appender-ref ref="CONSOLE"/>
+      <appender-ref ref="FILE"/>
+    </root>
+  </springProfile>
+
+  <!-- prod 프로파일일 때 적용 -->
+  <springProfile name="prod">
+    <!-- 우리 프로젝트 패키지는 info 레벨로 -->
+    <logger name="com.codeit.mission.discodeit" level="INFO"/>
+    <!-- Hibernate SQL 로그 최소화 -->
+    <logger name="org.hibernate.SQL" level="WARN"/>
+    <!-- 전체 기본 레벨: info, 콘솔+파일 동시 출력 -->
+    <root level="INFO">
+      <appender-ref ref="CONSOLE"/>
+      <appender-ref ref="FILE"/>
+    </root>
+  </springProfile>
+
+</configuration>
