@@ -1,3 +1,52 @@
+### Gradle ###
+.gradle/
+**/.gradle/
+build/
+*.class
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
 
+### Discodeit ###
+.discodeit/
+
+### IntelliJ IDEA ###
 .idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
 
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### Logs ###
+*.log          # 모든 .log 확장자 파일 무시
+.logs/         # .logs 폴더 전체 무시
+logs/          # logs 폴더도 혹시 모르니 같이 추가
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
+**/.DS_Store
