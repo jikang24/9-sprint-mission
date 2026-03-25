@@ -13,8 +13,10 @@ spring:
 
 logging:
   level:
+    root: info
     org.hibernate.SQL: debug     # 개발에선 SQL 로그 상세히 봄
     org.hibernate.orm.jdbc.bind: trace
+    com.sprint.misson.discodeit: debug
 
 discodeit:
   storage:

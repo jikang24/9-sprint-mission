@@ -13,7 +13,9 @@ spring:
 
 logging:
   level:
+    root: info
     org.hibernate.SQL: warn  # 운영에선 로그 최소화
+    com.sprint.misson.discodeit: info
 
 discodeit:
   storage:
