@@ -41,18 +41,13 @@ public class BasicChannelService implements ChannelService {
     String name = request.name();
     String description = request.description();
 
-    try {
-      Channel channel = new Channel(ChannelType.PUBLIC, name, description);
-      channelRepository.save(channel);
+    Channel channel = new Channel(ChannelType.PUBLIC, name, description);
+    channelRepository.save(channel);
 
-      log.info("Public channel created - name: {}, id: {}, description: {}",
-          name, channel.getId(), description);
+    log.info("Public channel created - name: {}, id: {}, description: {}",
+        name, channel.getId(), description);
 
-      return channelMapper.toDto(channel);
-    } catch (Exception e) {
-      log.error("Error creating public channel: {}", e.getMessage());
-      throw e;
-    }
+    return channelMapper.toDto(channel);
   }
 
   @Transactional
@@ -66,24 +61,19 @@ public class BasicChannelService implements ChannelService {
           request.participantIds().size(), foundUsers.size());
     }
 
-    try {
-      Channel channel = new Channel(ChannelType.PRIVATE, null, null);
-      channelRepository.save(channel);
-      log.info("Private channel created - Channel type: {}, Channel id: {}",
-          channel.getType(), channel.getId());
+    Channel channel = new Channel(ChannelType.PRIVATE, null, null);
+    channelRepository.save(channel);
+    log.info("Private channel created - Channel type: {}, Channel id: {}",
+        channel.getType(), channel.getId());
 
-      List<ReadStatus> readStatuses = foundUsers.stream()
-          .map(user -> new ReadStatus(user, channel, channel.getCreatedAt()))
-          .toList();
-      readStatusRepository.saveAll(readStatuses);
+    List<ReadStatus> readStatuses = foundUsers.stream()
+        .map(user -> new ReadStatus(user, channel, channel.getCreatedAt()))
+        .toList();
+    readStatusRepository.saveAll(readStatuses);
 
-      log.debug("ReadStatus created - count: {}", readStatuses.size());
+    log.debug("ReadStatus created - count: {}", readStatuses.size());
 
-      return channelMapper.toDto(channel);
-    } catch (Exception e) {
-      log.error("Error creating private channel: {}", e.getMessage());
-      throw e;
-    }
+    return channelMapper.toDto(channel);
   }
 
   @Transactional(readOnly = true)
@@ -116,26 +106,22 @@ public class BasicChannelService implements ChannelService {
 
     String newName = request.newName();
     String newDescription = request.newDescription();
-    try {
-      Channel channel = channelRepository.findById(channelId)
-          .orElseThrow(() -> {
-            log.warn("Channel update failed - channel not found: {}", channelId);
-            return new NoSuchElementException("Channel with id " + channelId + " not found");
-          });
-      if (channel.getType().equals(ChannelType.PRIVATE)) {
-        log.warn("Channel update failed - private channel cannot be updated: {}", channelId);
-        throw new IllegalArgumentException("Private channel cannot be updated");
-      }
 
-      channel.update(newName, newDescription);
-      log.info("Public channel updated - name: {}, id: {}, description: {}",
-          newName, channelId, newDescription);
-
-      return channelMapper.toDto(channel);
-    } catch (Exception e) {
-      log.error("Error updating public channel: {}", e.getMessage());
-      throw e;
+    Channel channel = channelRepository.findById(channelId)
+        .orElseThrow(() -> {
+          log.warn("Channel update failed - channel not found: {}", channelId);
+          return new NoSuchElementException("Channel with id " + channelId + " not found");
+        });
+    if (channel.getType().equals(ChannelType.PRIVATE)) {
+      log.warn("Channel update failed - private channel cannot be updated: {}", channelId);
+      throw new IllegalArgumentException("Private channel cannot be updated");
     }
+
+    channel.update(newName, newDescription);
+    log.info("Public channel updated - name: {}, id: {}, description: {}",
+        newName, channelId, newDescription);
+
+    return channelMapper.toDto(channel);
   }
 
   @Transactional
@@ -147,16 +133,11 @@ public class BasicChannelService implements ChannelService {
       throw new NoSuchElementException("Channel with id " + channelId + " not found");
     }
 
-    try {
-      messageRepository.deleteAllByChannelId(channelId);
-      readStatusRepository.deleteAllByChannelId(channelId);
-      log.info("Messages & ReadStatus deleted - Channel id: {}", channelId);
+    messageRepository.deleteAllByChannelId(channelId);
+    readStatusRepository.deleteAllByChannelId(channelId);
+    log.info("Messages & ReadStatus deleted - Channel id: {}", channelId);
 
-      channelRepository.deleteById(channelId);
-      log.info("Channel deleted - Channel id: {}", channelId);
-    } catch (Exception e) {
-      log.error("Error deleting channel: {}", e.getMessage());
-      throw e;
-    }
+    channelRepository.deleteById(channelId);
+    log.info("Channel deleted - Channel id: {}", channelId);
   }
 }

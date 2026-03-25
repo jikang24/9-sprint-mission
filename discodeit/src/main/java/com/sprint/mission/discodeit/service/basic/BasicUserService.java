@@ -66,23 +66,19 @@ public class BasicUserService implements UserService {
         .orElse(null);
     String password = userCreateRequest.password();
 
-    try {
-      User user = new User(username, email, password, nullableProfile);
-      Instant now = Instant.now();
-      UserStatus userStatus = new UserStatus(user, now);
+    User user = new User(username, email, password, nullableProfile);
+    Instant now = Instant.now();
+    UserStatus userStatus = new UserStatus(user, now);
 
-      userRepository.save(user);
+    userRepository.save(user);
 
-      log.info("User created - username: {}, email: {}", username, email);
-      if (nullableProfile != null) {
-        log.debug("Profile uploaded - id: {}", nullableProfile.getId());
-      }
-
-      return userMapper.toDto(user);
-    } catch (Exception e) {
-      log.error("Error creating user: {}", e.getMessage());
-      throw e;
+    log.info("User created - username: {}, email: {}", username, email);
+    if (nullableProfile != null) {
+      log.debug("Profile uploaded - id: {}", nullableProfile.getId());
     }
+
+    return userMapper.toDto(user);
+
   }
 
   @Override
@@ -137,20 +133,15 @@ public class BasicUserService implements UserService {
           return binaryContent;
         })
         .orElse(null);
-    try {
 
-      String newPassword = userUpdateRequest.newPassword();
-      user.update(newUsername, newEmail, newPassword, nullableProfile);
+    String newPassword = userUpdateRequest.newPassword();
+    user.update(newUsername, newEmail, newPassword, nullableProfile);
 
-      log.info("User updated - username: {}, email: {}", newUsername, newEmail);
-      if (nullableProfile != null) {
-        log.debug("Profile uploaded - id: {}", nullableProfile.getId());
-      }
-      return userMapper.toDto(user);
-    } catch (Exception e) {
-      log.error("Error updating user: {}", e.getMessage());
-      throw e;
+    log.info("User updated - username: {}, email: {}", newUsername, newEmail);
+    if (nullableProfile != null) {
+      log.debug("Profile uploaded - id: {}", nullableProfile.getId());
     }
+    return userMapper.toDto(user);
   }
 
   @Transactional
@@ -162,14 +153,9 @@ public class BasicUserService implements UserService {
       log.warn("User deletion failed - user not found: {}", userId);
       throw new NoSuchElementException("User with id " + userId + " not found");
     }
-    try {
-      User user = userRepository.findById(userId)
-          .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found"));
-      log.info("User deleted - username: {}", user.getUsername());
-      userRepository.deleteById(userId);
-    } catch (Exception e) {
-      log.error("Error deleting user: {}", e.getMessage());
-      throw e;
-    }
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found"));
+    userRepository.deleteById(userId);
+    log.info("User deleted - username: {}", user.getUsername());
   }
 }

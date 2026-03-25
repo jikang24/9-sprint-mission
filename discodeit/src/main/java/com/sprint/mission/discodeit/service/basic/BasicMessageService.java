@@ -46,6 +46,8 @@ public class BasicMessageService implements MessageService {
   @Override
   public MessageDto create(MessageCreateRequest messageCreateRequest,
       List<BinaryContentCreateRequest> binaryContentCreateRequests) {
+    log.debug("Creating message - channelId: {}, authorId: {}", messageCreateRequest.channelId(),
+        messageCreateRequest.authorId());
     UUID channelId = messageCreateRequest.channelId();
     UUID authorId = messageCreateRequest.authorId();
 
@@ -84,7 +86,7 @@ public class BasicMessageService implements MessageService {
     );
 
     messageRepository.save(message);
-//    log.info("Message created - id: {}", message.getId());
+    log.info("Message created - id: {}", message.getId());
     if (!attachments.isEmpty()) {
       log.debug("Attachments uploaded - ids: {}", attachments.stream().map(BinaryContent::getId)
           .toList());
