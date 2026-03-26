@@ -1,10 +1,13 @@
 package com.sprint.mission.discodeit.exception;
 
 import com.sprint.mission.discodeit.dto.response.ErrorResponse;
-import java.util.NoSuchElementException;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -45,6 +48,28 @@ public class GlobalExceptionHandler {
         HttpStatus.INTERNAL_SERVER_ERROR.value()
     );
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+  }
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<ErrorResponse> handleValidationException(
+      MethodArgumentNotValidException e) {
+
+    // 어떤 필드가 왜 실패했는지 details에 담기
+    Map<String, Object> details = new HashMap<>();
+    e.getBindingResult().getFieldErrors()
+        .forEach(error -> details.put(error.getField(), error.getDefaultMessage()));
+
+    log.warn("Validation failed - details: {}", details);
+
+    ErrorResponse response = new ErrorResponse(
+        Instant.now(),
+        "VALIDATION_ERROR",
+        "요청 데이터가 유효하지 않습니다",
+        details,
+        e.getClass().getSimpleName(),
+        HttpStatus.BAD_REQUEST.value()
+    );
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
   }
 
   // ErrorCode → HTTP 상태코드 매핑
