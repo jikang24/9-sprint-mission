@@ -1,20 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-  <!-- 로그 패턴을 변수로 정의해두면 아래에서 재사용 가능 -->
-  <!-- %d: 날짜/시간, [%thread]: 스레드명, %-5level: 5글자 맞춤 레벨, %logger{36}: 최대 36글자 로거명 -->
-  <property name="LOG_PATTERN"
-    value="%d{yy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+  <!-- %clr 등 Spring Boot 기본 변환기 등록 -->
+  <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+  <!-- ✅ 커스텀 색상 변환기 등록 - 맨 위에서 먼저 선언해야 아래에서 사용 가능 -->
+  <conversionRule conversionWord="lvlclr"
+    converterClass="com.sprint.mission.discodeit.logging.LevelColorConverter"/>
 
   <!-- 로그 파일이 저장될 경로 (프로젝트 루트/.logs) -->
   <property name="LOG_PATH" value=".logs"/>
+
+  <!-- 파일 출력용 패턴 (색상 코드 제외) -->
+  <property name="FILE_LOG_PATTERN"
+    value="%d{yy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
 
   <!-- ============================== -->
   <!--  1. 콘솔 출력 Appender         -->
   <!-- ============================== -->
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
-      <pattern>${LOG_PATTERN}</pattern>
+      <pattern>%d{yy-MM-dd HH:mm:ss.SSS} [%thread] %lvlclr(%-5level)
+        %clr(%-36logger{36}){cyan} - %msg%n
+      </pattern>
     </encoder>
   </appender>
 
@@ -26,7 +34,8 @@
     <file>${LOG_PATH}/discodeit.log</file>
 
     <encoder>
-      <pattern>${LOG_PATTERN}</pattern>
+      <!-- 파일에는 색상 코드 없는 패턴 사용 -->
+      <pattern>${FILE_LOG_PATTERN}</pattern>
     </encoder>
 
     <!-- 롤링 정책: 날짜가 바뀌면 새 파일로 교체 -->
