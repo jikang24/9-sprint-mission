@@ -22,6 +22,18 @@ spring:
   profiles:
     active: dev  # 기본값은 dev로 설정
 
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, loggers
+  info:
+    env:
+      enabled: true
+
 
 logging:
   level:
@@ -34,3 +46,20 @@ logging:
 #    type: local
 #    local:
 #      root-path: .discodeit/storage
+info:
+  app:
+    name: Discodeit
+    version: 1.7.0
+    java-version: 17
+    spring-boot-version: 3.4.0
+  datasource:
+    url: ${spring.datasource.url}                           # dev/prod yaml에서 참조
+    driver-class-name: ${spring.datasource.driver-class-name}
+  jpa:
+    ddl-auto: ${spring.jpa.hibernate.ddl-auto}             # dev/prod yaml에서 참조
+  storage:
+    type: ${discodeit.storage.type}                        # dev/prod yaml에서 참조
+    path: ${discodeit.storage.local.root-path}
+  multipart:
+    max-file-size: ${spring.servlet.multipart.maxFileSize}  # 공통 yaml에 있음
+    max-request-size: ${spring.servlet.multipart.maxRequestSize}
