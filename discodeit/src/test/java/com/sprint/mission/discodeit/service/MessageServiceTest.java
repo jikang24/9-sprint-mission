@@ -2,6 +2,8 @@ package com.sprint.mission.discodeit.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.ArgumentMatchers.any;
@@ -225,7 +227,8 @@ class MessageServiceTest {
         List.of(mockMessageDto), null, 1, false, 1L
     );
 
-    given(messageRepository.findAllByChannelIdWithAuthor(any(), any(), any()))
+    given(channelRepository.existsById(channelId)).willReturn(true);
+    given(messageRepository.findAllByChannelIdWithAuthor(eq(channelId), eq(cursor), eq(pageable)))
         .willReturn(mockSlice);
     given(messageMapper.toDto(any(Message.class))).willReturn(mockMessageDto);
     given(pageResponseMapper.<MessageDto>fromSlice(any(), any())).willReturn(mockPageResponse);
@@ -241,17 +244,33 @@ class MessageServiceTest {
   }
 
   @Test
+  @DisplayName("채널 ID로 메시지 목록 조회 실패 - 채널 없음")
+  void findAllByChannelId_fail_channelNotFound() {
+    UUID channelId = UUID.randomUUID();
+    Pageable pageable = PageRequest.of(0, 50, Sort.by(Direction.DESC, "createdAt"));
+
+    given(channelRepository.existsById(channelId)).willReturn(false);
+
+    assertThatThrownBy(() -> messageService.findAllByChannelId(channelId, null, pageable))
+        .isInstanceOf(ChannelNotFoundException.class);
+
+    then(messageRepository).should(never()).findAllByChannelIdWithAuthor(any(), any(), any());
+  }
+
+  @Test
   @DisplayName("채널 ID로 메시지 목록 조회 - 메시지 없음")
   void findAllByChannelId_empty() {
     UUID channelId = UUID.randomUUID();
     Pageable pageable = PageRequest.of(0, 50, Sort.by(Direction.DESC, "createdAt"));
+
+    given(channelRepository.existsById(channelId)).willReturn(true);
 
     Slice<Message> emptySlice = new SliceImpl<>(List.of(), pageable, false);
     PageResponse<MessageDto> emptyPageResponse = new PageResponse<>(
         List.of(), null, 0, false, 0L
     );
 
-    given(messageRepository.findAllByChannelIdWithAuthor(any(), any(), any()))
+    given(messageRepository.findAllByChannelIdWithAuthor(any(), nullable(Instant.class), any()))
         .willReturn(emptySlice);
     given(pageResponseMapper.<MessageDto>fromSlice(any(), any())).willReturn(emptyPageResponse);
 
