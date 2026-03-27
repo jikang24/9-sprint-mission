@@ -112,6 +112,10 @@ public class BasicMessageService implements MessageService {
   @Override
   public PageResponse<MessageDto> findAllByChannelId(UUID channelId, Instant createAt,
       Pageable pageable) {
+    if (!channelRepository.existsById(channelId)) {
+      log.warn("Message find failed - channel not found: {}", channelId);
+      throw new ChannelNotFoundException(Map.of("channelId", channelId));
+    }
     Slice<MessageDto> slice = messageRepository.findAllByChannelIdWithAuthor(channelId,
             Optional.ofNullable(createAt).orElse(Instant.now()),
             pageable)
