@@ -13,7 +13,7 @@
 
   <!-- 파일 출력용 패턴 (색상 코드 제외) -->
   <property name="FILE_LOG_PATTERN"
-    value="%d{yy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+    value="%d{yy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%X{requestId} | %X{method} | %X{url}] - %msg%n"/>
 
   <!-- ============================== -->
   <!--  1. 콘솔 출력 Appender         -->
@@ -21,7 +21,7 @@
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <pattern>%d{yy-MM-dd HH:mm:ss.SSS} [%thread] %lvlclr(%-5level)
-        %clr(%-36logger{36}){cyan} - %msg%n
+        %clr(%-36logger{36}){cyan} [%X{requestId} | %X{method} | %X{url}] - %msg%n
       </pattern>
     </encoder>
   </appender>
@@ -54,7 +54,7 @@
   <!-- dev 프로파일일 때 적용 -->
   <springProfile name="dev">
     <!-- 우리 프로젝트 패키지는 debug 레벨로 -->
-    <logger name="com.codeit.mission.discodeit" level="DEBUG"/>
+    <logger name="com.sprint.mission.discodeit" level="DEBUG"/>
     <!-- Hibernate SQL 로그 -->
     <logger name="org.hibernate.SQL" level="DEBUG"/>
     <logger name="org.hibernate.orm.jdbc.bind" level="TRACE"/>
@@ -68,7 +68,7 @@
   <!-- prod 프로파일일 때 적용 -->
   <springProfile name="prod">
     <!-- 우리 프로젝트 패키지는 info 레벨로 -->
-    <logger name="com.codeit.mission.discodeit" level="INFO"/>
+    <logger name="com.sprint.mission.discodeit" level="INFO"/>
     <!-- Hibernate SQL 로그 최소화 -->
     <logger name="org.hibernate.SQL" level="WARN"/>
     <!-- 전체 기본 레벨: info, 콘솔+파일 동시 출력 -->
