@@ -1,10 +1,10 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.4.0'
+    id 'org.springframework.boot' version '3.3.8'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
-group = 'com.sprint.misson'
+group = 'com.sprint.mission'
 version = '0.0.1-SNAPSHOT'
 description = 'admin'
 
@@ -19,7 +19,7 @@ repositories {
 }
 
 ext {
-    set('springBootAdminVersion', "4.0.2")
+    set('springBootAdminVersion', "3.3.6")
 }
 
 dependencies {
