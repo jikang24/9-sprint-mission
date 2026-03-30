@@ -8,27 +8,29 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import java.time.Instant;
 import lombok.AccessLevel;
 import lombok.Getter;
-import java.time.Instant;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "read_statuses", uniqueConstraints = @UniqueConstraint(
-    name = "uk_read_status_user-channel", columnNames = {"user_id", "channel_id"}))
+@Table(
+    name = "read_statuses",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"user_id", "channel_id"})
+    }
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReadStatus extends BaseUpdatableEntity {
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "user_id", nullable = false)
+  @JoinColumn(name = "user_id", columnDefinition = "uuid")
   private User user;
-
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "channel_id", nullable = false)
+  @JoinColumn(name = "channel_id", columnDefinition = "uuid")
   private Channel channel;
-
-  @Column(name = "last_read_at", columnDefinition = "timestamp with time zone", nullable = false)
+  @Column(columnDefinition = "timestamp with time zone", nullable = false)
   private Instant lastReadAt;
 
   public ReadStatus(User user, Channel channel, Instant lastReadAt) {
@@ -41,7 +43,5 @@ public class ReadStatus extends BaseUpdatableEntity {
     if (newLastReadAt != null && !newLastReadAt.equals(this.lastReadAt)) {
       this.lastReadAt = newLastReadAt;
     }
-
-
   }
 }

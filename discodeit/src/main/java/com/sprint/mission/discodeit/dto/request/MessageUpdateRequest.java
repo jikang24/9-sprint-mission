@@ -1,6 +1,12 @@
 package com.sprint.mission.discodeit.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public record MessageUpdateRequest(
-        String newContent
+    @NotBlank(message = "공백의 메시지는 보낼 수 없습니다.")
+    @Size(max = 1000, message = "메시지는 1000자 이하로 보낼 수 있습니다")
+    String newContent
 ) {
+
 }
