@@ -10,12 +10,16 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate  # 운영에선 절대 테이블 건드리지 않음
+  boot:
+    admin:
+      client:
+        url: ${SPRING_BOOT_ADMIN_CLIENT_URL}
 
 logging:
   level:
     root: info
     org.hibernate.SQL: warn  # 운영에선 로그 최소화
-    com.sprint.misson.discodeit: info
+    com.sprint.mission.discodeit: info
 
 discodeit:
   storage:

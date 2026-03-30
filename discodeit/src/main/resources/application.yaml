@@ -18,6 +18,11 @@ spring:
         format_sql: true
     #        default_batch_fetch_size: 100
     open-in-view: false
+  boot:
+    admin:
+      client:
+        instance:
+          name: discodeit
 
   profiles:
     active: dev  # 기본값은 dev로 설정
