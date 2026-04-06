@@ -52,3 +52,10 @@ logs/          # logs 폴더도 혹시 모르니 같이 추가
 ### Mac OS ###
 .DS_Store
 **/.DS_Store
+
+### Discodeit ###
+.discodeit
+
+### 숨김 파일 ###
+.*
+!.gitignore
