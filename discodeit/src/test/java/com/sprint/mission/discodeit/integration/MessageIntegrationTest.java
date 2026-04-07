@@ -14,6 +14,7 @@ import com.sprint.mission.discodeit.dto.request.MessageCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageUpdateRequest;
 import com.sprint.mission.discodeit.dto.request.PublicChannelCreateRequest;
 import com.sprint.mission.discodeit.dto.request.UserCreateRequest;
+import com.sprint.mission.discodeit.exception.ErrorCode;
 import com.sprint.mission.discodeit.repository.MessageRepository;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -149,7 +150,7 @@ class MessageIntegrationTest {
                 requestJson.getBytes()
             )))
         .andExpect(status().isNotFound())
-        .andExpect(jsonPath("$.code").value("CHANNEL_NOT_FOUND"));
+        .andExpect(jsonPath("$.code").value(ErrorCode.CHANNEL_NOT_FOUND.name()));
   }
 
   @Test

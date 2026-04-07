@@ -12,12 +12,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sprint.mission.discodeit.dto.data.UserDto;
 import com.sprint.mission.discodeit.dto.request.UserCreateRequest;
+import com.sprint.mission.discodeit.exception.ErrorCode;
 import com.sprint.mission.discodeit.exception.GlobalExceptionHandler;
+import com.sprint.mission.discodeit.exception.detail.UserExceptionDetail;
 import com.sprint.mission.discodeit.exception.user.UserAlreadyExistsException;
 import com.sprint.mission.discodeit.exception.user.UserNotFoundException;
 import com.sprint.mission.discodeit.service.UserService;
 import com.sprint.mission.discodeit.service.UserStatusService;
-import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,9 +64,9 @@ class UserControllerTest {
                 MediaType.APPLICATION_JSON_VALUE,
                 requestJson.getBytes()
             )))
-        .andExpect(status().isCreated())               // 201 상태코드 검증
-        .andExpect(jsonPath("$.username").value("testUser"))  // JSON 응답 검증
-        .andExpect(jsonPath("$.email").value("test@test.com"));
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.code").value(ErrorCode.DUPLICATE_USER.name()))
+        .andExpect(jsonPath("$.code").value(ErrorCode.USER_NOT_FOUND.name()));
   }
 
   @Test
@@ -75,7 +76,7 @@ class UserControllerTest {
     String requestJson = objectMapper.writeValueAsString(request);
 
     given(userService.create(any(), any())).willThrow(
-        new UserAlreadyExistsException(Map.of("email", "test@test.com")));
+        new UserAlreadyExistsException(UserExceptionDetail.ofEmail("test@test.com")));
 
     mockMvc.perform(multipart("/api/users")
             .file(new MockMultipartFile(
@@ -85,7 +86,7 @@ class UserControllerTest {
                 requestJson.getBytes()
             )))
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("DUPLICATE_USER"));
+        .andExpect(jsonPath("$.code").value("DUPLICATE_EMAIL"));
   }
 
   @Test
@@ -103,12 +104,12 @@ class UserControllerTest {
   void deleteUser_fail_notFount() throws Exception {
     UUID userId = UUID.randomUUID();
 
-    willThrow(new UserNotFoundException(Map.of("userId", userId)))
+    willThrow(new UserNotFoundException(UserExceptionDetail.ofUserId(userId.toString())))
         .given(userService).delete(any());
 
     mockMvc.perform(delete("/api/users/{userId}", userId))
         .andExpect(status().isNotFound())
-        .andExpect(jsonPath("$.code").value("USER_NOT_FOUND"));
+        .andExpect(jsonPath("$.code").value(ErrorCode.USER_NOT_FOUND.name()));
   }
 
 

@@ -12,6 +12,7 @@ import com.sprint.mission.discodeit.dto.request.UserUpdateRequest;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.exception.user.UserAlreadyExistsException;
 import com.sprint.mission.discodeit.exception.user.UserNotFoundException;
+import com.sprint.mission.discodeit.fixture.UserFixture;
 import com.sprint.mission.discodeit.mapper.UserMapper;
 import com.sprint.mission.discodeit.repository.BinaryContentRepository;
 import com.sprint.mission.discodeit.repository.UserRepository;
@@ -48,9 +49,9 @@ class UserServiceTest {
   @DisplayName("유저 생성 성공")
   void createUser_success() {
     // given - 테스트 준비: 어떤 상황인지 설정
-    UserCreateRequest request = new UserCreateRequest("testUser", "test@test.com", "password123");
-    User mockUser = new User("testUser", "test@test.com", "password123", null);
-    UserDto mockUserDto = new UserDto(UUID.randomUUID(), "testUser", "test@test.com", null, false);
+    UserCreateRequest request = UserFixture.createUserCreateRequest();
+    User mockUser = UserFixture.createUser();
+    UserDto mockUserDto = UserFixture.createUserDto();
 
     // 이메일/유저명 중복 없음을 가정
     given(userRepository.existsByEmail(request.email())).willReturn(false);
@@ -74,7 +75,7 @@ class UserServiceTest {
   @DisplayName("유저 생성 실패 - 이메일 중복")
   void createUser_fail_duplicateEmail() {
     // given - 이미 같은 이메일이 존재하는 상황
-    UserCreateRequest request = new UserCreateRequest("testUser", "test@test.com", "password123");
+    UserCreateRequest request = UserFixture.createUserCreateRequest();
     given(userRepository.existsByEmail(request.email())).willReturn(true);  // 이메일 중복!
 
     // when & then - 예외가 발생하는지 검증
@@ -89,7 +90,7 @@ class UserServiceTest {
   @DisplayName("유저 생성 실패 - 유저명 중복")
   void createUser_fail_duplicateUsername() {
     // given - 이미 같은 유저명이 존재하는 상황
-    UserCreateRequest request = new UserCreateRequest("testUser", "test@test.com", "password123");
+    UserCreateRequest request = UserFixture.createUserCreateRequest();
     given(userRepository.existsByEmail(request.email())).willReturn(false);
     given(userRepository.existsByUsername(request.username())).willReturn(true);  // 유저명 중복!
 
@@ -102,10 +103,9 @@ class UserServiceTest {
   @DisplayName("유저 수정 성공")
   void updateUser_success() {
     UUID userId = UUID.randomUUID();
-    UserUpdateRequest request = new UserUpdateRequest("testNewUsername", "testNewEmail",
-        "testNewPassword");
-    User mockUser = new User("testUser", "test@test.com", "password123", null);
-    UserDto mockUserDto = new UserDto(userId, "testNewUsername", "testNewEmail", null, false);
+    UserUpdateRequest request = UserFixture.createUserUpdateRequest();
+    User mockUser = UserFixture.createUser();
+    UserDto mockUserDto = UserFixture.createUserDto();
 
     given(userRepository.findById(userId)).willReturn(Optional.of(mockUser));
     given(userRepository.existsByEmail(request.newEmail())).willReturn(false);
@@ -124,9 +124,8 @@ class UserServiceTest {
   @DisplayName("유저 수정 실패 - 이메일 중복")
   void updateUser_fail_duplicateEmail() {
     UUID userId = UUID.randomUUID();  // 임의의 UUID 생성
-    User mockUser = new User("testUser", "test@test.com", "password123", null);
-    UserUpdateRequest request = new UserUpdateRequest("testNewUsername", "testNewEmail",
-        "testNewPassword");
+    User mockUser = UserFixture.createUser();
+    UserUpdateRequest request = UserFixture.createUserUpdateRequest();
 
     given(userRepository.findById(userId)).willReturn(Optional.of(mockUser));
     given(userRepository.existsByEmail(request.newEmail())).willReturn(true);  // 이메일 중복!
@@ -143,9 +142,8 @@ class UserServiceTest {
   void updateUser_fail_duplicateUsername() {
     // given - 이미 같은 유저명이 존재하는 상황
     UUID userId = UUID.randomUUID();
-    User mockUser = new User("testUser", "test@test.com", "password123", null);
-    UserUpdateRequest request = new UserUpdateRequest("testNewUsername", "testNewEmail",
-        "testNewPassword");
+    User mockUser = UserFixture.createUser();
+    UserUpdateRequest request = UserFixture.createUserUpdateRequest();
 
     given(userRepository.findById(userId)).willReturn(Optional.of(mockUser));
     given(userRepository.existsByEmail(request.newEmail())).willReturn(false);
@@ -160,7 +158,7 @@ class UserServiceTest {
   @DisplayName("유저 삭제 성공")
   void deleteUser_success() {
     UUID userId = UUID.randomUUID();
-    User mockUser = new User("testUser", "test@test.com", "password123", null);
+    User mockUser = UserFixture.createUser();
 
     given(userRepository.findById(userId)).willReturn(Optional.of(mockUser));
 
