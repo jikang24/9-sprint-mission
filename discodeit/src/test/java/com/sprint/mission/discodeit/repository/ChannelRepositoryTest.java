@@ -47,6 +47,7 @@ class ChannelRepositoryTest {
     em.persist(readStatus);
 
     em.flush();
+    em.clear();
 
     // 구독 중인 채널 ID 목록
     List<UUID> subscribedChannelIds = List.of(privateChannel.getId());

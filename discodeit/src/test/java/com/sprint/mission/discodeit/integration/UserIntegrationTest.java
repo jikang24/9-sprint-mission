@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sprint.mission.discodeit.dto.request.UserCreateRequest;
+import com.sprint.mission.discodeit.exception.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +79,7 @@ class UserIntegrationTest {
                 requestJson.getBytes()
             )))
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("DUPLICATE_USER"));
+        .andExpect(jsonPath("$.code").value(ErrorCode.DUPLICATE_USER.name()));
   }
 
   @Test

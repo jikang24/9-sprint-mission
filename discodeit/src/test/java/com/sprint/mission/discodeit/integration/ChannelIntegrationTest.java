@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sprint.mission.discodeit.dto.request.PublicChannelCreateRequest;
 import com.sprint.mission.discodeit.dto.request.PublicChannelUpdateRequest;
+import com.sprint.mission.discodeit.exception.ErrorCode;
 import com.sprint.mission.discodeit.repository.ChannelRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -85,7 +86,7 @@ class ChannelIntegrationTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestJson))
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
+        .andExpect(jsonPath("$.code").value(ErrorCode.VALIDATION_ERROR.name()));
   }
 
   @Test
@@ -121,7 +122,7 @@ class ChannelIntegrationTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(updateJson))
         .andExpect(status().isNotFound())
-        .andExpect(jsonPath("$.code").value("CHANNEL_NOT_FOUND"));
+        .andExpect(jsonPath("$.code").value(ErrorCode.CHANNEL_NOT_FOUND.name()));
   }
 
   @Test
