@@ -15,7 +15,7 @@ import com.sprint.mission.discodeit.repository.BinaryContentRepository;
 import com.sprint.mission.discodeit.service.basic.BasicBinaryContentService;
 import com.sprint.mission.discodeit.storage.BinaryContentStorage;
 import java.util.List;
-import java.util.NoSuchElementException;
+import com.sprint.mission.discodeit.exception.binarycontent.BinaryContentNotFoundException;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -101,7 +101,7 @@ class BinaryContentServiceTest {
     given(binaryContentRepository.findById(id)).willReturn(Optional.empty());
 
     assertThatThrownBy(() -> binaryContentService.find(id))
-        .isInstanceOf(NoSuchElementException.class);
+        .isInstanceOf(BinaryContentNotFoundException.class);
   }
 
   @Test
@@ -147,7 +147,7 @@ class BinaryContentServiceTest {
     given(binaryContentRepository.existsById(id)).willReturn(false);
 
     assertThatThrownBy(() -> binaryContentService.delete(id))
-        .isInstanceOf(NoSuchElementException.class);
+        .isInstanceOf(BinaryContentNotFoundException.class);
 
     then(binaryContentRepository).should(never()).deleteById(any());
   }

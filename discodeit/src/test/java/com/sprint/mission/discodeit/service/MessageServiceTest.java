@@ -19,6 +19,7 @@ import com.sprint.mission.discodeit.entity.ChannelType;
 import com.sprint.mission.discodeit.entity.Message;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.exception.channel.ChannelNotFoundException;
+import com.sprint.mission.discodeit.exception.message.MessageNotFoundException;
 import com.sprint.mission.discodeit.exception.user.UserNotFoundException;
 import com.sprint.mission.discodeit.fixture.ChannelFixture;
 import com.sprint.mission.discodeit.fixture.MessageFixture;
@@ -33,7 +34,6 @@ import com.sprint.mission.discodeit.service.basic.BasicMessageService;
 import com.sprint.mission.discodeit.storage.BinaryContentStorage;
 import java.time.Instant;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -73,25 +73,22 @@ class MessageServiceTest {
   @Test
   @DisplayName("메시지 생성 성공")
   void createMessage_success() {
-    UUID channelId = UUID.randomUUID();
-    UUID authorId = UUID.randomUUID();
-
     MessageCreateRequest request = MessageFixture.createMessageCreateRequest();
     Channel mockChannel = ChannelFixture.createPublicChannel();
     User mockAuthor = UserFixture.createUser();
     Message mockMessage = MessageFixture.createMessage();
     MessageDto mockMessageDto = MessageFixture.createMessageDto();
 
-    given(channelRepository.findById(channelId)).willReturn(Optional.of(mockChannel));
-    given(userRepository.findById(authorId)).willReturn(Optional.of(mockAuthor));
+    given(channelRepository.findById(ChannelFixture.CHANNEL_ID)).willReturn(Optional.of(mockChannel));
+    given(userRepository.findById(UserFixture.USER_ID)).willReturn(Optional.of(mockAuthor));
     given(messageRepository.save(any(Message.class))).willReturn(mockMessage);
     given(messageMapper.toDto(any(Message.class))).willReturn(mockMessageDto);
 
     MessageDto result = messageService.create(request, List.of());
 
     assertThat(result.content()).isEqualTo("testContent");
-    assertThat(result.channelId()).isEqualTo(channelId);
-    assertThat(result.author().id()).isEqualTo(authorId);
+    assertThat(result.channelId()).isEqualTo(ChannelFixture.CHANNEL_ID);
+    assertThat(result.author().id()).isEqualTo(UserFixture.USER_ID);
 
     then(messageRepository).should().save(any(Message.class));
   }
@@ -112,14 +109,12 @@ class MessageServiceTest {
   @Test
   @DisplayName("메시지 생성 실패 - 작성자 없음")
   void createMessage_fail_authorNotFound() {
-    UUID channelId = UUID.randomUUID();
-    UUID authorId = UUID.randomUUID();
     MessageCreateRequest request = MessageFixture.createMessageCreateRequest();
     Channel mockChannel = ChannelFixture.createPublicChannel();
 
     // 채널은 있고, 작성자가 없는 상황
-    given(channelRepository.findById(channelId)).willReturn(Optional.of(mockChannel));
-    given(userRepository.findById(authorId)).willReturn(Optional.empty());
+    given(channelRepository.findById(ChannelFixture.CHANNEL_ID)).willReturn(Optional.of(mockChannel));
+    given(userRepository.findById(UserFixture.USER_ID)).willReturn(Optional.empty());
 
     assertThatThrownBy(() -> messageService.create(request, List.of()))
         .isInstanceOf(UserNotFoundException.class);
@@ -129,11 +124,9 @@ class MessageServiceTest {
   @DisplayName("메시지 수정 성공")
   void updateMessage_success() {
     UUID messageId = UUID.randomUUID();
-    UUID channelId = UUID.randomUUID();
-    UUID authorId = UUID.randomUUID();
     MessageUpdateRequest request = MessageFixture.createMessageUpdateRequest();
     Message mockMessage = MessageFixture.createMessage();
-    MessageDto mockMessageDto = MessageFixture.createMessageDto();
+    MessageDto mockMessageDto = MessageFixture.createUpdatedMessageDto();
 
     given(messageRepository.findById(messageId)).willReturn(Optional.of(mockMessage));
     given(messageMapper.toDto(any(Message.class))).willReturn(mockMessageDto);
@@ -141,8 +134,8 @@ class MessageServiceTest {
     MessageDto result = messageService.update(messageId, request);
 
     assertThat(result.content()).isEqualTo("newTestContent");
-    assertThat(result.channelId()).isEqualTo(channelId);
-    assertThat(result.author().id()).isEqualTo(authorId);
+    assertThat(result.channelId()).isEqualTo(ChannelFixture.CHANNEL_ID);
+    assertThat(result.author().id()).isEqualTo(UserFixture.USER_ID);
 
     then(messageMapper).should().toDto(any(Message.class));
     then(messageRepository).should().findById(messageId);
@@ -157,7 +150,7 @@ class MessageServiceTest {
     given(messageRepository.findById(messageId)).willReturn(Optional.empty());
 
     assertThatThrownBy(() -> messageService.update(messageId, request))
-        .isInstanceOf(NoSuchElementException.class);
+        .isInstanceOf(MessageNotFoundException.class);
   }
 
   @Test
@@ -180,7 +173,7 @@ class MessageServiceTest {
     given(messageRepository.existsById(messageId)).willReturn(false);
 
     assertThatThrownBy(() -> messageService.delete(messageId))
-        .isInstanceOf(NoSuchElementException.class);
+        .isInstanceOf(MessageNotFoundException.class);
 
     then(messageRepository).should(never()).deleteById(messageId);
   }

@@ -36,6 +36,19 @@ public class MessageFixture {
     );
   }
 
+  // Updated MessageDto
+  public static MessageDto createUpdatedMessageDto() {
+    return new MessageDto(
+        MESSAGE_ID,
+        Instant.now(),
+        null,
+        "newTestContent",
+        ChannelFixture.CHANNEL_ID,
+        UserFixture.createUserDto(),
+        List.of()
+    );
+  }
+
   // MessageCreateRequest
   public static MessageCreateRequest createMessageCreateRequest() {
     return new MessageCreateRequest(

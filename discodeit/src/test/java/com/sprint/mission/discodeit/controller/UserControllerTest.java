@@ -65,8 +65,9 @@ class UserControllerTest {
                 requestJson.getBytes()
             )))
         .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.code").value(ErrorCode.DUPLICATE_USER.name()))
-        .andExpect(jsonPath("$.code").value(ErrorCode.USER_NOT_FOUND.name()));
+        .andExpect(jsonPath("$.id").value(userId.toString()))
+        .andExpect(jsonPath("$.username").value("testUser"))
+        .andExpect(jsonPath("$.email").value("test@test.com"));
   }
 
   @Test
@@ -86,7 +87,7 @@ class UserControllerTest {
                 requestJson.getBytes()
             )))
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("DUPLICATE_EMAIL"));
+        .andExpect(jsonPath("$.code").value(ErrorCode.DUPLICATE_USER.name()));
   }
 
   @Test
