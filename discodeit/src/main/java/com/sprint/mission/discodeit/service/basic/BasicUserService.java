@@ -7,6 +7,7 @@ import com.sprint.mission.discodeit.dto.request.UserUpdateRequest;
 import com.sprint.mission.discodeit.entity.BinaryContent;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.entity.UserStatus;
+import com.sprint.mission.discodeit.exception.detail.UserExceptionDetail;
 import com.sprint.mission.discodeit.exception.user.UserAlreadyExistsException;
 import com.sprint.mission.discodeit.exception.user.UserNotFoundException;
 import com.sprint.mission.discodeit.mapper.UserMapper;
@@ -17,7 +18,6 @@ import com.sprint.mission.discodeit.service.UserService;
 import com.sprint.mission.discodeit.storage.BinaryContentStorage;
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -47,11 +47,11 @@ public class BasicUserService implements UserService {
 
     if (userRepository.existsByEmail(email)) {
       log.warn("User creation failed - email already exists: {}", email);
-      throw new UserAlreadyExistsException(Map.of("email", email));
+      throw new UserAlreadyExistsException(UserExceptionDetail.ofEmail(email));
     }
     if (userRepository.existsByUsername(username)) {
       log.warn("User creation failed - username already exists: {}", username);
-      throw new UserAlreadyExistsException(Map.of("username", username));
+      throw new UserAlreadyExistsException(UserExceptionDetail.ofUsername(username));
     }
 
     BinaryContent nullableProfile = optionalProfileCreateRequest
@@ -87,7 +87,8 @@ public class BasicUserService implements UserService {
   public UserDto find(UUID userId) {
     return userRepository.findById(userId)
         .map(userMapper::toDto)
-        .orElseThrow(() -> new UserNotFoundException(Map.of("userId", userId)));
+        .orElseThrow(
+            () -> new UserNotFoundException(UserExceptionDetail.ofUserId(userId.toString())));
   }
 
   @Override
@@ -108,18 +109,18 @@ public class BasicUserService implements UserService {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> {
           log.warn("User update failed - user not found: {}", userId);
-          return new UserNotFoundException(Map.of("userId", userId));
+          return new UserNotFoundException(UserExceptionDetail.ofUserId(userId.toString()));
         });
 
     String newUsername = userUpdateRequest.newUsername();
     String newEmail = userUpdateRequest.newEmail();
     if (userRepository.existsByEmail(newEmail)) {
       log.warn("User update failed - email already exists: {}", newEmail);
-      throw new UserAlreadyExistsException(Map.of("email", newEmail));
+      throw new UserAlreadyExistsException(UserExceptionDetail.ofEmail(newEmail));
     }
     if (userRepository.existsByUsername(newUsername)) {
       log.warn("User update failed - username already exists: {}", newUsername);
-      throw new UserAlreadyExistsException(Map.of("username", newUsername));
+      throw new UserAlreadyExistsException(UserExceptionDetail.ofUsername(newUsername));
     }
 
     BinaryContent nullableProfile = optionalProfileCreateRequest
@@ -154,7 +155,7 @@ public class BasicUserService implements UserService {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> {
           log.warn("User deletion failed - user not found: {}", userId);
-          return new UserNotFoundException(Map.of("userId", userId));
+          return new UserNotFoundException(UserExceptionDetail.ofUserId(userId.toString()));
         });
     userRepository.deleteById(userId);
     log.info("User deleted - username: {}", user.getUsername());

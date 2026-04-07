@@ -10,6 +10,10 @@ import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.entity.Message;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.exception.channel.ChannelNotFoundException;
+import com.sprint.mission.discodeit.exception.detail.ChannelExceptionDetail;
+import com.sprint.mission.discodeit.exception.detail.MessageExceptionDetail;
+import com.sprint.mission.discodeit.exception.detail.UserExceptionDetail;
+import com.sprint.mission.discodeit.exception.message.MessageNotFoundException;
 import com.sprint.mission.discodeit.exception.user.UserNotFoundException;
 import com.sprint.mission.discodeit.mapper.MessageMapper;
 import com.sprint.mission.discodeit.mapper.PageResponseMapper;
@@ -21,8 +25,6 @@ import com.sprint.mission.discodeit.service.MessageService;
 import com.sprint.mission.discodeit.storage.BinaryContentStorage;
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -57,12 +59,13 @@ public class BasicMessageService implements MessageService {
     Channel channel = channelRepository.findById(channelId)
         .orElseThrow(() -> {
           log.warn("Message creation failed - channel not found: {}", channelId);
-          return new ChannelNotFoundException(Map.of("channelId", channelId));
+          return new ChannelNotFoundException(
+              ChannelExceptionDetail.ofChannelId(channelId.toString()));
         });
     User author = userRepository.findById(authorId)
         .orElseThrow(() -> {
               log.warn("Message creation failed - author not found: {}", authorId);
-              return new UserNotFoundException(Map.of("authorId", authorId));
+              return new UserNotFoundException(UserExceptionDetail.ofUserId(authorId.toString()));
             }
         );
 
@@ -104,7 +107,8 @@ public class BasicMessageService implements MessageService {
         .map(messageMapper::toDto)
         .orElseThrow(() -> {
           log.warn("Message find failed - message not found: {}", messageId);
-          return new NoSuchElementException("Message with id " + messageId + " not found");
+          return new MessageNotFoundException(
+              MessageExceptionDetail.ofMessageId(messageId.toString()));
         });
   }
 
@@ -114,7 +118,7 @@ public class BasicMessageService implements MessageService {
       Pageable pageable) {
     if (!channelRepository.existsById(channelId)) {
       log.warn("Message find failed - channel not found: {}", channelId);
-      throw new ChannelNotFoundException(Map.of("channelId", channelId));
+      throw new ChannelNotFoundException(ChannelExceptionDetail.ofChannelId(channelId.toString()));
     }
     Slice<MessageDto> slice = messageRepository.findAllByChannelIdWithAuthor(channelId,
             Optional.ofNullable(createAt).orElse(Instant.now()),
@@ -139,7 +143,8 @@ public class BasicMessageService implements MessageService {
         .orElseThrow(
             () -> {
               log.warn("Message update failed - message not found: {}", messageId);
-              return new NoSuchElementException("Message with id " + messageId + " not found");
+              return new MessageNotFoundException(
+                  MessageExceptionDetail.ofMessageId(messageId.toString()));
             });
     message.update(newContent);
     log.info("Message updated - id: {}", messageId);
@@ -152,7 +157,7 @@ public class BasicMessageService implements MessageService {
     log.debug("Deleting message - id: {}", messageId);
     if (!messageRepository.existsById(messageId)) {
       log.warn("Message deletion failed - message not found: {}", messageId);
-      throw new NoSuchElementException("Message with id " + messageId + " not found");
+      throw new MessageNotFoundException(MessageExceptionDetail.ofMessageId(messageId.toString()));
     }
 
     messageRepository.deleteById(messageId);
