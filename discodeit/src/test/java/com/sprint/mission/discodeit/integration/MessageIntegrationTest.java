@@ -101,7 +101,7 @@ class MessageIntegrationTest {
   }
 
   @Test
-  @DisplayName("메시지 생성 성공 - 실제 DB에 저장되는지 확인")
+  @DisplayName("메시지 생성 성공 - 실제 DB 확인")
   void createMessage_success() throws Exception {
     // given - 유저와 채널 먼저 생성
     String authorId = createUserAndGetId("testUser", "test@test.com");
@@ -173,7 +173,7 @@ class MessageIntegrationTest {
   }
 
   @Test
-  @DisplayName("메시지 삭제 성공 - 실제 DB에서 삭제되는지 확인")
+  @DisplayName("메시지 삭제 성공 - 실제 DB 삭제 확인")
   void deleteMessage_success() throws Exception {
     // given - 유저, 채널, 메시지 순서로 생성
     String authorId = createUserAndGetId("testUser", "test@test.com");
@@ -189,7 +189,7 @@ class MessageIntegrationTest {
   }
 
   @Test
-  @DisplayName("채널별 메시지 목록 조회 성공")
+  @DisplayName("채널별 메시지 조회 성공")
   void findAllByChannelId_success() throws Exception {
     // given - 유저, 채널, 메시지 생성
     String authorId = createUserAndGetId("testUser", "test@test.com");
