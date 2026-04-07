@@ -18,14 +18,22 @@
   <!-- ============================== -->
   <!--  1. 콘솔 출력 Appender         -->
   <!-- ============================== -->
+  <!-- ✅ LevelColorConverter 없이 %clr로 직접 색 지정 -->
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
-      <pattern>%d{yy-MM-dd HH:mm:ss.SSS} [%thread] %lvlclr(%-5level)
-        %clr(%-36logger{36}){cyan} [%X{requestId} | %X{method} | %X{url}] - %msg%n
+      <pattern>%d{yy-MM-dd HH:mm:ss.SSS} [%thread]
+        %clr(%-5level){
+        ERROR: red,
+        WARN: yellow,
+        INFO: green,
+        DEBUG: blue,
+        TRACE: white
+        }
+        %clr(%-36logger{36}){cyan}
+        [%X{requestId} | %X{method} | %X{url}] - %msg%n
       </pattern>
     </encoder>
   </appender>
-
   <!-- ============================== -->
   <!--  2. 파일 출력 Appender (롤링)  -->
   <!-- ============================== -->
