@@ -25,6 +25,11 @@ public class UserFixture {
     return new UserDto(USER_ID, USERNAME, EMAIL, null, false);
   }
 
+  // Updated UserDto
+  public static UserDto createUpdatedUserDto() {
+    return new UserDto(USER_ID, "newUsername", "newEmail@test.com", null, false);
+  }
+
   // UserCreateRequest
   public static UserCreateRequest createUserCreateRequest() {
     return new UserCreateRequest(USERNAME, EMAIL, PASSWORD);

@@ -31,6 +31,16 @@ public class ChannelFixture {
         CHANNEL_DESCRIPTION, null, null);
   }
 
+  // Private ChannelDto
+  public static ChannelDto createPrivateChannelDto() {
+    return new ChannelDto(CHANNEL_ID, ChannelType.PRIVATE, null, null, null, null);
+  }
+
+  // Updated Public ChannelDto
+  public static ChannelDto createUpdatedPublicChannelDto() {
+    return new ChannelDto(CHANNEL_ID, ChannelType.PUBLIC, "newName", "newDescription", null, null);
+  }
+
   // PublicChannelCreateRequest
   public static PublicChannelCreateRequest createPublicChannelCreateRequest() {
     return new PublicChannelCreateRequest(CHANNEL_NAME, CHANNEL_DESCRIPTION);

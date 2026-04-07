@@ -80,7 +80,7 @@ class ChannelServiceTest {
         new User("user1", "user1@test.com", "password", null),
         new User("user2", "user2@test.com", "password", null)
     );
-    ChannelDto mockChannelDto = ChannelFixture.createPublicChannelDto();
+    ChannelDto mockChannelDto = ChannelFixture.createPrivateChannelDto();
 
     given(channelRepository.save(any(Channel.class))).willReturn(mockChannel);
     given(channelMapper.toDto(any(Channel.class))).willReturn(mockChannelDto);
@@ -89,8 +89,6 @@ class ChannelServiceTest {
     ChannelDto result = channelService.create(request);
 
     assertThat(result.type()).isEqualTo(ChannelType.PRIVATE);
-    assertThat(result.name()).isEqualTo("testChannel");
-    assertThat(result.description()).isEqualTo("testDescription");
 
     then(channelRepository).should().save(any(Channel.class));
     then(readStatusRepository).should().saveAll(any());
@@ -102,7 +100,7 @@ class ChannelServiceTest {
     UUID channelId = UUID.randomUUID();
     PublicChannelUpdateRequest request = ChannelFixture.createPublicChannelUpdateRequest();
     Channel mockChannel = ChannelFixture.createPublicChannel();
-    ChannelDto mockChannelDto = ChannelFixture.createPublicChannelDto();
+    ChannelDto mockChannelDto = ChannelFixture.createUpdatedPublicChannelDto();
 
     given(channelRepository.findById(channelId)).willReturn(Optional.of(mockChannel));
     given(channelMapper.toDto(any(Channel.class))).willReturn(mockChannelDto);
@@ -187,7 +185,7 @@ class ChannelServiceTest {
     User mockUser = UserFixture.createUser();
     ReadStatus mockReadStatus = new ReadStatus(mockUser, privateChannel, Instant.now());
 
-    ChannelDto mockChannelDto = ChannelFixture.createPublicChannelDto();
+    ChannelDto mockChannelDto = ChannelFixture.createPrivateChannelDto();
 
     given(readStatusRepository.findAllByUserId(userId)).willReturn(List.of(mockReadStatus));
     given(channelRepository.findAllByTypeOrIdIn(any(), any())).willReturn(List.of(privateChannel));

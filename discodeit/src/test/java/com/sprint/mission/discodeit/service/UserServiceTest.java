@@ -105,7 +105,7 @@ class UserServiceTest {
     UUID userId = UUID.randomUUID();
     UserUpdateRequest request = UserFixture.createUserUpdateRequest();
     User mockUser = UserFixture.createUser();
-    UserDto mockUserDto = UserFixture.createUserDto();
+    UserDto mockUserDto = UserFixture.createUpdatedUserDto();
 
     given(userRepository.findById(userId)).willReturn(Optional.of(mockUser));
     given(userRepository.existsByEmail(request.newEmail())).willReturn(false);
@@ -114,8 +114,8 @@ class UserServiceTest {
 
     UserDto result = userService.update(userId, request, Optional.empty());
 
-    assertThat(result.username()).isEqualTo("testNewUsername");
-    assertThat(result.email()).isEqualTo("testNewEmail");
+    assertThat(result.username()).isEqualTo("newUsername");
+    assertThat(result.email()).isEqualTo("newEmail@test.com");
 
     then(userRepository).should().findById(userId);
   }
