@@ -35,7 +35,7 @@ class MessageRepositoryTest {
   private TestEntityManager em;
 
   @Test
-  @DisplayName("채널과 유저를 함께 조회 - 데이터 있음")
+  @DisplayName("채널, 유저를 함께 조회: 성공")
   void findAllByChannelIdWithAuthor_success() {
     User user = new User("testuser", "test@test.com", "password", null);
     em.persist(user);
@@ -60,7 +60,7 @@ class MessageRepositoryTest {
   }
 
   @Test
-  @DisplayName("채널과 유저를 함께 조회 - 데이터 없음")
+  @DisplayName("채널, 유저를 함께 조회: 실패 - 데이터 없음")
   void findAllByChannelIdWithAuthor_empty() {
     Channel channel = new Channel(ChannelType.PUBLIC, "testchannel", "testdescription");
     em.persist(channel);
@@ -77,7 +77,7 @@ class MessageRepositoryTest {
   }
 
   @Test
-  @DisplayName("채널 ID로 메시지 목록 조회 실패 - 채널 없음")
+  @DisplayName("채널 ID로 메시지 목록 조회: 실패 - 채널 없음")
   void findAllByChannelId_fail_unknownChannel() {
     UUID channelId = UUID.randomUUID();
     PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Direction.DESC, "createdAt"));
@@ -89,7 +89,7 @@ class MessageRepositoryTest {
   }
 
   @Test
-  @DisplayName("마지막 메시지를 통한 채널 조회")
+  @DisplayName("마지막 메시지를 통한 채널 조회 성공")
   void findLastMessageAtByChannelId_success() {
     User user = new User("testuser", "test@test.com", "password", null);
     em.persist(user);
@@ -109,7 +109,7 @@ class MessageRepositoryTest {
   }
 
   @Test
-  @DisplayName("마지막 메시지를 통한 채널 조회 - 데이터 없음")
+  @DisplayName("마지막 메시지를 통한 채널 조회 실패: - 데이터 없음")
   void findLastMesssageAtByChannelId_empty() {
 
     Channel channel = new Channel(ChannelType.PUBLIC, "testchannel", "testdescription");
