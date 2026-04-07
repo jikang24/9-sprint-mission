@@ -17,9 +17,3 @@ logging:
     org.hibernate.SQL: debug     # 개발에선 SQL 로그 상세히 봄
     org.hibernate.orm.jdbc.bind: trace
     com.sprint.mission.discodeit: debug
-
-discodeit:
-  storage:
-    type: local
-    local:
-      root-path: .discodeit/storage
