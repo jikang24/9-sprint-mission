@@ -16,13 +16,13 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 
-@Tag(name = "ReadStatus", description = "ReadStatus API")
+@Tag(name = "ReadStatus", description = "Message 읽음 상태 API")
 public interface ReadStatusApi {
 
-  @Operation(summary = "ReadStatus 생성")
+  @Operation(summary = "Message 읽음 상태 생성")
   @ApiResponses(value = {
       @ApiResponse(
-          responseCode = "201", description = "readStatus가 성공적으로 생성됨",
+          responseCode = "201", description = "Message 읽음 상태가 성공적으로 생성됨",
           content = @Content(schema = @Schema(implementation = ReadStatusDto.class))
       ),
       @ApiResponse(
@@ -35,36 +35,33 @@ public interface ReadStatusApi {
       )
   })
   ResponseEntity<ReadStatusDto> create(
-      @Parameter(description = "ReadStatus 생성 정보")
-      ReadStatusCreateRequest readStatusCreateRequest
+      @Parameter(description = "Message 읽음 상태 생성 정보") ReadStatusCreateRequest request
   );
 
-  @Operation(summary = "ReadStatus 수정")
+  @Operation(summary = "Message 읽음 상태 수정")
   @ApiResponses(value = {
       @ApiResponse(
-          responseCode = "200", description = "ReadStatus가 성공적으로 수정됨",
+          responseCode = "200", description = "Message 읽음 상태가 성공적으로 수정됨",
           content = @Content(schema = @Schema(implementation = ReadStatusDto.class))
       ),
       @ApiResponse(
-          responseCode = "404", description = "ReadStatus를 찾을 수 없음",
+          responseCode = "404", description = "Message 읽음 상태를 찾을 수 없음",
           content = @Content(examples = @ExampleObject(value = "ReadStatus with id {readStatusId} not found"))
       )
   })
   ResponseEntity<ReadStatusDto> update(
-      @Parameter(name = "readStatusId") UUID readStatusId,
-      @Parameter(description = "수정할 ReadStatus 정보") ReadStatusUpdateRequest readStatusUpdateRequest
+      @Parameter(description = "수정할 읽음 상태 ID") UUID readStatusId,
+      @Parameter(description = "수정할 읽음 상태 정보") ReadStatusUpdateRequest request
   );
 
-
-  @Operation(summary = "ReadStatus 전체 조회")
+  @Operation(summary = "User의 Message 읽음 상태 목록 조회")
   @ApiResponses(value = {
       @ApiResponse(
-          responseCode = "200", description = "ReadStatus 목록 조회",
+          responseCode = "200", description = "Message 읽음 상태 목록 조회 성공",
           content = @Content(array = @ArraySchema(schema = @Schema(implementation = ReadStatusDto.class)))
       )
   })
   ResponseEntity<List<ReadStatusDto>> findAllByUserId(
       @Parameter(description = "조회할 User ID") UUID userId
   );
-
-}
+} 
