@@ -89,7 +89,6 @@ public class AWSS3Test {
   }
 
   private static Properties loadEnv() throws IOException {
-    // working directory 기준으로 .env 탐색 (루트 실행 / 서브모듈 실행 모두 대응)
     String[] candidates = {".env", "discodeit/.env"};
     for (String candidate : candidates) {
       Path path = Paths.get(candidate);
