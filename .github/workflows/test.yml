@@ -8,6 +8,21 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: discodeit
+          POSTGRES_USER: discodeit_user
+          POSTGRES_PASSWORD: discodeit1234
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -25,6 +40,10 @@ jobs:
       - name: Run tests
         run: ./gradlew test jacocoTestReport --no-daemon
         working-directory: discodeit
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/discodeit
+          SPRING_DATASOURCE_USERNAME: discodeit_user
+          SPRING_DATASOURCE_PASSWORD: discodeit1234
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
