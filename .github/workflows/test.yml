@@ -33,6 +33,14 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
 
+      - name: Initialize database schema
+        run: |
+          PGPASSWORD=discodeit1234 psql \
+            -h localhost \
+            -U discodeit_user \
+            -d discodeit \
+            -f discodeit/src/main/resources/schema.sql    
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
         working-directory: discodeit
