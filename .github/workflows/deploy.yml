@@ -53,12 +53,19 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
 
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition ${{ vars.ECS_TASK_DEFINITION }} \
+            --query taskDefinition \
+            > task-definition.json    
+
       # 새 이미지로 태스크 정의 업데이트
       - name: Update ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: ${{ vars.ECS_TASK_DEFINITION }}
+          task-definition: task-definition.json
           container-name: discodeit-app
           image: ${{ vars.ECR_REPOSITORY_URI }}:${{ github.sha }}
 
