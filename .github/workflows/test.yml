@@ -39,7 +39,9 @@ jobs:
             -h localhost \
             -U discodeit_user \
             -d discodeit \
-            -f discodeit/src/main/resources/schema.sql    
+            -f discodeit/src/main/resources/schema.sql   
+          # 실행 결과 확인을 위해 추가
+        continue-on-error: false
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
