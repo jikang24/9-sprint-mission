@@ -58,7 +58,8 @@ jobs:
           aws ecs describe-task-definition \
             --task-definition ${{ vars.ECS_TASK_DEFINITION }} \
             --query taskDefinition \
-            > task-definition.json    
+            | jq 'del(.enableFaultInjection)' \
+            > task-definition.json   
 
       # 새 이미지로 태스크 정의 업데이트
       - name: Update ECS task definition
