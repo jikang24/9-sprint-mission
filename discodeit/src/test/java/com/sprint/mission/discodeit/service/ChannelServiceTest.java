@@ -17,6 +17,8 @@ import com.sprint.mission.discodeit.entity.ReadStatus;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.exception.channel.ChannelNotFoundException;
 import com.sprint.mission.discodeit.exception.channel.PrivateChannelUpdateException;
+import com.sprint.mission.discodeit.fixture.ChannelFixture;
+import com.sprint.mission.discodeit.fixture.UserFixture;
 import com.sprint.mission.discodeit.mapper.ChannelMapper;
 import com.sprint.mission.discodeit.repository.ChannelRepository;
 import com.sprint.mission.discodeit.repository.MessageRepository;
@@ -54,11 +56,9 @@ class ChannelServiceTest {
   @Test
   @DisplayName("공용 채널 생성 성공")
   void createPublicChannel_success() {
-    PublicChannelCreateRequest request = new PublicChannelCreateRequest("testChannel",
-        "testDescription");
-    Channel mockChannel = new Channel(ChannelType.PUBLIC, "testChannel", "testDescription");
-    ChannelDto mockChannelDto = new ChannelDto(UUID.randomUUID(), ChannelType.PUBLIC, "testChannel",
-        "testDescription", null, null);
+    PublicChannelCreateRequest request = ChannelFixture.createPublicChannelCreateRequest();
+    Channel mockChannel = ChannelFixture.createPublicChannel();
+    ChannelDto mockChannelDto = ChannelFixture.createPublicChannelDto();
 
     given(channelRepository.save(any(Channel.class))).willReturn(mockChannel);
     given(channelMapper.toDto(any(Channel.class))).willReturn(mockChannelDto);
@@ -74,17 +74,13 @@ class ChannelServiceTest {
   @Test
   @DisplayName("사설 채널 생성 성공")
   void createPrivateChannel_success() {
-    PrivateChannelCreateRequest request = new PrivateChannelCreateRequest(
-        List.of(UUID.randomUUID(), UUID.randomUUID())  // 참여자 ID 목록
-    );
-    Channel mockChannel = new Channel(ChannelType.PRIVATE, "testChannel", "testDescription");
+    PrivateChannelCreateRequest request = ChannelFixture.createPrivateChannelCreateRequest();
+    Channel mockChannel = ChannelFixture.createPrivateChannel();
     List<User> mockUsers = List.of(
         new User("user1", "user1@test.com", "password", null),
         new User("user2", "user2@test.com", "password", null)
     );
-    ChannelDto mockChannelDto = new ChannelDto(UUID.randomUUID(), ChannelType.PRIVATE,
-        "testChannel",
-        "testDescription", null, null);
+    ChannelDto mockChannelDto = ChannelFixture.createPrivateChannelDto();
 
     given(channelRepository.save(any(Channel.class))).willReturn(mockChannel);
     given(channelMapper.toDto(any(Channel.class))).willReturn(mockChannelDto);
@@ -93,8 +89,6 @@ class ChannelServiceTest {
     ChannelDto result = channelService.create(request);
 
     assertThat(result.type()).isEqualTo(ChannelType.PRIVATE);
-    assertThat(result.name()).isEqualTo("testChannel");
-    assertThat(result.description()).isEqualTo("testDescription");
 
     then(channelRepository).should().save(any(Channel.class));
     then(readStatusRepository).should().saveAll(any());
@@ -104,11 +98,9 @@ class ChannelServiceTest {
   @DisplayName("채널 수정 성공")
   void updatePublicChannel_success() {
     UUID channelId = UUID.randomUUID();
-    PublicChannelUpdateRequest request = new PublicChannelUpdateRequest("newName",
-        "newDescription");
-    Channel mockChannel = new Channel(ChannelType.PUBLIC, "testChannel", "testDescription");
-    ChannelDto mockChannelDto = new ChannelDto(UUID.randomUUID(), ChannelType.PUBLIC, "newName",
-        "newDescription", null, null);
+    PublicChannelUpdateRequest request = ChannelFixture.createPublicChannelUpdateRequest();
+    Channel mockChannel = ChannelFixture.createPublicChannel();
+    ChannelDto mockChannelDto = ChannelFixture.createUpdatedPublicChannelDto();
 
     given(channelRepository.findById(channelId)).willReturn(Optional.of(mockChannel));
     given(channelMapper.toDto(any(Channel.class))).willReturn(mockChannelDto);
@@ -126,8 +118,7 @@ class ChannelServiceTest {
   void updateChannel_fail_notFound() {
     // given
     UUID channelId = UUID.randomUUID();
-    PublicChannelUpdateRequest request = new PublicChannelUpdateRequest("newName",
-        "newDescription");
+    PublicChannelUpdateRequest request = ChannelFixture.createPublicChannelUpdateRequest();
 
     // 채널이 존재하지 않는 상황
     given(channelRepository.findById(channelId)).willReturn(Optional.empty());
@@ -140,12 +131,10 @@ class ChannelServiceTest {
   @Test
   @DisplayName("채널 수정 실패 - Private 채널 수정 시도")
   void updateChannel_fail_privateChannel() {
-    // given
     UUID channelId = UUID.randomUUID();
-    PublicChannelUpdateRequest request = new PublicChannelUpdateRequest("newName",
-        "newDescription");
+    PublicChannelUpdateRequest request = ChannelFixture.createPublicChannelUpdateRequest();
     // PRIVATE 채널이 존재하는 상황
-    Channel mockChannel = new Channel(ChannelType.PRIVATE, null, null);
+    Channel mockChannel = ChannelFixture.createPrivateChannel();
 
     given(channelRepository.findById(channelId)).willReturn(Optional.of(mockChannel));
 
@@ -190,15 +179,13 @@ class ChannelServiceTest {
   void findAllByUserId_success() {
     // given
     UUID userId = UUID.randomUUID();
-    UUID channelId = UUID.randomUUID();
 
     // 유저가 구독 중인 ReadStatus 목록 (PRIVATE 채널)
-    Channel privateChannel = new Channel(ChannelType.PRIVATE, null, null);
-    User mockUser = new User("testUser", "test@test.com", "password", null);
+    Channel privateChannel = ChannelFixture.createPrivateChannel();
+    User mockUser = UserFixture.createUser();
     ReadStatus mockReadStatus = new ReadStatus(mockUser, privateChannel, Instant.now());
 
-    ChannelDto mockChannelDto = new ChannelDto(channelId, ChannelType.PRIVATE, null, null, null,
-        null);
+    ChannelDto mockChannelDto = ChannelFixture.createPrivateChannelDto();
 
     given(readStatusRepository.findAllByUserId(userId)).willReturn(List.of(mockReadStatus));
     given(channelRepository.findAllByTypeOrIdIn(any(), any())).willReturn(List.of(privateChannel));

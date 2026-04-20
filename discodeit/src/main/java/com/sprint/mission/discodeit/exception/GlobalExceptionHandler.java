@@ -17,16 +17,16 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(DiscodeitException.class)
   public ResponseEntity<ErrorResponse> handleDiscodeitException(DiscodeitException e) {
-    log.warn("DiscodeitException - code: {}, message: {}, details: {}",
+    log.error("DiscodeitException - code: {}, message: {}, details: {}",
         e.getErrorCode(), e.getMessage(), e.getDetails());
 
-    HttpStatus status = resolveHttpStatus(e.getErrorCode());
+    HttpStatus status = e.getErrorCode().getHttpStatus();
 
     ErrorResponse response = new ErrorResponse(
         e.getTimestamp(),
-        e.getErrorCode().name(),  // 예: "USER_NOT_FOUND"
-        e.getMessage(),           // 예: "사용자를 찾을 수 없습니다"
-        e.getDetails(),// 예: {"userId": "123e4567-..."}
+        e.getErrorCode().name(),
+        e.getMessage(),
+        e.getDetails(),
         e.getClass().getSimpleName(),
         status.value()
     );
@@ -47,7 +47,9 @@ public class GlobalExceptionHandler {
         e.getClass().getSimpleName(),
         HttpStatus.INTERNAL_SERVER_ERROR.value()
     );
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body(response);
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -59,24 +61,18 @@ public class GlobalExceptionHandler {
     e.getBindingResult().getFieldErrors()
         .forEach(error -> details.put(error.getField(), error.getDefaultMessage()));
 
-    log.warn("Validation failed - details: {}", details);
+    log.error("Validation failed - details: {}", details);
 
     ErrorResponse response = new ErrorResponse(
         Instant.now(),
-        "VALIDATION_ERROR",
-        "요청 데이터가 유효하지 않습니다",
-        details,
+        ErrorCode.VALIDATION_ERROR.name(),
+        ErrorCode.VALIDATION_ERROR.getMessage(),
+        null,
         e.getClass().getSimpleName(),
         HttpStatus.BAD_REQUEST.value()
     );
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
   }
 
-  // ErrorCode → HTTP 상태코드 매핑
-  private HttpStatus resolveHttpStatus(ErrorCode errorCode) {
-    return switch (errorCode) {
-      case USER_NOT_FOUND, CHANNEL_NOT_FOUND -> HttpStatus.NOT_FOUND;          // 404
-      case DUPLICATE_USER, PRIVATE_CHANNEL_UPDATE -> HttpStatus.BAD_REQUEST;   // 400
-    };
-  }
+
 }

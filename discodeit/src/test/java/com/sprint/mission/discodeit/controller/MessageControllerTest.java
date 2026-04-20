@@ -12,14 +12,16 @@ import com.sprint.mission.discodeit.dto.data.MessageDto;
 import com.sprint.mission.discodeit.dto.data.UserDto;
 import com.sprint.mission.discodeit.dto.request.MessageCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageUpdateRequest;
+import com.sprint.mission.discodeit.exception.ErrorCode;
 import com.sprint.mission.discodeit.exception.GlobalExceptionHandler;
 import com.sprint.mission.discodeit.exception.channel.ChannelNotFoundException;
+import com.sprint.mission.discodeit.exception.detail.ChannelExceptionDetail;
+import com.sprint.mission.discodeit.exception.detail.MessageExceptionDetail;
+import com.sprint.mission.discodeit.exception.message.MessageNotFoundException;
 import com.sprint.mission.discodeit.service.MessageService;
 import com.sprint.mission.discodeit.service.ReadStatusService;
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -82,7 +84,7 @@ class MessageControllerTest {
     String requestJson = objectMapper.writeValueAsString(request);
 
     given(messageService.create(any(), any())).willThrow(new ChannelNotFoundException(
-        Map.of("channelId", channelId)));
+        ChannelExceptionDetail.ofChannelId(channelId.toString())));
 
     mockMvc.perform(multipart("/api/messages")
             .file(new MockMultipartFile(
@@ -92,7 +94,7 @@ class MessageControllerTest {
                 requestJson.getBytes()
             )))
         .andExpect(status().isNotFound())
-        .andExpect(jsonPath("$.code").value("CHANNEL_NOT_FOUND"));
+        .andExpect(jsonPath("$.code").value(ErrorCode.CHANNEL_NOT_FOUND.name()));
   }
 
   @Test
@@ -125,12 +127,12 @@ class MessageControllerTest {
     String requestJson = objectMapper.writeValueAsString(request);
 
     given(messageService.update(any(UUID.class), any(MessageUpdateRequest.class))).willThrow(
-        new NoSuchElementException("Message with id " + messageId + " not found"));
+        new MessageNotFoundException(MessageExceptionDetail.ofMessageId(messageId.toString())));
     mockMvc.perform(patch("/api/messages/{messageId}", messageId)
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestJson))
-        .andExpect(status().isInternalServerError())
-        .andExpect(jsonPath("$.code").value("INTERNAL_ERROR"));
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.code").value(ErrorCode.MESSAGE_NOT_FOUND.name()));
   }
 
 }

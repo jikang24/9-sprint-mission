@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sprint.mission.discodeit.dto.request.UserCreateRequest;
+import com.sprint.mission.discodeit.exception.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest          // 전체 Spring 컨텍스트 로드
-@AutoConfigureMockMvc    // MockMvc 자동 설정 (슬라이스 테스트와 달리 직접 추가해야 해요)
-@ActiveProfiles("test")  // application-test.yaml 활성화
-@Transactional           // 각 테스트 후 DB 롤백 → 테스트 간 독립성 보장
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+@Transactional
 class UserIntegrationTest {
 
   @Autowired
@@ -33,7 +34,7 @@ class UserIntegrationTest {
   ObjectMapper objectMapper;
 
   @Test
-  @DisplayName("유저 생성 성공 - 실제 DB에 저장되는지 확인")
+  @DisplayName("유저 생성 성공 - 실제 DB 저장 확인")
   void createUser_success() throws Exception {
     // given
     UserCreateRequest request = new UserCreateRequest("testUser", "test@test.com", "password123");
@@ -78,7 +79,7 @@ class UserIntegrationTest {
                 requestJson.getBytes()
             )))
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("DUPLICATE_USER"));
+        .andExpect(jsonPath("$.code").value(ErrorCode.DUPLICATE_USER.name()));
   }
 
   @Test
@@ -103,7 +104,7 @@ class UserIntegrationTest {
   }
 
   @Test
-  @DisplayName("유저 삭제 성공 - 실제 DB에서 삭제되는지 확인")
+  @DisplayName("유저 삭제 성공 - 실제 DB 삭제 확인")
   void deleteUser_success() throws Exception {
     // given - 유저 생성 후 ID 추출
     UserCreateRequest request = new UserCreateRequest("testUser", "test@test.com", "password123");

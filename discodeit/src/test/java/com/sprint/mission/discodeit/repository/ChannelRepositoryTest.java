@@ -29,7 +29,7 @@ class ChannelRepositoryTest {
   private TestEntityManager em;
 
   @Test
-  @DisplayName("PUBLIC 채널과 구독 중인 PRIVATE 채널 함께 조회")
+  @DisplayName("PUBLIC 채널, PRIVATE 채널 함께 조회")
   void findAllByTypeOrIdIn_success() {
     // given
     // PUBLIC 채널 생성
@@ -47,6 +47,7 @@ class ChannelRepositoryTest {
     em.persist(readStatus);
 
     em.flush();
+    em.clear();
 
     // 구독 중인 채널 ID 목록
     List<UUID> subscribedChannelIds = List.of(privateChannel.getId());

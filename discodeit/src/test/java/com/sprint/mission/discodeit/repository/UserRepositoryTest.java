@@ -77,7 +77,7 @@ class UserRepositoryTest {
   }
 
   @Test
-  @DisplayName("프로필과 상태 포함 전체 유저 조회 - 데이터 있음")
+  @DisplayName("프로필과 상태 포함 전체 유저 조회: 성공 - 데이터 있음")
   void findAllWithProfileAndStatus_success() {
     // given
     User user = new User("testUser", "test@test.com", "password123", null);
@@ -95,7 +95,7 @@ class UserRepositoryTest {
   }
 
   @Test
-  @DisplayName("프로필과 상태 포함 전체 유저 조회 - 데이터 없음")
+  @DisplayName("프로필과 상태 포함 전체 유저 조회: 실패 - 데이터 없음")
   void findAllWithProfileAndStatus_empty() {
     // when
     var result = userRepository.findAllWithProfileAndStatus();

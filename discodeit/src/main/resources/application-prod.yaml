@@ -20,9 +20,3 @@ logging:
     root: info
     org.hibernate.SQL: warn  # 운영에선 로그 최소화
     com.sprint.mission.discodeit: info
-
-discodeit:
-  storage:
-    type: local  # 나중에 S3 등으로 바꿀 수 있음
-    local:
-      root-path: /var/discodeit/storage

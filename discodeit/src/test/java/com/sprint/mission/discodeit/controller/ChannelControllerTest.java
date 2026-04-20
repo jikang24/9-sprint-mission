@@ -15,11 +15,12 @@ import com.sprint.mission.discodeit.dto.data.ChannelDto;
 import com.sprint.mission.discodeit.dto.request.PublicChannelCreateRequest;
 import com.sprint.mission.discodeit.dto.request.PublicChannelUpdateRequest;
 import com.sprint.mission.discodeit.entity.ChannelType;
+import com.sprint.mission.discodeit.exception.ErrorCode;
 import com.sprint.mission.discodeit.exception.GlobalExceptionHandler;
 import com.sprint.mission.discodeit.exception.channel.ChannelNotFoundException;
 import com.sprint.mission.discodeit.exception.channel.PrivateChannelUpdateException;
+import com.sprint.mission.discodeit.exception.detail.ChannelExceptionDetail;
 import com.sprint.mission.discodeit.service.ChannelService;
-import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -55,7 +56,7 @@ class ChannelControllerTest {
 
     given(channelService.create(any(PublicChannelCreateRequest.class))).willReturn(mockChannelDto);
 
-    mockMvc.perform(post("/api/channels/public")  // URL도 수정
+    mockMvc.perform(post("/api/channels/public")
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestJson))
         .andExpect(status().isCreated())
@@ -65,15 +66,16 @@ class ChannelControllerTest {
   @Test
   @DisplayName("Public 채널 생성 실패 - 유효성 검증 실패")
   void createChannel_fail_validation() throws Exception {
-    PublicChannelCreateRequest invalidRequest = new PublicChannelCreateRequest("thisChannelNameIsTooLong!",
+    PublicChannelCreateRequest invalidRequest = new PublicChannelCreateRequest(
+        "thisChannelNameIsTooLong!",
         "testDescription");
     String requestJson = objectMapper.writeValueAsString(invalidRequest);
 
-    mockMvc.perform(post("/api/channels/public")  // URL도 수정
+    mockMvc.perform(post("/api/channels/public")
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestJson))
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
+        .andExpect(jsonPath("$.code").value(ErrorCode.VALIDATION_ERROR.name()));
   }
 
   @Test
@@ -86,13 +88,14 @@ class ChannelControllerTest {
     String requestJson = objectMapper.writeValueAsString(request);
 
     given(channelService.update(any(UUID.class), any(PublicChannelUpdateRequest.class))).willThrow(
-        new PrivateChannelUpdateException(Map.of("channelId", channelId)));
+        new PrivateChannelUpdateException(
+            ChannelExceptionDetail.ofChannelId(channelId.toString())));
 
     mockMvc.perform(patch("/api/channels/{channelId}", channelId)
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestJson))
         .andExpect(status().isBadRequest())   // 400 검증
-        .andExpect(jsonPath("$.code").value("PRIVATE_CHANNEL_UPDATE"));
+        .andExpect(jsonPath("$.code").value(ErrorCode.PRIVATE_CHANNEL_UPDATE.name()));
   }
 
   @Test
@@ -110,12 +113,13 @@ class ChannelControllerTest {
   void deleteChannel_fail_notFound() throws Exception {
     UUID channelId = UUID.randomUUID();
 
-    willThrow(new ChannelNotFoundException(Map.of("channelId", channelId)))
+    willThrow(
+        new ChannelNotFoundException(ChannelExceptionDetail.ofChannelId(channelId.toString())))
         .given(channelService).delete(channelId);
 
     mockMvc.perform(delete("/api/channels/{channelId}", channelId))
         .andExpect(status().isNotFound())
-        .andExpect(jsonPath("$.code").value("CHANNEL_NOT_FOUND"));
+        .andExpect(jsonPath("$.code").value(ErrorCode.CHANNEL_NOT_FOUND.name()));
   }
 
 

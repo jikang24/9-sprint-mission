@@ -8,12 +8,13 @@ import static org.mockito.BDDMockito.then;
 import com.sprint.mission.discodeit.dto.data.UserDto;
 import com.sprint.mission.discodeit.dto.request.LoginRequest;
 import com.sprint.mission.discodeit.entity.User;
+import com.sprint.mission.discodeit.exception.user.InvalidCredentialsException;
 import com.sprint.mission.discodeit.exception.user.UserNotFoundException;
+import com.sprint.mission.discodeit.fixture.UserFixture;
 import com.sprint.mission.discodeit.mapper.UserMapper;
 import com.sprint.mission.discodeit.repository.UserRepository;
 import com.sprint.mission.discodeit.service.basic.BasicAuthService;
 import java.util.Optional;
-import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,9 +37,9 @@ class AuthServiceTest {
   @Test
   @DisplayName("유저 로그인 성공")
   void login_success() {
-    LoginRequest request = new LoginRequest("testUser", "password123");
-    User mockUser = new User("testUser", "test@test.com", "password123", null);
-    UserDto mockUserDto = new UserDto(UUID.randomUUID(), "testUser", "test@test.com", null, false);
+    User mockUser = UserFixture.createUser();
+    UserDto mockUserDto = UserFixture.createUserDto();
+    LoginRequest request = UserFixture.createLoginRequest();
 
     given(userRepository.findByUsername("testUser")).willReturn(Optional.of(mockUser));
     given(userMapper.toDto(mockUser)).willReturn(mockUserDto);
@@ -53,9 +54,9 @@ class AuthServiceTest {
   @Test
   @DisplayName("로그인 실패 - 유저 없음")
   void login_failed_userNotFound() {
-    LoginRequest request = new LoginRequest("notExist", "password123");
+    LoginRequest request = UserFixture.createLoginRequest();
 
-    given(userRepository.findByUsername("notExist")).willReturn(Optional.empty());
+    given(userRepository.findByUsername("testUser")).willReturn(Optional.empty());
 
     assertThatThrownBy(() -> authService.login(request))
         .isInstanceOf(UserNotFoundException.class);
@@ -65,13 +66,12 @@ class AuthServiceTest {
   @DisplayName("로그인 실패 - 비밀번호 불일치")
   void login_failed_wrongPassword() {
     LoginRequest request = new LoginRequest("testUser", "wrongPassword");
-    User mockUser = new User("testUser", "test@test.com", "password123", null);
+    User mockUser = UserFixture.createUser();
 
     given(userRepository.findByUsername("testUser")).willReturn(Optional.of(mockUser));
 
     assertThatThrownBy(() -> authService.login(request))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Wrong password");
+        .isInstanceOf(InvalidCredentialsException.class);
     then(userMapper).shouldHaveNoInteractions();
   }
 
