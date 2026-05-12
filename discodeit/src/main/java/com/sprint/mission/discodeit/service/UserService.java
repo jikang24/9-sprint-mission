@@ -1,27 +1,24 @@
 package com.sprint.mission.discodeit.service;
 
-import com.sprint.mission.discodeit.DTO.UserDTO;
-import com.sprint.mission.discodeit.DTO.UserServiceResponseDTO;
-import com.sprint.mission.discodeit.entity.User;
-
+import com.sprint.mission.discodeit.dto.data.UserDto;
+import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
+import com.sprint.mission.discodeit.dto.request.UserCreateRequest;
+import com.sprint.mission.discodeit.dto.request.UserUpdateRequest;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 public interface UserService {
-    //생성
-//    User createUser(String username,String email,String password);
-    User createUser(UserDTO.CreateUserDTO dto);
-    //조회
-//    User findByUserId(UUID id);
-    UserServiceResponseDTO.FindUserId findByUserId(UserDTO.FindUserDTO dto);
 
-    //전체 조회
-    List<UserDTO.FindUserDTO> findAllUser();
+  UserDto create(UserCreateRequest userCreateRequest,
+      Optional<BinaryContentCreateRequest> profileCreateRequest);
 
-    //수정
-    User updateUser(UserDTO.updateUserDTO dto);
-    //삭제
-    boolean deleteUser(UserDTO.deleteDTO dto);
+  UserDto find(UUID userId);
 
+  List<UserDto> findAll();
+
+  UserDto update(UUID userId, UserUpdateRequest userUpdateRequest,
+      Optional<BinaryContentCreateRequest> profileCreateRequest);
+
+  void delete(UUID userId);
 }
