@@ -2,8 +2,8 @@ package com.sprint.mission.discodeit.controller;
 
 import com.sprint.mission.discodeit.controller.api.AuthApi;
 import com.sprint.mission.discodeit.dto.data.UserDto;
-import com.sprint.mission.discodeit.dto.request.LoginRequest;
-import com.sprint.mission.discodeit.service.AuthService;
+//import com.sprint.mission.discodeit.dto.request.LoginRequest;
+//import com.sprint.mission.discodeit.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,17 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/auth")
 public class AuthController implements AuthApi {
 
-  private final AuthService authService;
+//  private final AuthService authService;
 
-  @PostMapping(path = "login")
-  public ResponseEntity<UserDto> login(@RequestBody @Valid LoginRequest loginRequest) {
-    log.info("로그인 요청: username={}", loginRequest.username());
-    UserDto user = authService.login(loginRequest);
-    log.debug("로그인 응답: {}", user);
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(user);
-  }
 
   // 클라이언트가 페이지 로드 시 이 API를 호출 → 서버가 쿠키로 CSRF 토큰 발급
   @Override
