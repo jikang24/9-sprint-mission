@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,5 +32,16 @@ public class AuthController implements AuthApi {
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(user);
+  }
+
+  // 클라이언트가 페이지 로드 시 이 API를 호출 → 서버가 쿠키로 CSRF 토큰 발급
+  @Override
+  @GetMapping("csrf-token")
+  public ResponseEntity<Void> getCsrfToken(CsrfToken csrfToken) {
+    // CsrfToken은 Spring이 자동으로 주입해줌 (HandlerMethodArgumentResolver)
+    // GET 요청은 CSRF 검증을 안 하므로, 명시적으로 .getToken() 호출해서 토큰 초기화
+    String tokenValue = csrfToken.getToken();
+    log.debug("CSRF 토큰 요청: {}", tokenValue);
+    return ResponseEntity.status(HttpStatus.NON_AUTHORITATIVE_INFORMATION).build();
   }
 }
