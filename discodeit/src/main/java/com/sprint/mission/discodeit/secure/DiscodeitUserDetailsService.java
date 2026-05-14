@@ -1,8 +1,7 @@
-package com.sprint.mission.discodeit.detail;
+package com.sprint.mission.discodeit.secure;
 
 import com.sprint.mission.discodeit.dto.data.UserDto;
 import com.sprint.mission.discodeit.entity.User;
-import com.sprint.mission.discodeit.exception.user.UserNotFoundException;
 import com.sprint.mission.discodeit.mapper.UserMapper;
 import com.sprint.mission.discodeit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,7 @@ public class DiscodeitUserDetailsService implements UserDetailsService {
 
     User user = userRepository.findByUsername(username)
         .or(() -> userRepository.findByEmail(username))
-        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        .orElseThrow(() -> new UsernameNotFoundException("User not found" + username));
     UserDto userDto = userMapper.toDto(user);
 
     return new DiscodeitUserDetails(userDto, user.getPassword());

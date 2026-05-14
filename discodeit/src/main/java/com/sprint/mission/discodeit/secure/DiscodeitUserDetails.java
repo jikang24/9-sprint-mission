@@ -1,10 +1,12 @@
-package com.sprint.mission.discodeit.detail;
+package com.sprint.mission.discodeit.secure;
 
 import com.sprint.mission.discodeit.dto.data.UserDto;
+import com.sprint.mission.discodeit.entity.UserRole;
 import java.util.Collection;
 import java.util.List;
 import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +21,9 @@ public class DiscodeitUserDetails implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return List.of();
+    return List.of(
+        new SimpleGrantedAuthority("ROLE_" + userDto.role().name().toUpperCase())
+    );
   }
 
   @Override
