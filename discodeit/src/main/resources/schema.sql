@@ -82,6 +82,9 @@ ALTER TABLE users
         FOREIGN KEY (profile_id)
             REFERENCES binary_contents (id)
             ON DELETE SET NULL;
+-- role 컬럼 추가
+ALTER TABLE users
+    ADD role varchar(20) NOT NULL DEFAULT 'USER';
 
 -- UserStatus (1) -> User (1)
 ALTER TABLE user_statuses
