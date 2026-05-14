@@ -2,6 +2,7 @@ package com.sprint.mission.discodeit.secure;
 
 import com.sprint.mission.discodeit.dto.data.UserDto;
 import com.sprint.mission.discodeit.entity.User;
+import com.sprint.mission.discodeit.mapper.BinaryContentMapper;
 import com.sprint.mission.discodeit.mapper.UserMapper;
 import com.sprint.mission.discodeit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ public class DiscodeitUserDetailsService implements UserDetailsService {
 
   private final UserRepository userRepository;
   private final UserMapper userMapper;
+  private final BinaryContentMapper binaryContentMapper;
 
   @Transactional(readOnly = true)
   @Override
@@ -26,7 +28,14 @@ public class DiscodeitUserDetailsService implements UserDetailsService {
     User user = userRepository.findByUsername(username)
         .or(() -> userRepository.findByEmail(username))
         .orElseThrow(() -> new UsernameNotFoundException("User not found" + username));
-    UserDto userDto = userMapper.toDto(user);
+    UserDto userDto = new UserDto(
+        user.getId(),
+        user.getUsername(),
+        user.getEmail(),
+        user.getProfile() != null ? binaryContentMapper.toDto(user.getProfile()) : null,
+        user.getStatus() != null && user.getStatus().isOnline(),
+        user.getRole()
+    );
 
     return new DiscodeitUserDetails(userDto, user.getPassword());
   }

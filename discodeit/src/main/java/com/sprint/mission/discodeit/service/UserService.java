@@ -8,6 +8,7 @@ import com.sprint.mission.discodeit.entity.UserRole;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 public interface UserService {
 
@@ -23,5 +24,6 @@ public interface UserService {
 
   void delete(UUID userId);
 
+  @PreAuthorize("hasRole('ADMIN')")
   UserDto updateRole(UUID userId, UserRole role);
 }

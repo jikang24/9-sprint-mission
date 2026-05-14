@@ -8,6 +8,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,6 +24,7 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -49,11 +55,19 @@ public class SecurityConfig {
         .authorizeHttpRequests(auth -> auth
             .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
             .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-            .requestMatchers("/api/auth/**").permitAll()
-            .requestMatchers("/api/channels").hasAnyRole("ADMIN", "CHANNEL_MANAGER")
-            .requestMatchers("/api/messages").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.GET, "/api/auth/csrf-token").permitAll()
+            .requestMatchers("/actuator/**").permitAll()
+            .requestMatchers("/", "/index.html", "/assets/**", "/favicon.ico").permitAll()
             .anyRequest()
             .authenticated()
+        )
+        .exceptionHandling(ex -> ex
+            .authenticationEntryPoint((request, response, e) -> {
+              response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            })
+            .accessDeniedHandler((request, response, e) -> {
+              response.setStatus(HttpStatus.FORBIDDEN.value());
+            })
         );
 
     return http.build();
@@ -62,6 +76,23 @@ public class SecurityConfig {
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
+  }
+
+  @Bean
+  public RoleHierarchy roleHierarchy() {
+    return RoleHierarchyImpl.withDefaultRolePrefix()
+        .role("ADMIN").implies("CHANNEL_MANAGER")
+        // "ADMIN이 CHANNEL_MANAGER를 포함한다"를 코드로 명확하게 표현
+        .role("CHANNEL_MANAGER").implies("USER")
+        .build();
+  }
+
+  @Bean
+  static MethodSecurityExpressionHandler methodSecurityExpressionHandler(
+      RoleHierarchy roleHierarchy) {
+    DefaultMethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
+    handler.setRoleHierarchy(roleHierarchy);
+    return handler;
   }
 
 
