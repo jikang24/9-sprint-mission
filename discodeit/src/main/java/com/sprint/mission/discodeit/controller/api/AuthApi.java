@@ -1,7 +1,8 @@
 package com.sprint.mission.discodeit.controller.api;
 
-import com.sprint.mission.discodeit.detail.DiscodeitUserDetails;
+import com.sprint.mission.discodeit.secure.DiscodeitUserDetails;
 import com.sprint.mission.discodeit.dto.data.UserDto;
+import com.sprint.mission.discodeit.dto.request.UserRoleUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,6 +31,16 @@ public interface AuthApi {
       @ApiResponse(responseCode = "401", description = "올바르지 않은 세션")
   })
   ResponseEntity<UserDto> getMe(
-      @Parameter(hidden = true) DiscodeitUserDetails userDetails
+      @Parameter DiscodeitUserDetails userDetails
   );
+
+  @Operation(summary = "유져 권한 업데이트")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "권한 업데이트 성공"),
+      @ApiResponse(responseCode = "403", description = "업데이트 권한 없음")
+  })
+  ResponseEntity<UserDto> updateRole(
+      @Parameter UserRoleUpdateRequest userRoleUpdateRequest
+  );
+
 }
