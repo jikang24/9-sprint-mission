@@ -7,6 +7,7 @@ import com.sprint.mission.discodeit.dto.request.UserRoleUpdateRequest;
 import com.sprint.mission.discodeit.entity.UserRole;
 import com.sprint.mission.discodeit.service.AuthService;
 import com.sprint.mission.discodeit.service.UserService;
+import com.sprint.mission.discodeit.service.basic.BasicAuthService;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -43,21 +44,19 @@ public class AuthController implements AuthApi {
 
   @GetMapping("me")
   public ResponseEntity<UserDto> getMe(@AuthenticationPrincipal DiscodeitUserDetails userDetails) {
-    log.info("내 정보 조회");
-    UUID userId = userDetails.getUserDto().id();
-    UserDto userDto = userService.find(userId);
-
-    return ResponseEntity.status(HttpStatus.OK).body(userDto);
+    log.debug("내 정보 조회: userId={}", userDetails.getUserDto().id());
+    return ResponseEntity.ok(userDetails.getUserDto());
   }
 
   @PutMapping("role")
   public ResponseEntity<UserDto> updateRole(
       @RequestBody UserRoleUpdateRequest userRoleUpdateRequest) {
-    log.info("유저 권한 업데이트");
     UUID userId = userRoleUpdateRequest.userId();
     UserRole role = userRoleUpdateRequest.role();
+    log.info("유저 권한 업데이트 요청: userId={}, role={}", userId, role);
 
     UserDto userDto = userService.updateRole(userId, role);
+    authService.closeUserSession(userId);
 
     return ResponseEntity.status(HttpStatus.OK).body(userDto);
   }
