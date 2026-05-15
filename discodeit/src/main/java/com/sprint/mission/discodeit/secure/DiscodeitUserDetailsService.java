@@ -33,7 +33,7 @@ public class DiscodeitUserDetailsService implements UserDetailsService {
         user.getUsername(),
         user.getEmail(),
         user.getProfile() != null ? binaryContentMapper.toDto(user.getProfile()) : null,
-        user.getStatus() != null && user.getStatus().isOnline(),
+        false,
         user.getRole()
     );
 
