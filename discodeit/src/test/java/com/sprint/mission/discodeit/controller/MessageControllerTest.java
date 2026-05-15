@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sprint.mission.discodeit.dto.data.BinaryContentDto;
 import com.sprint.mission.discodeit.dto.data.MessageDto;
 import com.sprint.mission.discodeit.dto.data.UserDto;
+import com.sprint.mission.discodeit.entity.UserRole;
 import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageUpdateRequest;
@@ -84,7 +85,8 @@ class MessageControllerTest {
         "testuser",
         "test@example.com",
         null,
-        true
+        true,
+        UserRole.USER
     );
     
     BinaryContentDto attachmentDto = new BinaryContentDto(
@@ -163,7 +165,8 @@ class MessageControllerTest {
         "testuser",
         "test@example.com",
         null,
-        true
+        true,
+        UserRole.USER
     );
 
     MessageDto updatedMessage = new MessageDto(
@@ -251,7 +254,8 @@ class MessageControllerTest {
         "testuser",
         "test@example.com",
         null,
-        true
+        true,
+        UserRole.USER
     );
     
     List<MessageDto> messages = List.of(
