@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.config;
 
+import com.sprint.mission.discodeit.secure.DiscodeitUserDetailsService;
 import com.sprint.mission.discodeit.secure.handler.LoginFailureHandler;
 import com.sprint.mission.discodeit.secure.handler.LoginSuccessHandler;
 import com.sprint.mission.discodeit.secure.handler.SpaCsrfTokenRequestHandler;
@@ -32,6 +33,7 @@ public class SecurityConfig {
   private final LoginSuccessHandler loginSuccessHandler;
   private final LoginFailureHandler loginFailureHandler;
   private final SessionConfig sessionConfig;
+  private final DiscodeitUserDetailsService userDetailsService;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http, SessionRegistry sessionRegistry)
@@ -52,7 +54,7 @@ public class SecurityConfig {
             .logoutSuccessHandler(
                 new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT))
             .invalidateHttpSession(true)
-            .deleteCookies("JSESSIONID")
+            .deleteCookies("JSESSIONID", "remember-me")
             .permitAll()
         )
         .authorizeHttpRequests(auth -> auth
@@ -78,6 +80,15 @@ public class SecurityConfig {
                 .maxSessionsPreventsLogin(false)
                 .sessionRegistry(sessionConfig.sessionRegistry())
             )
+        )
+        .rememberMe(remember -> remember
+            .rememberMeParameter("remember-me")
+            .tokenValiditySeconds(3600)
+            .userDetailsService(userDetailsService)
+            .key("discodeit-remember-me-key")
+            .rememberMeCookieName("remember-me")
+            .useSecureCookie(false)
+            .alwaysRemember(false)
         );
 
     return http.build();
