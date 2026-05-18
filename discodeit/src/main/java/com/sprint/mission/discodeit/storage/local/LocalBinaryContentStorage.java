@@ -8,8 +8,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.NoSuchElementException;
 import java.util.UUID;
+import com.sprint.mission.discodeit.exception.DiscodeitException;
+import com.sprint.mission.discodeit.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.InputStreamResource;
@@ -37,6 +38,7 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
       try {
         Files.createDirectories(root);
       } catch (IOException e) {
+        e.printStackTrace();
         throw new RuntimeException(e);
       }
     }
@@ -58,11 +60,12 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
   public InputStream get(UUID binaryContentId) {
     Path filePath = resolvePath(binaryContentId);
     if (Files.notExists(filePath)) {
-      throw new NoSuchElementException("File with key " + binaryContentId + " does not exist");
+      throw new DiscodeitException(ErrorCode.BINARY_CONTENT_NOT_FOUND);
     }
     try {
       return Files.newInputStream(filePath);
     } catch (IOException e) {
+      e.printStackTrace();
       throw new RuntimeException(e);
     }
   }
