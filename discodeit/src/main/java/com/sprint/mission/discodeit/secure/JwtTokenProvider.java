@@ -7,9 +7,11 @@ import com.nimbusds.jose.JWSHeader;
 
 import com.nimbusds.jose.crypto.MACSigner;
 
+import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
+import java.text.ParseException;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +34,8 @@ public class JwtTokenProvider {
 
   private final MACSigner signer;
 
+  private final MACVerifier verifier;
+
   private final long accessTokenValiditySeconds;
 
   public JwtTokenProvider(
@@ -47,6 +51,9 @@ public class JwtTokenProvider {
 
     this.signer =
         new MACSigner(secretKey);
+
+    this.verifier =
+        new MACVerifier(secretKey);
 
     this.accessTokenValiditySeconds =
         accessTokenValiditySeconds;
@@ -122,6 +129,32 @@ public class JwtTokenProvider {
           "JWT 생성 실패",
           e
       );
+    }
+  }
+
+  public boolean validateToken(String token) {
+    try {
+      SignedJWT signedJWT = SignedJWT.parse(token);
+      if (!signedJWT.verify(verifier)) {
+        return false;
+      }
+      Date expirationTime =
+          signedJWT.getJWTClaimsSet().getExpirationTime();
+      return expirationTime.after(new Date());
+    } catch (Exception e) {
+      return false;
+    }
+  }
+
+  public String getUsername(String token) {
+    try {
+      SignedJWT signedJWT =
+          SignedJWT.parse(token);
+      return signedJWT
+          .getJWTClaimsSet()
+          .getSubject();
+    } catch (ParseException e) {
+      throw new RuntimeException(e);
     }
   }
 

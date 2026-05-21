@@ -1,6 +1,7 @@
 package com.sprint.mission.discodeit.config;
 
 import com.sprint.mission.discodeit.secure.DiscodeitUserDetailsService;
+import com.sprint.mission.discodeit.secure.JwtAuthenticationFilter;
 import com.sprint.mission.discodeit.secure.handler.JwtLoginSuccessHandler;
 import com.sprint.mission.discodeit.secure.handler.LoginFailureHandler;
 import com.sprint.mission.discodeit.secure.handler.SpaCsrfTokenRequestHandler;
@@ -21,6 +22,7 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
@@ -32,10 +34,9 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 public class SecurityConfig {
 
   private final LoginFailureHandler loginFailureHandler;
-  private final SessionConfig sessionConfig;
   private final DiscodeitUserDetailsService userDetailsService;
-  private final SessionRegistry sessionRegistry;
   private final JwtLoginSuccessHandler jwtLoginSuccessHandler;
+  private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http, SessionRegistry sessionRegistry)
@@ -87,7 +88,10 @@ public class SecurityConfig {
             .rememberMeCookieName("remember-me")
             .useSecureCookie(false)
             .alwaysRemember(false)
-        );
+        )
+        .addFilterBefore(
+            jwtAuthenticationFilter,
+            UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }
