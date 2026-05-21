@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sprint.mission.discodeit.dto.response.JwtDto;
 import com.sprint.mission.discodeit.secure.DiscodeitUserDetails;
 import com.sprint.mission.discodeit.secure.JwtTokenProvider;
+import com.sprint.mission.discodeit.service.AuthService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -23,6 +25,7 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
 
   private final JwtTokenProvider jwtTokenProvider;
   private final ObjectMapper objectMapper;
+  private final AuthService authService;
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -31,18 +34,25 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
     DiscodeitUserDetails userDetails = (DiscodeitUserDetails) authentication.getPrincipal();
 
     String accessToken = jwtTokenProvider.generateAccessToken(userDetails);
+    String refreshToken = jwtTokenProvider.generateRefreshToken();
 
-    JwtDto responseBody =
-        JwtDto.builder()
-            .userDto(userDetails.getUserDto())
-            .accessToken(accessToken)
-            .build();
+    authService.deleteSession(userDetails.getUserDto().id());
+    authService.saveSession(userDetails.getUserDto().id(), accessToken, refreshToken);
+
+    Cookie refreshTokenCookie = new Cookie("REFRESH_TOKEN", refreshToken);
+    refreshTokenCookie.setHttpOnly(true);
+    refreshTokenCookie.setPath("/");
+    response.addCookie(refreshTokenCookie);
 
     response.setStatus(HttpServletResponse.SC_OK);
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     response.setCharacterEncoding("UTF-8");
-
-    response.getWriter().write(objectMapper.writeValueAsString(responseBody));
+    response.getWriter().write(objectMapper.writeValueAsString(
+        JwtDto.builder()
+            .userDto(userDetails.getUserDto())
+            .accessToken(accessToken)
+            .build()
+    ));
 
     log.info("User [{}] logged in successfully", userDetails.getUsername());
 

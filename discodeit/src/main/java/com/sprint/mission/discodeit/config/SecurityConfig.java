@@ -5,7 +5,11 @@ import com.sprint.mission.discodeit.secure.JwtAuthenticationFilter;
 import com.sprint.mission.discodeit.secure.handler.JwtLoginSuccessHandler;
 import com.sprint.mission.discodeit.secure.handler.LoginFailureHandler;
 import com.sprint.mission.discodeit.secure.handler.SpaCsrfTokenRequestHandler;
+import java.util.List;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,8 +29,11 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -39,12 +46,14 @@ public class SecurityConfig {
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
   @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http, SessionRegistry sessionRegistry)
-      throws Exception {
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
         .csrf(csrf -> csrf
             .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
             .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler())
+            .ignoringRequestMatchers(
+                AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/auth/login"),
+                AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/auth/logout"))
         )
         .formLogin(login -> login
             .loginProcessingUrl("/api/auth/login")
@@ -57,43 +66,60 @@ public class SecurityConfig {
             .logoutSuccessHandler(
                 new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT))
             .invalidateHttpSession(true)
-            .deleteCookies("JSESSIONID", "remember-me")
+            .deleteCookies("JSESSIONID")
             .permitAll()
         )
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
-            .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-            .requestMatchers(HttpMethod.GET, "/api/auth/csrf-token").permitAll()
-            .requestMatchers("/actuator/**").permitAll()
-            .requestMatchers("/", "/index.html", "/assets/**", "/favicon.ico").permitAll()
-            .anyRequest()
-            .authenticated()
+            .requestMatchers(
+                AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/users"),
+                AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/auth/csrf-token"),
+                AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/auth/refresh"),
+                AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/auth/login"),
+                AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/auth/logout"),
+                new NegatedRequestMatcher(AntPathRequestMatcher.antMatcher("/api/**"))
+            ).permitAll()
+            .anyRequest().authenticated()
         )
         .exceptionHandling(ex -> ex
             .authenticationEntryPoint((request, response, e) -> {
               response.setStatus(HttpStatus.UNAUTHORIZED.value());
+              response.getWriter().write("""
+                  {
+                    "error": "UNAUTHORIZED",
+                    "message": "인증이 필요합니다."
+                  }
+                  """);
             })
             .accessDeniedHandler((request, response, e) -> {
               response.setStatus(HttpStatus.FORBIDDEN.value());
+              response.getWriter().write("""
+                  {
+                    "error": "FORBIDDEN",
+                    "message": "접근 권한이 없습니다."
+                  }
+                  """);
             })
         )
         .sessionManagement(session -> session
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        )
-        .rememberMe(remember -> remember
-            .rememberMeParameter("remember-me")
-            .tokenValiditySeconds(3600)
-            .userDetailsService(userDetailsService)
-            .key("discodeit-remember-me-key")
-            .rememberMeCookieName("remember-me")
-            .useSecureCookie(false)
-            .alwaysRemember(false)
         )
         .addFilterBefore(
             jwtAuthenticationFilter,
             UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
+  }
+
+  @Bean
+  public CommandLineRunner debugFilterChain(SecurityFilterChain filterChain) {
+    return args -> {
+      int filterSize = filterChain.getFilters().size();
+      List<String> filterNames = IntStream.range(0, filterSize)
+          .mapToObj(idx -> String.format("\t[%s/%s] %s", idx + 1, filterSize,
+              filterChain.getFilters().get(idx).getClass()))
+          .toList();
+      log.debug("Debug Filter Chain...\n{}", String.join(System.lineSeparator(), filterNames));
+    };
   }
 
 

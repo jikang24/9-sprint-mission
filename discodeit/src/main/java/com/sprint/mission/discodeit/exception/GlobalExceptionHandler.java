@@ -11,12 +11,19 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+  @ExceptionHandler(NoResourceFoundException.class)
+  public ResponseEntity<Void> handleNoResourceFoundException(NoResourceFoundException e) {
+    log.debug("정적 리소스 없음: {}", e.getMessage());
+    return ResponseEntity.notFound().build();
+  }
 
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> handleException(Exception e) {

@@ -38,12 +38,17 @@ public class JwtTokenProvider {
 
   private final long accessTokenValiditySeconds;
 
+  private final long refreshTokenValiditySeconds;
+
   public JwtTokenProvider(
       @Value("${jwt.secret}")
       String secret,
 
       @Value("${jwt.access-token-validity-seconds}")
-      long accessTokenValiditySeconds
+      long accessTokenValiditySeconds,
+
+      @Value("${jwt.refresh-token-validity-seconds}")
+      long refreshTokenValiditySeconds
   ) throws JOSEException {
 
     byte[] secretKey =
@@ -57,6 +62,9 @@ public class JwtTokenProvider {
 
     this.accessTokenValiditySeconds =
         accessTokenValiditySeconds;
+
+    this.refreshTokenValiditySeconds =
+        refreshTokenValiditySeconds;
 
     log.info(
         "JwtTokenProvider initialized"
@@ -140,7 +148,8 @@ public class JwtTokenProvider {
       }
       Date expirationTime =
           signedJWT.getJWTClaimsSet().getExpirationTime();
-      return expirationTime.after(new Date());
+      // 5초 여유를 두어 만료 경계에서의 race condition 방지
+      return expirationTime.after(new Date(System.currentTimeMillis() - 5000));
     } catch (Exception e) {
       return false;
     }
@@ -165,6 +174,10 @@ public class JwtTokenProvider {
         + UUID.randomUUID()
         .toString()
         .replace("-", "");
+  }
+
+  public long getRefreshTokenValiditySeconds() {
+    return refreshTokenValiditySeconds;
   }
 }
 

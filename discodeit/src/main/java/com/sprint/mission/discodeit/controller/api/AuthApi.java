@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.controller.api;
 
+import com.sprint.mission.discodeit.dto.response.JwtDto;
 import com.sprint.mission.discodeit.secure.DiscodeitUserDetails;
 import com.sprint.mission.discodeit.dto.data.UserDto;
 import com.sprint.mission.discodeit.dto.request.UserRoleUpdateRequest;
@@ -10,8 +11,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.web.bind.annotation.CookieValue;
 
 @Tag(name = "Auth", description = "인증 API")
 public interface AuthApi {
@@ -25,14 +28,6 @@ public interface AuthApi {
   ResponseEntity<Void> getCsrfToken(
       @Parameter(hidden = true) CsrfToken csrfToken);
 
-  @Operation(summary = "세션을 활용한 현재 사용자 정보 조회")
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "내 정보 조회 성공", content = @Content(schema = @Schema(implementation = UserDto.class))),
-      @ApiResponse(responseCode = "401", description = "올바르지 않은 세션")
-  })
-  ResponseEntity<UserDto> getMe(
-      @Parameter DiscodeitUserDetails userDetails
-  );
 
   @Operation(summary = "유져 권한 업데이트")
   @ApiResponses(value = {
@@ -43,4 +38,12 @@ public interface AuthApi {
       @Parameter UserRoleUpdateRequest userRoleUpdateRequest
   );
 
+  @Operation(summary = "refresh 토큰을 활용해 엑세스 토큰 재발급")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "토큰 재발급 성공", content = @Content(schema = @Schema(implementation = JwtDto.class))),
+      @ApiResponse(responseCode = "401", description = "유효하지 않은 토큰")
+  })
+  ResponseEntity<JwtDto> refreshToken(
+      @CookieValue(name = "REFRESH_TOKEN", required = false) String refreshToken,
+      HttpServletResponse response);
 }
