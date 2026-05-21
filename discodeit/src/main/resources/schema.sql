@@ -64,6 +64,19 @@ CREATE TABLE read_statuses
     UNIQUE (user_id, channel_id)
 );
 
+CREATE TABLE jwt_sessions
+(
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id         UUID                     NOT NULL,
+    access_token    VARCHAR(512)             NOT NULL UNIQUE,
+    refresh_token   VARCHAR(512)             NOT NULL UNIQUE,
+    expiration_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at      TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at      TIMESTAMP WITH TIME ZONE NOT NULL,
+
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+
 
 -- 제약 조건
 -- User (1) -> BinaryContent (1)
