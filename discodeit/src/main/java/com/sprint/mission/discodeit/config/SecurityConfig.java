@@ -1,8 +1,8 @@
 package com.sprint.mission.discodeit.config;
 
 import com.sprint.mission.discodeit.secure.DiscodeitUserDetailsService;
+import com.sprint.mission.discodeit.secure.handler.JwtLoginSuccessHandler;
 import com.sprint.mission.discodeit.secure.handler.LoginFailureHandler;
-import com.sprint.mission.discodeit.secure.handler.LoginSuccessHandler;
 import com.sprint.mission.discodeit.secure.handler.SpaCsrfTokenRequestHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +16,7 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,10 +31,11 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-  private final LoginSuccessHandler loginSuccessHandler;
   private final LoginFailureHandler loginFailureHandler;
   private final SessionConfig sessionConfig;
   private final DiscodeitUserDetailsService userDetailsService;
+  private final SessionRegistry sessionRegistry;
+  private final JwtLoginSuccessHandler jwtLoginSuccessHandler;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http, SessionRegistry sessionRegistry)
@@ -45,7 +47,7 @@ public class SecurityConfig {
         )
         .formLogin(login -> login
             .loginProcessingUrl("/api/auth/login")
-            .successHandler(loginSuccessHandler)
+            .successHandler(jwtLoginSuccessHandler)
             .failureHandler(loginFailureHandler)
             .permitAll()
         )
@@ -74,12 +76,8 @@ public class SecurityConfig {
               response.setStatus(HttpStatus.FORBIDDEN.value());
             })
         )
-        .sessionManagement(management -> management
-            .sessionConcurrency(concurrency -> concurrency
-                .maximumSessions(1)
-                .maxSessionsPreventsLogin(false)
-                .sessionRegistry(sessionConfig.sessionRegistry())
-            )
+        .sessionManagement(session -> session
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         )
         .rememberMe(remember -> remember
             .rememberMeParameter("remember-me")

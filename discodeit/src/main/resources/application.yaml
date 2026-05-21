@@ -61,3 +61,7 @@ discodeit:
 logging:
   level:
     root: info
+
+jwt:
+  secret: 8vec2bejXe03rLhrFrdClSPDFB8zfaYrX21N7v2DyzY=
+  access-token-validity-seconds: 3600
