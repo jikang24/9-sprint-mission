@@ -139,8 +139,7 @@ public class JwtTokenProvider {
       }
       Date expirationTime =
           signedJWT.getJWTClaimsSet().getExpirationTime();
-      // 5초 여유를 두어 만료 경계에서의 race condition 방지
-      return expirationTime.after(new Date(System.currentTimeMillis() - 5000));
+      return expirationTime.after(new Date());
     } catch (Exception e) {
       return false;
     }

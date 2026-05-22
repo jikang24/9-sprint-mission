@@ -64,5 +64,5 @@ logging:
 
 jwt:
   secret: 8vec2bejXe03rLhrFrdClSPDFB8zfaYrX21N7v2DyzY=
-  access-token-validity-seconds: 30
+  access-token-validity-seconds: 1800
   refresh-token-validity-seconds: 604800
