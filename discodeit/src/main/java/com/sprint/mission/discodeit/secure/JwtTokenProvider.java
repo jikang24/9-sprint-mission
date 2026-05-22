@@ -1,28 +1,19 @@
 package com.sprint.mission.discodeit.secure;
 
 import com.nimbusds.jose.JOSEException;
-
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
-
 import com.nimbusds.jose.crypto.MACSigner;
-
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-
 import java.text.ParseException;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Value;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import org.springframework.stereotype.Component;
-
 import java.time.Instant;
-
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
