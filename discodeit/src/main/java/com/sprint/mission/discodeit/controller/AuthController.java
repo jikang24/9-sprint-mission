@@ -61,7 +61,7 @@ public class AuthController implements AuthApi {
       @CookieValue(name = "REFRESH_TOKEN", required = false) String refreshToken,
       HttpServletResponse response) {
     if (refreshToken == null) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+      return ResponseEntity.ok(JwtDto.builder().build());
     }
 
     try {
@@ -74,8 +74,8 @@ public class AuthController implements AuthApi {
 
       return ResponseEntity.ok(jwtDto);
     } catch (Exception e) {
-      log.error("Refresh 실패: {}", e.getMessage());
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+      log.warn("Refresh 실패 (세션 없음 또는 만료): {}", e.getMessage());
+      return ResponseEntity.ok(JwtDto.builder().build());
     }
   }
 

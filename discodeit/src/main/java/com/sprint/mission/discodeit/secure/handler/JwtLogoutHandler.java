@@ -39,8 +39,9 @@ public class JwtLogoutHandler implements LogoutHandler {
     if (refreshToken != null) {
       jwtSessionRepository.findByRefreshToken(refreshToken)
           .ifPresent(session -> {
+            jwtRegistry.invalidateJwtInformationByUserId(session.getUserId());
             jwtSessionRepository.delete(session);
-            log.info("JWT 세션 삭제 완료 - logout");
+            log.info("JWT 세션 삭제 완료 - logout, userId: {}", session.getUserId());
           });
     }
 
@@ -49,14 +50,6 @@ public class JwtLogoutHandler implements LogoutHandler {
     cookie.setPath("/");
     response.addCookie(cookie);
 
-    if (refreshToken != null) {
-      jwtSessionRepository.findByRefreshToken(refreshToken)
-          .ifPresent(session -> {
-            jwtRegistry.invalidateJwtInformationByUserId(session.getUserId());
-            jwtSessionRepository.delete(session);
-            log.info("JWT 세션 삭제 완료 - logout, userId: {}", session.getUserId());
-          });
-    }
 
   }
 
