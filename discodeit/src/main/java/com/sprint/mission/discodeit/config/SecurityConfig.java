@@ -3,6 +3,7 @@ package com.sprint.mission.discodeit.config;
 import com.sprint.mission.discodeit.secure.DiscodeitUserDetailsService;
 import com.sprint.mission.discodeit.secure.JwtAuthenticationFilter;
 import com.sprint.mission.discodeit.secure.handler.JwtLoginSuccessHandler;
+import com.sprint.mission.discodeit.secure.handler.JwtLogoutHandler;
 import com.sprint.mission.discodeit.secure.handler.LoginFailureHandler;
 import com.sprint.mission.discodeit.secure.handler.SpaCsrfTokenRequestHandler;
 import java.util.List;
@@ -44,6 +45,7 @@ public class SecurityConfig {
   private final DiscodeitUserDetailsService userDetailsService;
   private final JwtLoginSuccessHandler jwtLoginSuccessHandler;
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
+  private final JwtLogoutHandler jwtLogoutHandler;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -63,6 +65,7 @@ public class SecurityConfig {
         )
         .logout(logout -> logout
             .logoutUrl("/api/auth/logout")
+            .addLogoutHandler(jwtLogoutHandler)
             .logoutSuccessHandler(
                 new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT))
             .invalidateHttpSession(true)
