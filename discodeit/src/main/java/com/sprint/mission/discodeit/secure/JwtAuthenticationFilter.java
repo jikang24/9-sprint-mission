@@ -21,6 +21,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final JwtTokenProvider jwtTokenProvider;
   private final DiscodeitUserDetailsService userDetailsService;
+  private final JwtRegistry jwtRegistry;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -30,6 +31,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     log.debug("Resolved JWT token: {}", token != null ? "present" : "absent");
 
     if (token != null && jwtTokenProvider.validateToken(token)) {
+      if (!jwtRegistry.hasActiveJwtInformationByAccessToken(token)) {
+        log.debug("Registry에 없는 토큰 - 무효화된 토큰");
+        filterChain.doFilter(request, response);
+        return;
+      }
       String username = jwtTokenProvider.getUsername(token);
       DiscodeitUserDetails userDetails = (DiscodeitUserDetails) userDetailsService
           .loadUserByUsername(username);

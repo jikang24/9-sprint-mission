@@ -7,6 +7,8 @@ import com.sprint.mission.discodeit.repository.JwtSessionRepository;
 import com.sprint.mission.discodeit.repository.UserRepository;
 import com.sprint.mission.discodeit.secure.DiscodeitUserDetails;
 import com.sprint.mission.discodeit.secure.DiscodeitUserDetailsService;
+import com.sprint.mission.discodeit.secure.JwtInformation;
+import com.sprint.mission.discodeit.secure.JwtRegistry;
 import com.sprint.mission.discodeit.secure.JwtTokenProvider;
 import com.sprint.mission.discodeit.service.AuthService;
 import java.time.Instant;
@@ -25,6 +27,7 @@ public class BasicAuthService implements AuthService {
   private final JwtTokenProvider jwtTokenProvider;
   private final DiscodeitUserDetailsService userDetailsService;
   private final UserRepository userRepository;
+  private final JwtRegistry jwtRegistry;
 
   @Override
   public JwtSession saveSession(UUID userId, String accessToken, String refreshToken) {
@@ -55,8 +58,24 @@ public class BasicAuthService implements AuthService {
     String newAccessToken = jwtTokenProvider.generateAccessToken(userDetails);
     String newRefreshToken = jwtTokenProvider.generateRefreshToken();
 
+    JwtInformation oldInfo = jwtRegistry.findByRefreshToken(refreshToken)
+        .orElse(null);
+
+    JwtInformation newInfo = new JwtInformation(
+        session.getUserId(),
+        newAccessToken,
+        newRefreshToken,
+        Instant.now().plusSeconds(jwtTokenProvider.getRefreshTokenValiditySeconds())
+    );
+
     jwtSessionRepository.delete(session);
     saveSession(session.getUserId(), newAccessToken, newRefreshToken);
+
+    if (oldInfo != null) {
+      jwtRegistry.rotateJwtInformation(session.getUserId(), oldInfo, newInfo);
+    } else {
+      jwtRegistry.registerJwtInformation(session.getUserId(), newInfo);
+    }
 
     log.info("Refresh token refreshed - userId: {}", session.getUserId());
     return JwtDto.builder()

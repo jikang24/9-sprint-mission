@@ -5,6 +5,7 @@ import com.sprint.mission.discodeit.dto.response.JwtDto;
 import com.sprint.mission.discodeit.dto.data.UserDto;
 import com.sprint.mission.discodeit.dto.request.UserRoleUpdateRequest;
 import com.sprint.mission.discodeit.entity.UserRole;
+import com.sprint.mission.discodeit.secure.JwtRegistry;
 import com.sprint.mission.discodeit.service.AuthService;
 import com.sprint.mission.discodeit.service.UserService;
 import jakarta.servlet.http.Cookie;
@@ -31,7 +32,7 @@ public class AuthController implements AuthApi {
 
   private final AuthService authService;
   private final UserService userService;
-
+  private final JwtRegistry jwtRegistry;
 
   @Override
   @GetMapping("csrf-token")
@@ -50,6 +51,7 @@ public class AuthController implements AuthApi {
 
     UserDto userDto = userService.updateRole(userId, role);
     authService.deleteSession(userId);
+    jwtRegistry.invalidateJwtInformationByUserId(userId);
 
     return ResponseEntity.status(HttpStatus.OK).body(userDto);
   }

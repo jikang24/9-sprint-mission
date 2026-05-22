@@ -20,6 +20,7 @@ public class DiscodeitUserDetailsService implements UserDetailsService {
   private final UserRepository userRepository;
   private final UserMapper userMapper;
   private final BinaryContentMapper binaryContentMapper;
+  private final JwtRegistry jwtRegistry;
 
   @Transactional(readOnly = true)
   @Override
@@ -33,7 +34,7 @@ public class DiscodeitUserDetailsService implements UserDetailsService {
         user.getUsername(),
         user.getEmail(),
         user.getProfile() != null ? binaryContentMapper.toDto(user.getProfile()) : null,
-        false,
+        jwtRegistry.hasActiveJwtInformationByUserId(user.getId()),
         user.getRole()
     );
 
