@@ -15,8 +15,8 @@ public class MessageSecurityService {
 
   public boolean isMessageOwner(UUID messageId, DiscodeitUserDetails userDetails) {
     return messageRepository.findById(messageId)
-        .map(message -> message.getAuthor().
-            equals(userDetails.getUserDto().id()))
+        .map(message -> message.getAuthor().getId()
+            .equals(userDetails.getUserDto().id()))
         .orElse(false);
   }
 
