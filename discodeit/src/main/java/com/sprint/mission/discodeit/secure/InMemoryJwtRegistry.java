@@ -83,14 +83,20 @@ public class InMemoryJwtRegistry implements JwtRegistry {
     }
   }
 
-  @Transactional
   @Scheduled(fixedDelay = 1000 * 60 * 5)
   @Override
   public void clearExpiredJwtInformation() {
     origin.values().forEach(queue -> queue.removeIf(JwtInformation::isExpired));
     origin.entrySet().removeIf(entry -> entry.getValue().isEmpty());
+    log.debug("만료된 JWT 정보 인메모리 정리 완료");
+
+    deleteExpiredSessions();
+  }
+
+  @Transactional
+  public void deleteExpiredSessions() {
     jwtSessionRepository.deleteByExpirationTimeBefore(Instant.now());
-    log.debug("만료된 JWT 정보 정리 완료 (인메모리 + DB)");
+    log.debug("만료된 JWT 세션 DB 정리 완료");
   }
 
   @Override

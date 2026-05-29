@@ -3,6 +3,7 @@ package com.sprint.mission.discodeit.service.basic;
 import com.sprint.mission.discodeit.dto.response.JwtDto;
 import com.sprint.mission.discodeit.entity.JwtSession;
 import com.sprint.mission.discodeit.entity.User;
+import com.sprint.mission.discodeit.exception.secure.JwtAuthenticationException;
 import com.sprint.mission.discodeit.repository.JwtSessionRepository;
 import com.sprint.mission.discodeit.repository.UserRepository;
 import com.sprint.mission.discodeit.secure.DiscodeitUserDetails;
@@ -42,7 +43,7 @@ public class BasicAuthService implements AuthService {
   @Override
   public JwtDto refresh(String refreshToken) {
     JwtSession session = jwtSessionRepository.findByRefreshToken(refreshToken)
-        .orElseThrow(() -> new IllegalArgumentException("Invalid refresh token"));
+        .orElseThrow(() -> new JwtAuthenticationException("Invalid refresh token"));
 
     if (session.getExpirationTime().isBefore(Instant.now())) {
       jwtSessionRepository.delete(session);

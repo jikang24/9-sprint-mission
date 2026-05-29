@@ -7,6 +7,7 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import com.sprint.mission.discodeit.exception.secure.JwtAuthenticationException;
 import java.text.ParseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -124,10 +125,7 @@ public class JwtTokenProvider {
 
     } catch (Exception e) {
 
-      throw new RuntimeException(
-          "JWT 생성 실패",
-          e
-      );
+      throw new JwtAuthenticationException("JWT 생성 실패", e);
     }
   }
 

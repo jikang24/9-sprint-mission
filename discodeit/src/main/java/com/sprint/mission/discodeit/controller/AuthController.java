@@ -75,7 +75,7 @@ public class AuthController implements AuthApi {
       return ResponseEntity.ok(jwtDto);
     } catch (Exception e) {
       log.warn("Refresh 실패 (세션 없음 또는 만료): {}", e.getMessage());
-      return ResponseEntity.ok(JwtDto.builder().build());
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
   }
 

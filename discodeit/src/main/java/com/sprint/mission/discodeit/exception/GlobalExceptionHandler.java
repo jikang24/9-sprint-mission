@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.exception;
 
+import com.sprint.mission.discodeit.exception.secure.JwtAuthenticationException;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +24,15 @@ public class GlobalExceptionHandler {
   public ResponseEntity<Void> handleNoResourceFoundException(NoResourceFoundException e) {
     log.debug("정적 리소스 없음: {}", e.getMessage());
     return ResponseEntity.notFound().build();
+  }
+
+  @ExceptionHandler(JwtAuthenticationException.class)
+  public ResponseEntity<ErrorResponse> handleJwtAuthenticationException(
+      JwtAuthenticationException e) {
+    ErrorResponse errorResponse = new ErrorResponse(e, HttpStatus.UNAUTHORIZED.value());
+    log.warn("JWT 인증 실패: {}", e.getMessage());
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        .body(errorResponse);
   }
 
   @ExceptionHandler(Exception.class)
