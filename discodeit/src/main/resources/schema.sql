@@ -16,10 +16,11 @@ CREATE TABLE binary_contents
 (
     id           uuid PRIMARY KEY,
     created_at   timestamp with time zone NOT NULL,
+    updated_at   timestamp with time zone,
     file_name    varchar(255)             NOT NULL,
     size         bigint                   NOT NULL,
-    content_type varchar(100)             NOT NULL
---     ,bytes        bytea        NOT NULL
+    content_type varchar(100)             NOT NULL,
+    status       varchar(20)              NOT NULL
 );
 
 -- Channel
@@ -123,3 +124,8 @@ ALTER TABLE read_statuses
         FOREIGN KEY (channel_id)
             REFERENCES channels (id)
             ON DELETE CASCADE;
+
+ALTER TABLE binary_contents
+    ADD COLUMN updated_at timestamp with time zone;
+ALTER TABLE binary_contents
+    ADD COLUMN status varchar(20) NOT NULL DEFAULT 'PROCESSING';
