@@ -25,6 +25,10 @@ management:
   endpoint:
     health:
       show-details: always
+  observations:
+    annotations:
+      enabled: true
+
 
 info:
   name: Discodeit

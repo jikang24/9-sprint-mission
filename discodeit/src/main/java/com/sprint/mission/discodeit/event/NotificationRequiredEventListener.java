@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ public class NotificationRequiredEventListener {
   private final NotificationRepository notificationRepository;
   private final ReadStatusRepository readStatusRepository;
 
+  @Async
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void on(MessageCreatedEvent event) {
@@ -51,6 +53,7 @@ public class NotificationRequiredEventListener {
     log.info("메시지 알림 생성 완료: channelId={}, 알림 수={}", channelId, readStatuses.size());
   }
 
+  @Async
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void on(RoleUpdatedEvent event) {
