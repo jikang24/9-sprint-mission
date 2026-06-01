@@ -8,6 +8,7 @@ import com.sprint.mission.discodeit.entity.BinaryContent;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.entity.UserRole;
 import com.sprint.mission.discodeit.event.BinaryContentCreatedEvent;
+import com.sprint.mission.discodeit.event.RoleUpdatedEvent;
 import com.sprint.mission.discodeit.exception.user.UserAlreadyExistsException;
 import com.sprint.mission.discodeit.exception.user.UserNotFoundException;
 import com.sprint.mission.discodeit.mapper.UserMapper;
@@ -181,6 +182,11 @@ public class BasicUserService implements UserService {
   public UserDto updateRole(UUID userId, UserRole role) {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> UserNotFoundException.withId(userId));
+
+    UserRole oldRole = user.getRole();
+    user.updateRole(role);
+
+    applicationEventPublisher.publishEvent(new RoleUpdatedEvent(user, oldRole, role));
 
     user.updateRole(role);
     return userMapper.toDto(user);

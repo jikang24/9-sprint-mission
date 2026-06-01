@@ -4,14 +4,12 @@ import com.sprint.mission.discodeit.dto.data.UserDto;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@EqualsAndHashCode(of = "userDto")
 @Getter
 @RequiredArgsConstructor
 public class DiscodeitUserDetails implements UserDetails {
