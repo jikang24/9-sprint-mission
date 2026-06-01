@@ -85,6 +85,7 @@ public class SecurityConfig {
         .exceptionHandling(ex -> ex
             .authenticationEntryPoint((request, response, e) -> {
               response.setStatus(HttpStatus.UNAUTHORIZED.value());
+              response.setContentType("application/json; charset=UTF-8");
               response.getWriter().write("""
                   {
                     "error": "UNAUTHORIZED",
@@ -94,6 +95,7 @@ public class SecurityConfig {
             })
             .accessDeniedHandler((request, response, e) -> {
               response.setStatus(HttpStatus.FORBIDDEN.value());
+              response.setContentType("application/json; charset=UTF-8");
               response.getWriter().write("""
                   {
                     "error": "FORBIDDEN",
