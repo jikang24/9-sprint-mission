@@ -28,7 +28,11 @@ public enum ErrorCode {
   INVALID_REQUEST("잘못된 요청입니다."),
 
   // Role 에러 코드
-  NO_AUTHORITY("적절한 권한이 없습니다.");
+  NO_AUTHORITY("적절한 권한이 없습니다."),
+
+  //Notification 에러 코드
+  NOTIFICATION_NOT_FOUND("알림을 찾지 못했습니다."),
+  AUTHORIZATION_DENIED("접근 권한이 제한되었습니다.");
 
   private final String message;
 
